@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/Store";
-import { UserOutlined, LogoutOutlined, BellOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined } from "@ant-design/icons";
 
 import { setOrder } from "../../redux/features/orderSlice";
 function Header() {
@@ -110,8 +110,9 @@ function Header() {
             <span className="user-name">{user.userName}</span>
           </div>
           <ul className="dropdown-content">
-            <li><Link to="/info-user"><UserOutlined/> Thông tin</Link></li>
-            <li><button onClick={handleLogout}><LogoutOutlined /> Đăng xuất</button></li>
+            <li><Link to ="/info-user"><UserOutlined/> Thông tin</Link></li>
+            <li><Link to = "/progress"><StockOutlined/> Lộ Trình</Link></li>
+            <li><button onClick={handleLogout}><LogoutOutlined/> Đăng xuất</button></li>
           </ul>
         </div>
       </div>

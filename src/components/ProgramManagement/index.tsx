@@ -9,8 +9,8 @@ interface Subscription {
   description: string;
   price: number;
   duration: number;
-  categoryName: string;
-  psychologistName: string;
+  categoryId: string;
+  psychologistId: string;
   purpose: string;
   criteria: string;
   focusGroup: string;
@@ -30,8 +30,8 @@ const SubscriptionManagement: React.FC = () => {
     description: "",
     price: 0.01,
     duration: 0,
-    categoryName: "",
-    psychologistName: "",
+    categoryId: "",
+    psychologistId: "",
     purpose: "",
     criteria: "",
     focusGroup: "",
@@ -71,8 +71,8 @@ const SubscriptionManagement: React.FC = () => {
       description: "",
       price: 0.01,
       duration: 0,
-      categoryName: "",
-      psychologistName: "",
+      categoryId: "",
+      psychologistId: "",
       purpose: "",
       criteria: "",
       focusGroup: "",
@@ -203,8 +203,8 @@ const SubscriptionManagement: React.FC = () => {
               <td>{sub.description}</td>
               <td>VND{sub.price.toLocaleString()}</td>
               <td>{sub.duration} days</td>
-              <td>{sub.categoryName}</td>
-              <td>{sub.psychologistName}</td>
+              <td>{sub.categoryId}</td>
+              <td>{sub.psychologistId}</td>
               <td>{sub.purpose}</td>
               <td>{sub.criteria}</td>
               <td>{sub.focusGroup}</td>
@@ -251,11 +251,11 @@ const SubscriptionManagement: React.FC = () => {
               </div>
               <div className="form-group">
                 <label>Category</label>
-                <input type="text" value={currentSub.categoryName} onChange={(e) => setCurrentSub({ ...currentSub, categoryName: e.target.value })} />
+                <input type="text" value={currentSub.categoryId} onChange={(e) => setCurrentSub({ ...currentSub, categoryId: e.target.value })} />
               </div>
               <div className="form-group">
                 <label>Psychologist</label>
-                <input type="text" value={currentSub.psychologistName} onChange={(e) => setCurrentSub({ ...currentSub, psychologistName: e.target.value })} />
+                <input type="text" value={currentSub.psychologistId} onChange={(e) => setCurrentSub({ ...currentSub, psychologistId: e.target.value })} />
               </div>
               <div className="form-group">
                 <label>Purpose</label>

@@ -34,6 +34,13 @@ const OrderDetail: React.FC = () => {
     navigate(`/payment`);
   };
 
+  // xử lí khi bấm nút hủy: 
+  const handleCancel = () => {
+    console.log("Hủy đơn hàng, quay lại trang trước");
+    dispatch(setOrder(null));
+    navigate(-1);
+  };
+
   return (
     <div className="order-detail-container">
       <div className="order-bill">
@@ -51,7 +58,8 @@ const OrderDetail: React.FC = () => {
 
         <div className="bill-footer">
           <button className="confirm-button" onClick={handleConfirm}>✔ Đồng ý</button>
-          <button className="cancel-button">❌ Hủy</button>
+          
+          <button className="cancel-button" onClick={handleCancel}>❌ Hủy</button>
         </div>
       </div>
     </div>

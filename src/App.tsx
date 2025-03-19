@@ -5,6 +5,7 @@ import RegisterPage from "./pages/Register/register";
 import RegisterValidation from "./pages/RegisterValidation/RegisterValidation";
 import "./main.css";
 import Info from "./pages/info-user";
+import Progress from "./pages/ProgressInformation"
 import Booking from "./pages/Booking";
 import BookingDetail from "./pages/Booking-detail";
 import Blog from "./pages/Blog/index";
@@ -27,6 +28,7 @@ import Psychologist from "./pages/Psychologist";
 import SurveyTypeManagementPage from "./pages/SurveyTypeManagement";
 import SurveyManagementPage from "./pages/SurveyManagement";
 import PaymentPage from "./pages/Payment";
+import ProgressManagePage from "./pages/ProgressManagement";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "info-user", element: <Info /> },
+      { path: "progress", element: <Progress /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       { path: "register-valid", element: <RegisterValidation /> },
@@ -51,6 +54,7 @@ const router = createBrowserRouter([
       { path: "danh-gia/:id", element: <ProgramDetail /> },
       { path: "reset-password", element: <ResetPassword /> },
       { path: "manage/SurveyTypeManagement", element: <SurveyTypeManagementPage /> },
+      { path: "manage/ProgressManagePage", element: <ProgressManagePage /> },
       { path: "manage/survey-management/:surveyTypeId", element: <SurveyManagementPage /> },
       {
         path: "manage",
