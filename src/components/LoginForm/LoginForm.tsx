@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     try {
       const userData = await handleLogin(formData.email, formData.password);
-      localStorage.setItem("token", userData.token);
+      // localStorage.setItem("token", userData.token);
       navigate("/");
     } catch (error) {
       setErrors({ auth: "Đăng nhập thất bại. Vui lòng thử lại." });
@@ -133,7 +133,7 @@ const LoginPage: React.FC = () => {
       };
       const userInfo = await fetchUserInfo(userId);
 
-      localStorage.setItem("token", token);
+      localStorage.setItem("BearerToken", token);
       sessionStorage.setItem("token", token)
 
       dispatch(login(userInfo));
