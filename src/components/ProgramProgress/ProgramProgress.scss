@@ -1,5 +1,3 @@
-@import "../ProgramProgress/ProgramProgress.scss";
-
 // Course Progress SCSS - Two Column Layout
 .course-container {
     font-family: 'Roboto', sans-serif;
@@ -173,76 +171,20 @@
     }
   }
 
-.orders-list {
-  margin-bottom: 20px;
-
-  .order-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
+  .back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #1890ff;
+    color: white;
+    border: none;
     border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &.deleted { // Renamed from .canceled to .deleted
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
-      color: #721c24;
-
-      .canceled-label { // Updated to match the new context
-        font-weight: bold;
-        color: #721c24;
-      }
-    }
-
-    .order-info {
-      flex: 1;
-    }
-
-    .view-progress-button {
-      padding: 10px 15px;
-      background-color: #1890ff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: #096dd9;
-      }
-    }
-
-    .cancel-order-button {
-      padding: 10px 15px;
-      background-color: #ff4d4f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: #d9363e;
-      }
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #096dd9;
     }
   }
-}
-
-.progress-section {
-  margin-top: 20px;
-
-  .progress-title {
-    margin-bottom: 15px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  .progress-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-}

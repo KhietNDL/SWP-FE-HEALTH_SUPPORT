@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, Search, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "./index.scss";
 
 // ✅ Định nghĩa `id` là `string` thay vì `number`
@@ -20,11 +21,13 @@ interface Subscription {
 const API_URL = "http://localhost:5199/Subscription";
 
 const SubscriptionManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-
+  const [categories, setCategories] = useState<{ id: string; categoryName: string }[]>([]);
+  const [psychologists, setPsychologists] = useState<{ id: string; name: string; specialization: string }[]>([]);
   const [currentSub, setCurrentSub] = useState<Subscription>({
     subscriptionName: "",
     description: "",
@@ -58,9 +61,32 @@ const SubscriptionManagement: React.FC = () => {
     }
   };
 
+  const fetchCategoriesAndPsychologists = async () => {
+    try {
+      const categoryResponse = await fetch("http://localhost:5199/api/Category");
+      console.log("Category Response:", categoryResponse); // Log phản hồi từ API Category
+      const psychologistResponse = await fetch("http://localhost:5199/api/Psychologist");
+      console.log("Psychologist Response:", psychologistResponse); // Log phản hồi từ API Psychologist
+  
+      if (!categoryResponse.ok || !psychologistResponse.ok) {
+        throw new Error("Failed to fetch data");
+      }
+  
+      const categoryData = await categoryResponse.json();
+      const psychologistData = await psychologistResponse.json();
+  
+      setCategories(categoryData);
+      setPsychologists(psychologistData);
+    } catch (error) {
+      console.error("Error fetching categories/psychologists:", error);
+      alert("Failed to fetch categories and psychologists.");
+    }
+  };
+
   // 🔹 Gọi API khi component mount
   useEffect(() => {
     fetchSubscriptions();
+    fetchCategoriesAndPsychologists();
   }, []);
 
   // Mở Modal để thêm mới
@@ -161,9 +187,17 @@ const SubscriptionManagement: React.FC = () => {
       {/* HEADER */}
       <div className="subscription-header">
         <h2>Subscription Management</h2>
-        <button className="add-button" onClick={handleOpenAddModal}>
-          <Plus size={16} /> Add New Subscription
-        </button>
+        <div className="header-buttons">
+          <button className="add-button" onClick={handleOpenAddModal}>
+            <Plus size={16} /> Add New Subscription
+          </button>
+          <button
+            className="navigate-button"
+            onClick={() => navigate("/manage/ProgressManagePage")}
+          >
+            Go to Progress Management
+          </button>
+        </div>
       </div>
 
       {/* SEARCH BAR */}
@@ -203,8 +237,10 @@ const SubscriptionManagement: React.FC = () => {
               <td>{sub.description}</td>
               <td>VND{sub.price.toLocaleString()}</td>
               <td>{sub.duration} days</td>
-              <td>{sub.categoryId}</td>
-              <td>{sub.psychologistId}</td>
+              {/* Hiển thị tên Category dựa trên categoryId */}
+              <td>{categories.find((c) => c.id === sub.categoryId)?.categoryName || "Unknown"}</td>
+              {/* Hiển thị tên Psychologist dựa trên psychologistId */}
+              <td>{psychologists.find((p) => p.id === sub.psychologistId)?.name || "Unknown"}</td>
               <td>{sub.purpose}</td>
               <td>{sub.criteria}</td>
               <td>{sub.focusGroup}</td>
@@ -251,11 +287,31 @@ const SubscriptionManagement: React.FC = () => {
               </div>
               <div className="form-group">
                 <label>Category</label>
-                <input type="text" value={currentSub.categoryId} onChange={(e) => setCurrentSub({ ...currentSub, categoryId: e.target.value })} />
+                <select
+                  value={currentSub.categoryId}
+                  onChange={(e) => setCurrentSub({ ...currentSub, categoryId: e.target.value })}
+                >
+                  <option value="">Select a Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label>Psychologist</label>
-                <input type="text" value={currentSub.psychologistId} onChange={(e) => setCurrentSub({ ...currentSub, psychologistId: e.target.value })} />
+                <select
+                  value={currentSub.psychologistId}
+                  onChange={(e) => setCurrentSub({ ...currentSub, psychologistId: e.target.value })}
+                >
+                  <option value="">Select a Psychologist</option>
+                  {psychologists.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} - {p.specialization}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label>Purpose</label>

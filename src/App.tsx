@@ -29,6 +29,8 @@ import SurveyTypeManagementPage from "./pages/SurveyTypeManagement";
 import SurveyManagementPage from "./pages/SurveyManagement";
 import PaymentPage from "./pages/Payment";
 import ProgressManagePage from "./pages/ProgressManagement";
+import ProgressPage from "./pages/ProgramProgress";
+import OrderProgressPage from "./pages/OrderProgress";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +69,9 @@ const router = createBrowserRouter([
       { path: "Psycologist", element: <Psychologist /> },
       { path: "order-detail/:id", element: <OrderDetailPage /> },
       { path: "payment", element: <PaymentPage /> },
+      { path: "progress-program", element: <ProgressPage /> },
+      { path: "progress-information/:orderId", element: <Progress /> },
+      { path: "progress/:orderId", element: <OrderProgressPage /> },
     ],
   },
 ]);

@@ -1,206 +1,21 @@
-@import "../ProgramProgress/ProgramProgress.scss";
+.order-progress-container {
+  font-family: 'Roboto', sans-serif;
+  max-width: 100%;
+  margin: 0 auto;
 
-// Course Progress SCSS - Two Column Layout
-.course-container {
-    font-family: 'Roboto', sans-serif;
-    max-width: 100%;
-    margin: 0 auto;
-    
-    .course-content {
-      padding: 20px;
-      
-      .course-title {
-        color: #008000;
-        font-size: 28px;
-        margin-bottom: 20px;
-      }
-    }
-  }
-  
-  // Two-column layout
-  .content-layout {
-    display: flex;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    height: 600px; // Fixed height for scrolling
-    
-    // Left column - Sessions sidebar
-    .sessions-sidebar {
-      width: 200px;
-      border-right: 1px solid #ccc;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      
-      .sidebar-title {
-        padding: 15px;
-        margin: 0;
-        font-size: 18px;
-        border-bottom: 1px solid #ddd;
-        background-color: #eaeaea;
-      }
-      
-      .sessions-list {
-        overflow-y: auto;
-        flex: 1;
-        
-        .session-item {
-          padding: 15px;
-          border-bottom: 1px solid #eee;
-          cursor: pointer;
-          transition: background-color 0.2s ease;
-          
-          &:hover {
-            background-color: #f0f0f0;
-          }
-          
-          &.active {
-            background-color: #e8f4d9;
-            border-left: 4px solid #9ACD32;
-          }
-          
-          .session-number {
-            font-weight: bold;
-            margin-bottom: 5px;
-          }
-          
-          .session-date {
-            font-size: 12px;
-            color: #666;
-          }
-        }
-      }
-    }
-    
-    // Right column - Session content
-    .session-content-area {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background-color: #fff;
-      
-      .session-header {
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
-        
-        h2 {
-          margin: 0 0 10px 0;
-          color: #444;
-        }
-        
-        .session-meta {
-          color: #666;
-          font-size: 14px;
-        }
-      }
-      
-      .session-description {
-        background-color: #f0f0f0;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        
-        h3 {
-          margin-top: 0;
-          margin-bottom: 10px;
-          font-size: 16px;
-        }
-        
-        p {
-          line-height: 1.6;
-          margin: 0;
-        }
-      }
-      
-      .session-info {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 5px;
-        
-        .info-item {
-          display: flex;
-          margin-bottom: 8px;
-          
-          &:last-child {
-            margin-bottom: 0;
-          }
-          
-          .info-label {
-            width: 100px;
-            font-weight: bold;
-            color: #666;
-          }
-          
-          .info-value {
-            flex: 1;
-          }
-        }
-      }
-      
-      .no-session {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: #666;
-        font-style: italic;
-      }
-    }
-  }
-  
-  // Loading indicator
-  .loading {
+  .order-progress-content {
     padding: 20px;
-    text-align: center;
-    color: #666;
-    font-style: italic;
-  }
-  
-  // Responsive adjustments
-  @media (max-width: 768px) {
-    .content-layout {
-      flex-direction: column;
-      height: auto;
-      
-      .sessions-sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #ccc;
-        max-height: 300px;
-      }
-    }
-  }
 
-.orders-list {
-  margin-bottom: 20px;
-
-  .order-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &.deleted { // Renamed from .canceled to .deleted
-      background-color: #f8d7da;
-      border-color: #f5c6cb;
-      color: #721c24;
-
-      .canceled-label { // Updated to match the new context
-        font-weight: bold;
-        color: #721c24;
-      }
+    .order-progress-title {
+      color: #008000;
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    .order-info {
-      flex: 1;
-    }
-
-    .view-progress-button {
+    .back-button {
+      display: inline-block;
+      margin-bottom: 20px;
       padding: 10px 15px;
       background-color: #1890ff;
       color: white;
@@ -213,36 +28,157 @@
         background-color: #096dd9;
       }
     }
+  }
 
-    .cancel-order-button {
-      padding: 10px 15px;
-      background-color: #ff4d4f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+  .content-layout {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 600px; // Fixed height for scrolling
 
-      &:hover {
-        background-color: #d9363e;
+    .sessions-sidebar {
+      width: 200px;
+      border-right: 1px solid #ccc;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+
+      .sidebar-title {
+        padding: 15px;
+        margin: 0;
+        font-size: 18px;
+        border-bottom: 1px solid #ddd;
+        background-color: #eaeaea;
+        text-align: center;
+      }
+
+      .sessions-list {
+        overflow-y: auto;
+        flex: 1;
+
+        .session-item {
+          padding: 15px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+
+          &.active {
+            background-color: #e8f4d9;
+            border-left: 4px solid #9ACD32;
+          }
+
+          .session-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+
+          .session-date {
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+    }
+
+    .session-content-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #fff;
+
+      .session-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+
+        h2 {
+          margin: 0 0 10px 0;
+          color: #444;
+        }
+
+        .session-meta {
+          color: #666;
+          font-size: 14px;
+        }
+      }
+
+      .session-description {
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+
+        h3 {
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size: 16px;
+        }
+
+        p {
+          line-height: 1.6;
+          margin: 0;
+        }
+      }
+
+      .session-info {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+
+        .info-item {
+          display: flex;
+          margin-bottom: 8px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .info-label {
+            width: 100px;
+            font-weight: bold;
+            color: #666;
+          }
+
+          .info-value {
+            flex: 1;
+          }
+        }
+      }
+
+      .no-session {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #666;
+        font-style: italic;
       }
     }
   }
-}
 
-.progress-section {
-  margin-top: 20px;
-
-  .progress-title {
-    margin-bottom: 15px;
-    font-size: 20px;
-    font-weight: bold;
+  .loading {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
   }
 
-  .progress-item {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+  @media (max-width: 768px) {
+    .content-layout {
+      flex-direction: column;
+      height: auto;
+
+      .sessions-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        max-height: 300px;
+      }
+    }
   }
 }

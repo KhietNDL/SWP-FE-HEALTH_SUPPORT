@@ -7,12 +7,10 @@ interface Order {
   createAt: string;
   price: number;
   duration: string;
-  
 }
 
 interface OrderState {
-  currentOrder : Order | null;
-
+  currentOrder: Order | null;
 }
 
 const initialState: OrderState = {
@@ -23,14 +21,16 @@ const orderSlice = createSlice({
   name: "order",
   initialState,
   reducers: {
-    setOrder: (state, action: PayloadAction<Order | null >) => {
+    setOrder: (state, action: PayloadAction<Order | null>) => {
       state.currentOrder = action.payload;
     },
     clearOrder: (state) => {
-      state.currentOrder = null;
+      state.currentOrder = null; // Reset currentOrder về null
     },
   },
 });
 
 export const { setOrder, clearOrder } = orderSlice.actions;
 export default orderSlice.reducer;
+
+// Ensure that `clearOrder` is dispatched during logout or account switch

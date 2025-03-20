@@ -1,179 +1,243 @@
-import React, { useState, useEffect } from 'react';
-import './ProgressInformation.scss';
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { useNavigate } from "react-router-dom";
+import "./ProgressInformation.scss";
 
-// Define TypeScript interfaces
-interface CourseSession {
-    id: number;
-    description: string;
-    startDate: string;
-    subscriptionId: number;
-    createAt: string;
-    modifiedAt: string;
-    isDeleted: boolean;
-    session: number;
-  }
-  
-  const CourseProgress: React.FC = () => {
-    // State management
-    const [sessions, setSessions] = useState<CourseSession[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [activeSession, setActiveSession] = useState<number | null>(null);
-  
-    // Fetch data from API
-    useEffect(() => {
-      const fetchSessions = async () => {
-        try {
-          // Replace with actual API call
-          const data: CourseSession[] = [
-            {
-              id: 1,
-              description: "Giới thiệu về khóa học và phương pháp học tập hiệu quả. Trong buổi này, học viên sẽ được làm quen với nội dung chính của khóa học, các mục tiêu cần đạt được và phương pháp học tập phù hợp.",
-              startDate: "2023-09-01T09:00:00",
-              subscriptionId: 101,
-              createAt: "2023-08-15T10:30:00",
-              modifiedAt: "2023-08-20T14:20:00",
-              isDeleted: false,
-              session: 1
-            },
-            {
-              id: 2,
-              description: "Các kỹ năng cơ bản trong phát triển phần mềm. Học viên sẽ được giới thiệu về quy trình phát triển phần mềm, các công cụ cần thiết và cách thức tổ chức mã nguồn hiệu quả.",
-              startDate: "2023-09-03T09:00:00",
-              subscriptionId: 101,
-              createAt: "2023-08-15T10:35:00",
-              modifiedAt: "2023-08-21T09:15:00",
-              isDeleted: false,
-              session: 2
-            },
-            {
-              id: 3,
-              description: "Thực hành với công cụ phát triển và môi trường làm việc. Buổi này sẽ hướng dẫn học viên cài đặt và sử dụng các IDE, quản lý phiên bản với Git và thực hành quy trình làm việc nhóm.",
-              startDate: "2023-09-05T09:00:00",
-              subscriptionId: 101,
-              createAt: "2023-08-15T10:40:00",
-              modifiedAt: "2023-08-22T16:45:00",
-              isDeleted: false,
-              session: 3
-            },
-            {
-              id: 4,
-              description: "Kiến trúc phần mềm và nguyên tắc thiết kế. Học viên sẽ được tìm hiểu về các pattern phổ biến, nguyên tắc SOLID và cách áp dụng vào dự án thực tế.",
-              startDate: "2023-09-08T09:00:00",
-              subscriptionId: 101,
-              createAt: "2023-08-15T10:45:00",
-              modifiedAt: "2023-08-23T11:30:00",
-              isDeleted: false,
-              session: 4
-            },
-            {
-              id: 5,
-              description: "Phát triển ứng dụng web: Front-end basics. Buổi học tập trung vào HTML, CSS, JavaScript và các framework phổ biến trong phát triển giao diện người dùng.",
-              startDate: "2023-09-10T09:00:00",
-              subscriptionId: 101,
-              createAt: "2023-08-15T10:50:00",
-              modifiedAt: "2023-08-24T13:25:00",
-              isDeleted: false,
-              session: 5
-            }
-          ];
-          
-          setSessions(data);
-          if (data.length > 0) {
-            setActiveSession(data[0].id);
-          }
-          setIsLoading(false);
-        } catch (error) {
-          console.error("Error fetching session data:", error);
-          setIsLoading(false);
+interface Order {
+  id: string;
+  subscriptionName: string;
+  description: string;
+  price: number;
+  quantity: number;
+  accountName: string;
+  accountEmail: string;
+  createAt: string;
+  modifiedAt: string | null;
+  isActive: boolean;
+  isDeleted: boolean; // Use isDeleted instead of isCanceled
+}
+
+interface Progress {
+  id: string;
+  section: number;
+  description: string;
+  date: number;
+  subscriptionName: string;
+  isCompleted: boolean;
+  createAt: string;
+  modifiedAt: string | null;
+}
+
+const ProgressInformation: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [progressData, setProgressData] = useState<Progress[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(true);
+  const [isLoadingProgress, setIsLoadingProgress] = useState<boolean>(false);
+  const [activeOrder, setActiveOrder] = useState<string | null>(null);
+
+  // Get accountEmail from Redux Store
+  const accountEmail = useSelector((state: RootState) => state.user?.email);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setOrders([]); // Reset orders khi accountEmail thay đổi hoặc khi đăng xuất
+    if (!accountEmail) {
+      setIsLoadingOrders(false);
+      return;
+    }
+
+    const fetchOrders = async () => {
+      try {
+        // Gọi API với accountEmail hiện tại
+        const response = await fetch(`http://localhost:5199/Order?accountEmail=${encodeURIComponent(accountEmail)}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch orders: ${response.status}`);
         }
-      };
-  
-      fetchSessions();
-    }, []);
-  
-    // Format date for display
-    const formatDate = (dateString: string): string => {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('vi-VN', { 
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+
+        const data: Order[] = await response.json();
+
+        // Lọc danh sách đơn hàng theo accountEmail (nếu cần thiết)
+        const filteredOrders = data.filter(order => order.accountEmail === accountEmail);
+
+        setOrders(filteredOrders);
+        setIsLoadingOrders(false);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setIsLoadingOrders(false);
+      }
+    };
+
+    fetchOrders();
+  }, [accountEmail]); // Chạy lại khi accountEmail thay đổi
+
+  const fetchProgress = async (subscriptionName: string) => {
+    setIsLoadingProgress(true);
+    try {
+      const response = await fetch(`http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(subscriptionName)}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch progress data: ${response.status}`);
+      }
+
+      const data: Progress[] = await response.json();
+      data.sort((a, b) => a.section - b.section); // Sort by section in ascending order
+      setProgressData(data);
+      setIsLoadingProgress(false);
+    } catch (error) {
+      console.error("Error fetching progress data:", error);
+      setIsLoadingProgress(false);
+    }
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
+        method: "DELETE",
       });
-    };
-  
-    // Get current session details
-    const getCurrentSession = () => {
-      return sessions.find(s => s.id === activeSession);
-    };
-  
-    return (
-      <div className="course-container">
-        <div className="course-content">
-          <h1 className="course-title">Đánh giá sự phát triển</h1>
-          
+
+      if (!response.ok) {
+        throw new Error(`Failed to cancel order: ${response.status}`);
+      }
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, isDeleted: true } : order
+        )
+      );
+    } catch (error) {
+      console.error("Error canceling order:", error);
+    }
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const getCurrentProgress = () => {
+    return progressData.find((p) => p.id === activeOrder) || null;
+  };
+
+  return (
+    <div className="course-container">
+      <div className="course-content">
+        <h1 className="course-title">Chương trình Tham Gia</h1>
+
+        {isLoadingOrders ? (
+          <div className="loading">Đang tải danh sách chương trình ...</div>
+        ) : orders.length === 0 ? (
+          <div className="no-orders">Bạn đang không tham gia chương trình nào.</div>
+        ) : (
+          <div className="orders-list">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className={`order-item ${order.isDeleted ? "canceled" : ""}`}
+              >
+                <div className="order-info">
+                  <p><strong>Tên gói:</strong> {order.subscriptionName}</p>
+                  <p><strong>Ngày đặt:</strong> {formatDate(order.createAt)}</p>
+                  <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
+                  {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
+                </div>
+                {!order.isDeleted && (
+                  <>
+                    <button
+                      className="view-progress-button"
+                      onClick={() =>
+                        navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
+                      }
+                    >
+                      Xem tiến trình
+                    </button>
+                    <button
+                      className="cancel-order-button"
+                      onClick={() => cancelOrder(order.id)}
+                    >
+                      Hủy tiến trình
+                    </button>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeOrder && (
           <div className="content-layout">
-            {/* Session navigation sidebar */}
+            {/* Sidebar */}
             <div className="sessions-sidebar">
-              <h2 className="sidebar-title">Buổi học</h2>
-              {isLoading ? (
+              <h2 className="sidebar-title">Tiến trình</h2>
+              {isLoadingProgress ? (
                 <div className="loading">Đang tải...</div>
               ) : (
                 <div className="sessions-list">
-                  {sessions.map(session => (
-                    <div 
-                      key={session.id}
-                      className={`session-item ${session.id === activeSession ? 'active' : ''}`}
-                      onClick={() => setActiveSession(session.id)}
+                  {progressData.map((progress) => (
+                    <div
+                      key={progress.id}
+                      className={`session-item ${
+                        progress.id === activeOrder ? "active" : ""
+                      }`}
+                      onClick={() => setActiveOrder(progress.id)}
                     >
-                      <div className="session-number">Buổi {session.session}</div>
-                      <div className="session-date">{formatDate(session.startDate)}</div>
+                      <div className="session-number">Buổi {progress.section}</div>
+                      <div className="session-date">
+                        Ngày: {formatDate(progress.createAt)}
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-            
-            {/* Session content area */}
+
+            {/* Content Area */}
             <div className="session-content-area">
-              {isLoading ? (
+              {isLoadingProgress ? (
                 <div className="loading">Đang tải nội dung...</div>
-              ) : activeSession ? (
+              ) : activeOrder ? (
                 <div className="session-details">
                   <div className="session-header">
-                    <h2>Buổi {getCurrentSession()?.session}: Chi tiết</h2>
+                    <h2>Buổi {getCurrentProgress()?.section}</h2>
                     <div className="session-meta">
-                      Ngày bắt đầu: {formatDate(getCurrentSession()?.startDate || '')}
+                      Ngày tạo: {formatDate(getCurrentProgress()?.createAt || "")}
                     </div>
                   </div>
                   <div className="session-description">
-                    <h3>Mô tả buổi học</h3>
-                    <p>{getCurrentSession()?.description}</p>
+                    <h3>Mô tả</h3>
+                    <p>{getCurrentProgress()?.description}</p>
                   </div>
                   <div className="session-info">
                     <div className="info-item">
-                      <span className="info-label">Mã khóa học:</span>
-                      <span className="info-value">{getCurrentSession()?.subscriptionId}</span>
+                      <span className="info-label">Hoàn thành:</span>
+                      <span className="info-value">
+                        {getCurrentProgress()?.isCompleted ? "Có" : "Không"}
+                      </span>
                     </div>
                     <div className="info-item">
-                      <span className="info-label">Ngày tạo:</span>
-                      <span className="info-value">{formatDate(getCurrentSession()?.createAt || '')}</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label">Cập nhật:</span>
-                      <span className="info-value">{formatDate(getCurrentSession()?.modifiedAt || '')}</span>
+                      <span className="info-label">Ngày cập nhật:</span>
+                      <span className="info-value">
+                        {getCurrentProgress()?.modifiedAt
+                          ? formatDate(getCurrentProgress()?.modifiedAt)
+                          : "Chưa cập nhật"}
+                      </span>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="no-session">
-                  <p>Vui lòng chọn một buổi học từ danh sách bên trái</p>
+                  <p>Vui lòng chọn một phần từ danh sách bên trái</p>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-export default CourseProgress;
+export default ProgressInformation;
