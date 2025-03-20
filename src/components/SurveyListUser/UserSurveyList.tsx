@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { FiSearch, FiClipboard, FiRefreshCw } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
-import { surveyApi, surveyTypeApi } from "../../services/apiService";
+import { surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
 import { Survey } from "../../types/Survey";
 import { SurveyType } from "../../types/SurveyType";
 import { toastConfig } from "../../types/toastConfig";

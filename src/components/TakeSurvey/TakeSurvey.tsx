@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { surveyApi, surveyTypeApi, surveyResultApi } from "../../services/apiService";
+import { surveyApi, surveyTypeApi, surveyResultApi } from "../../services/SurveyApiService";
 import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./TakeSurvey.scss";
