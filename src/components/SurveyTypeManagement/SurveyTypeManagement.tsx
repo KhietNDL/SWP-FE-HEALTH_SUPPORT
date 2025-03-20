@@ -30,9 +30,6 @@ const SurveyTypeManagement: React.FC = () => {
   const [surveyTypes, setSurveyTypes] = useState<SurveyType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-
-
-  // States for the unified popup
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [editingSurvey, setEditingSurvey] = useState<Survey | null>(null);
   const [editForm, setEditForm] = useState<EditSurveyForm>({
@@ -80,7 +77,7 @@ const SurveyTypeManagement: React.FC = () => {
     try {
       const authAxios = getAuthAxios();
       const response = await authAxios.get("/SurveyType");
-      setSurveyTypes(response.data); // This line updates the state
+      setSurveyTypes(response.data);
       return response.data;
     } catch (error) {
       toast.error("Lỗi khi lấy danh sách loại khảo sát", toastConfig);
@@ -88,17 +85,7 @@ const SurveyTypeManagement: React.FC = () => {
     }
   };
 
-  // Fetch a single survey by ID
-  const fetchSurveyById = async (id: string) => {
-    try {
-      const authAxios = getAuthAxios();
-      const response = await authAxios.get(`/Survey/${id}`);
-      return response.data;
-    } catch (error) {
-      toast.error("Lỗi khi lấy thông tin khảo sát", toastConfig);
-      return null;
-    }
-  };
+  // REMOVED: fetchSurveyById function as we're no longer using it
 
   const mergedSurveys = surveys.map((survey) => {
     const surveyType = surveyTypes.find((type) => type.id === survey.surveyTypeId);
@@ -112,29 +99,28 @@ const SurveyTypeManagement: React.FC = () => {
     survey.surveyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Open unified edit popup
-  const openEditPopup = async (surveyId: string) => {
-    const surveyData = await fetchSurveyById(surveyId);
-    if (!surveyData) return;
-
-    // Đợi fetchSurveyTypes() hoàn tất trước khi tìm
-    const updatedSurveyTypes = await fetchSurveyTypes();
-    console.log("Survey Data:", surveyData);
-    console.log("Survey Types:", updatedSurveyTypes);
-
-    const surveyType = updatedSurveyTypes.find((type: SurveyType) => type.id === surveyData.surveyTypeId);
-
+  // Modified openEditPopup function that doesn't rely on fetchSurveyById
+  const openEditPopup = (surveyId: string) => {
+    // Find the survey in our existing data instead of fetching it again
+    const surveyToEdit = surveys.find(survey => survey.id === surveyId);
+    if (!surveyToEdit) {
+      toast.error("Không tìm thấy thông tin khảo sát", toastConfig);
+      return;
+    }
+    
+    // Find the corresponding survey type
+    const surveyType = surveyTypes.find(type => type.id === surveyToEdit.surveyTypeId);
     if (!surveyType) {
       toast.error("Không tìm thấy thông tin loại khảo sát", toastConfig);
       return;
     }
 
-    setEditingSurvey(surveyData);
+    setEditingSurvey(surveyToEdit);
     setCurrentSurveyType(surveyType);
 
     setEditForm({
-      maxScore: surveyData.maxScore,
-      surveyTypeId: surveyData.surveyTypeId,
+      maxScore: surveyToEdit.maxScore,
+      surveyTypeId: surveyToEdit.surveyTypeId,
       surveyName: surveyType.surveyName
     });
 
@@ -180,7 +166,6 @@ const SurveyTypeManagement: React.FC = () => {
   };
 
   // Handle add new survey submission
-  // Update this function
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -220,9 +205,8 @@ const SurveyTypeManagement: React.FC = () => {
 
       toast.success("Tạo khảo sát mới thành công!", toastConfig);
 
-      // Fix: Update both survey types and surveys
-      await fetchSurveyTypes(); // Add this line to update survey types first
-      await fetchSurveys();     // Then update surveys
+      await fetchSurveyTypes();
+      await fetchSurveys();
 
       closeAddPopup();
     } catch (error) {
@@ -250,8 +234,7 @@ const SurveyTypeManagement: React.FC = () => {
       });
 
       toast.success("Cập nhật khảo sát thành công!", toastConfig);
-
-      // Cập nhật lại danh sách khảo sát & loại khảo sát
+      
       await fetchSurveys();
       await fetchSurveyTypes();
 
@@ -298,7 +281,7 @@ const SurveyTypeManagement: React.FC = () => {
           <tr>
             <th>Tên Loại Khảo Sát</th>
             <th>Điểm tối đa</th>
-            <th>Trạng Thái</th>
+            {/* <th>Trạng Thái</th> */}
             <th>Thao tác</th>
             <th>Xem danh sách câu hỏi</th>
           </tr>
@@ -308,9 +291,9 @@ const SurveyTypeManagement: React.FC = () => {
             <tr key={survey.id}>
               <td>{survey.surveyName}</td>
               <td>{survey.maxScore}</td>
-              <td className={survey.isDeleted ? "inactive" : "active"}>
+              {/* <td className={survey.isDeleted ? "inactive" : "active"}>
                 {survey.isDeleted ? "Inactive" : "Active"}
-              </td>
+              </td> */}
               <td className="actions">
                 {!survey.isDeleted ? (
                   <>
