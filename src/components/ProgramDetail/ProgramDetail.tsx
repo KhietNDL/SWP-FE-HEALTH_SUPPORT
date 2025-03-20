@@ -195,6 +195,14 @@ function ProgramDetail() {
           <button className="register-button" onClick={handleRegister}>
             Đăng ký
           </button>
+          <button
+            className="progress-button"
+            onClick={() =>
+              navigate(`/progress-program?subscriptionName=${encodeURIComponent(programData.subscriptionName)}`)
+            }
+          >
+            Xem tiến trình
+          </button>
         </div>
 
         <Modal

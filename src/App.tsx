@@ -5,6 +5,7 @@ import RegisterPage from "./pages/Register/register";
 import RegisterValidation from "./pages/RegisterValidation/RegisterValidation";
 import "./main.css";
 import Info from "./pages/info-user";
+import Progress from "./pages/ProgressInformation"
 import Booking from "./pages/Booking";
 import BookingDetail from "./pages/Booking-detail";
 import Blog from "./pages/Blog/index";
@@ -26,7 +27,13 @@ import Psychologist from "./pages/Psychologist";
 import SurveyTypeManagementPage from "./pages/SurveyTypeManagement";
 import SurveyManagementPage from "./pages/SurveyManagement";
 import PaymentPage from "./pages/Payment";
+<<<<<<< HEAD
 import TakeSurveyPage from "./pages/TakeSurvey";
+=======
+import ProgressManagePage from "./pages/ProgressManagement";
+import ProgressPage from "./pages/ProgramProgress";
+import OrderProgressPage from "./pages/OrderProgress";
+>>>>>>> 4c82395877155afc605a7fb096bfdf1f8913f1cc
 
 const router = createBrowserRouter([
   {
@@ -35,6 +42,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "info-user", element: <Info /> },
+      { path: "progress", element: <Progress /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       { path: "register-valid", element: <RegisterValidation /> },
@@ -51,7 +59,12 @@ const router = createBrowserRouter([
       { path: "danh-gia/:id", element: <ProgramDetail /> },
       { path: "reset-password", element: <ResetPassword /> },
       { path: "manage/SurveyTypeManagement", element: <SurveyTypeManagementPage /> },
+<<<<<<< HEAD
       { path: "manage/survey-management/:surveyId", element: <SurveyManagementPage /> },
+=======
+      { path: "manage/ProgressManagePage", element: <ProgressManagePage /> },
+      { path: "manage/survey-management/:surveyTypeId", element: <SurveyManagementPage /> },
+>>>>>>> 4c82395877155afc605a7fb096bfdf1f8913f1cc
       {
         path: "manage",
         element: (
@@ -63,6 +76,9 @@ const router = createBrowserRouter([
       { path: "Psycologist", element: <Psychologist /> },
       { path: "order-detail/:id", element: <OrderDetailPage /> },
       { path: "payment", element: <PaymentPage /> },
+      { path: "progress-program", element: <ProgressPage /> },
+      { path: "progress-information/:orderId", element: <Progress /> },
+      { path: "progress/:orderId", element: <OrderProgressPage /> },
     ],
   },
 ]);
