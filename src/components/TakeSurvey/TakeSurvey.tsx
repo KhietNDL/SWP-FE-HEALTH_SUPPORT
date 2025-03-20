@@ -5,18 +5,7 @@ import { surveyApi, surveyTypeApi, surveyResultApi } from "../../services/Survey
 import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./TakeSurvey.scss";
-
-interface Answer {
-  id: string;
-  content: string;
-  point: number;
-}
-
-interface Question {
-  id: string;
-  contentQ: string;
-  answerList: Answer[];
-}
+import { Question } from "../../types/Question";
 
 interface SurveyData {
   id: string;

@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FiEdit2, FiTrash2, FiSearch, FiX, FiPlus } from "react-icons/fi";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./SurveyTypeManagement.scss";
 import { Survey } from "../../types/Survey";
-
-interface SurveyType {
-  id: string;
-  surveyName: string;
-  isDelete: boolean;
-}
+import { SurveyType } from "../../types/SurveyType";
+import { surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
 
 interface EditSurveyForm {
   maxScore: number;
@@ -37,7 +32,7 @@ const SurveyTypeManagement: React.FC = () => {
     surveyTypeId: "",
     surveyName: ""
   });
-  const [currentSurveyType, setCurrentSurveyType] = useState<SurveyType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // States for add survey popup
   const [showAddPopup, setShowAddPopup] = useState(false);
@@ -47,45 +42,24 @@ const SurveyTypeManagement: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchSurveyTypes();
-    fetchSurveys();
+    fetchInitialData();
   }, []);
 
-  // Set up axios with authentication token
-  const getAuthAxios = () => {
-    const token = sessionStorage.getItem('token');
-    return axios.create({
-      baseURL: "http://localhost:5199",
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-  };
-
-  const fetchSurveys = async () => {
+  const fetchInitialData = async () => {
+    setIsLoading(true);
     try {
-      const authAxios = getAuthAxios();
-      const response = await authAxios.get("/Survey");
-      setSurveys(response.data);
+      const [surveyTypesData, surveysData] = await Promise.all([
+        surveyTypeApi.getAll(),
+        surveyApi.getAll()
+      ]);
+      setSurveyTypes(surveyTypesData);
+      setSurveys(surveysData);
     } catch (error) {
-      toast.error("Lỗi khi lấy danh sách khảo sát", toastConfig);
+      console.error("Error fetching initial data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const fetchSurveyTypes = async () => {
-    try {
-      const authAxios = getAuthAxios();
-      const response = await authAxios.get("/SurveyType");
-      setSurveyTypes(response.data);
-      return response.data;
-    } catch (error) {
-      toast.error("Lỗi khi lấy danh sách loại khảo sát", toastConfig);
-      return [];
-    }
-  };
-
-  // REMOVED: fetchSurveyById function as we're no longer using it
 
   const mergedSurveys = surveys.map((survey) => {
     const surveyType = surveyTypes.find((type) => type.id === survey.surveyTypeId);
@@ -100,14 +74,12 @@ const SurveyTypeManagement: React.FC = () => {
   );
 
   const openEditPopup = (surveyId: string) => {
-    // Find the survey in our existing data instead of fetching it again
     const surveyToEdit = surveys.find(survey => survey.id === surveyId);
     if (!surveyToEdit) {
       toast.error("Không tìm thấy thông tin khảo sát", toastConfig);
       return;
     }
     
-    // Find the corresponding survey type
     const surveyType = surveyTypes.find(type => type.id === surveyToEdit.surveyTypeId);
     if (!surveyType) {
       toast.error("Không tìm thấy thông tin loại khảo sát", toastConfig);
@@ -115,8 +87,6 @@ const SurveyTypeManagement: React.FC = () => {
     }
 
     setEditingSurvey(surveyToEdit);
-    setCurrentSurveyType(surveyType);
-
     setEditForm({
       maxScore: surveyToEdit.maxScore,
       surveyTypeId: surveyToEdit.surveyTypeId,
@@ -126,7 +96,6 @@ const SurveyTypeManagement: React.FC = () => {
     setShowEditPopup(true);
   };
 
-  // Open add survey popup
   const openAddPopup = () => {
     setAddForm({
       surveyName: "",
@@ -135,18 +104,15 @@ const SurveyTypeManagement: React.FC = () => {
     setShowAddPopup(true);
   };
 
-  // Close edit popup
   const closeEditPopup = () => {
     setShowEditPopup(false);
     setEditingSurvey(null);
   };
 
-  // Close add popup
   const closeAddPopup = () => {
     setShowAddPopup(false);
   };
 
-  // Handle form input changes for edit form
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditForm({
@@ -155,7 +121,6 @@ const SurveyTypeManagement: React.FC = () => {
     });
   };
 
-  // Handle form input changes for add form
   const handleAddFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setAddForm({
@@ -164,99 +129,120 @@ const SurveyTypeManagement: React.FC = () => {
     });
   };
 
-  // Handle add new survey submission
+  const validateAddForm = () => {
+    if (!addForm.surveyName.trim()) {
+      toast.error("Vui lòng nhập tên loại khảo sát", toastConfig);
+      return false;
+    }
+    
+    if (addForm.maxScore <= 0) {
+      toast.error("Điểm tối đa phải lớn hơn 0", toastConfig);
+      return false;
+    }
+    
+    return true;
+  };
+
+  const validateEditForm = () => {
+    if (!editForm.surveyName.trim()) {
+      toast.error("Vui lòng nhập tên loại khảo sát", toastConfig);
+      return false;
+    }
+    
+    if (editForm.maxScore <= 0) {
+      toast.error("Điểm tối đa phải lớn hơn 0", toastConfig);
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!addForm.surveyName.trim()) {
-      toast.error("Vui lòng nhập tên loại khảo sát", toastConfig);
-      return;
-    }
-
+    if (!validateAddForm()) return;
+    
+    setIsLoading(true);
     try {
-      const authAxios = getAuthAxios();
-
-      // Bước 1: Gửi yêu cầu tạo SurveyType mới
-      const surveyTypeResponse = await authAxios.post("/SurveyType", {
-        surveyName: addForm.surveyName,
-      });
-
-      if (!surveyTypeResponse.data) {
-        throw new Error("Không nhận được phản hồi từ server khi tạo loại khảo sát");
-      }
-
-      // Bước 2: Lấy danh sách SurveyType để lấy surveyTypeId mới
-      const surveyTypesResponse = await authAxios.get("/SurveyType");
-      const createdSurveyType = surveyTypesResponse.data.find(
+      // Step 1: Create new SurveyType
+      const surveyTypeResponse = await surveyTypeApi.create(addForm.surveyName);
+      
+      // Step 2: Get updated survey types to find the new ID
+      const updatedTypes = await surveyTypeApi.getAll();
+      const createdType = updatedTypes.find(
         (type: SurveyType) => type.surveyName === addForm.surveyName
       );
-
-      if (!createdSurveyType) {
+      
+      if (!createdType) {
         throw new Error("Không tìm thấy loại khảo sát vừa tạo");
       }
 
-      // Bước 3: Gửi yêu cầu tạo Survey mới với surveyTypeId
-      await authAxios.post("/Survey", {
-        maxScore: addForm.maxScore,
-        surveyTypeId: createdSurveyType.id,
-        questionList: [],
-      });
-
+      // Step 3: Create Survey with the new type ID
+      await surveyApi.create(addForm.maxScore, createdType.id);
+      
       toast.success("Tạo khảo sát mới thành công!", toastConfig);
-
-      await fetchSurveyTypes();
-      await fetchSurveys();
-
+      
+      // Refresh data
+      await fetchInitialData();
       closeAddPopup();
     } catch (error) {
-      toast.error("Lỗi khi tạo khảo sát mới", toastConfig);
       console.error(error);
+      toast.error("Lỗi khi tạo khảo sát mới", toastConfig);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Submit the unified edit form
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingSurvey) return;
-
+    if (!editingSurvey || !validateEditForm()) return;
+    
+    setIsLoading(true);
     try {
-      const authAxios = getAuthAxios();
-
-      // Cập nhật survey (chỉ maxScore)
-      await authAxios.put(`/Survey/${editingSurvey.id}`, {
-        maxScore: editForm.maxScore
-      });
-
-      // Cập nhật surveyType (chỉ surveyName)
-      await authAxios.put(`/SurveyType/${editForm.surveyTypeId}`, {
-        surveyName: editForm.surveyName
-      });
-
+      // Update survey maxScore
+      await surveyApi.update(editingSurvey.id, editForm.maxScore);
+      
+      // Update survey type name
+      await surveyTypeApi.update(editForm.surveyTypeId, editForm.surveyName);
+      
       toast.success("Cập nhật khảo sát thành công!", toastConfig);
       
-      await fetchSurveys();
-      await fetchSurveyTypes();
-
+      // Refresh data
+      await fetchInitialData();
       closeEditPopup();
     } catch (error) {
+      console.error(error);
       toast.error("Cập nhật khảo sát thất bại", toastConfig);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async (surveyId: string) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa khảo sát này không?")) {
+      return;
+    }
+    
+    setIsLoading(true);
     try {
-      const authAxios = getAuthAxios();
-      await authAxios.delete(`/Survey/${surveyId}`);
+      await surveyApi.delete(surveyId);
       toast.success("Xóa khảo sát thành công!", toastConfig);
-      fetchSurveys();
+      
+      // Update local state without re-fetching
+      setSurveys(prevSurveys => 
+        prevSurveys.filter(survey => survey.id !== surveyId)
+      );
     } catch (error) {
+      console.error(error);
       toast.error("Lỗi khi xóa khảo sát", toastConfig);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="container">
-      <ToastContainer position="top-center" autoClose={3000} />
+      <ToastContainer {...toastConfig} />
       <h1>Quản Lý Khảo Sát</h1>
 
       <div className="search-box">
@@ -270,51 +256,68 @@ const SurveyTypeManagement: React.FC = () => {
       </div>
 
       <div className="button-container">
-        <button className="add-button" onClick={openAddPopup}>
+        <button 
+          className="add-button" 
+          onClick={openAddPopup}
+          disabled={isLoading}
+        >
           <FiPlus /> Thêm Bài Khảo Sát
         </button>
       </div>
+
+      {isLoading && <div className="loading-indicator">Đang tải dữ liệu...</div>}
 
       <table>
         <thead>
           <tr>
             <th>Tên Loại Khảo Sát</th>
             <th>Điểm tối đa</th>
-            {/* <th>Trạng Thái</th> */}
             <th>Thao tác</th>
             <th>Xem danh sách câu hỏi</th>
           </tr>
         </thead>
         <tbody>
-          {filteredSurveys.map((survey) => (
-            <tr key={survey.id}>
-              <td>{survey.surveyName}</td>
-              <td>{survey.maxScore}</td>
-              {/* <td className={survey.isDeleted ? "inactive" : "active"}>
-                {survey.isDeleted ? "Inactive" : "Active"}
-              </td> */}
-              <td className="actions">
-                {!survey.isDeleted ? (
-                  <>
-                    <button onClick={() => openEditPopup(survey.id)}>
-                      <FiEdit2 /> Chỉnh Sửa
-                    </button>
-                    <button className="delete" onClick={() => handleDelete(survey.id)}>
-                      <FiTrash2 /> Xóa
-                    </button>
-                  </>
-                ) : null}
-              </td>
-              <td className="QuestionList">
-                <i
-                  style={{ cursor: "pointer", fontStyle: "italic", color: "#007bff" }}
-                  onClick={() => navigate(`survey-management/${survey.id}`)}
-                >
-                  View
-                </i>
+          {filteredSurveys.length > 0 ? (
+            filteredSurveys.map((survey) => (
+              <tr key={survey.id}>
+                <td>{survey.surveyName}</td>
+                <td>{survey.maxScore}</td>
+                <td className="actions">
+                  {!survey.isDeleted ? (
+                    <>
+                      <button 
+                        onClick={() => openEditPopup(survey.id)}
+                        disabled={isLoading}
+                      >
+                        <FiEdit2 /> Chỉnh Sửa
+                      </button>
+                      <button 
+                        className="delete" 
+                        onClick={() => handleDelete(survey.id)}
+                        disabled={isLoading}
+                      >
+                        <FiTrash2 /> Xóa
+                      </button>
+                    </>
+                  ) : null}
+                </td>
+                <td className="QuestionList">
+                  <i
+                    style={{ cursor: "pointer", fontStyle: "italic", color: "#007bff" }}
+                    onClick={() => navigate(`survey-management/${survey.id}`)}
+                  >
+                    View
+                  </i>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="no-data">
+                {searchTerm ? "Không tìm thấy khảo sát phù hợp" : "Chưa có khảo sát nào"}
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
@@ -349,13 +352,23 @@ const SurveyTypeManagement: React.FC = () => {
                   value={editForm.maxScore}
                   onChange={handleFormChange}
                   required
+                  min="1"
                 />
               </div>
               <div className="form-actions">
-                <button type="submit" className="save-button">
-                  Lưu
+                <button 
+                  type="submit" 
+                  className="save-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Đang lưu..." : "Lưu"}
                 </button>
-                <button type="button" className="cancel-button" onClick={closeEditPopup}>
+                <button 
+                  type="button" 
+                  className="cancel-button" 
+                  onClick={closeEditPopup}
+                  disabled={isLoading}
+                >
                   Hủy
                 </button>
               </div>
@@ -395,13 +408,23 @@ const SurveyTypeManagement: React.FC = () => {
                   value={addForm.maxScore}
                   onChange={handleAddFormChange}
                   required
+                  min="1"
                 />
               </div>
               <div className="form-actions">
-                <button type="submit" className="save-button">
-                  Tạo mới
+                <button 
+                  type="submit" 
+                  className="save-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Đang tạo..." : "Tạo mới"}
                 </button>
-                <button type="button" className="cancel-button" onClick={closeAddPopup}>
+                <button 
+                  type="button" 
+                  className="cancel-button" 
+                  onClick={closeAddPopup}
+                  disabled={isLoading}
+                >
                   Hủy
                 </button>
               </div>

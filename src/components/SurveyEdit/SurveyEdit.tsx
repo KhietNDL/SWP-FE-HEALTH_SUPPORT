@@ -5,18 +5,8 @@ import { surveyApi, questionApi, answerApi } from "../../services/SurveyApiServi
 import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./SurveyEdit.scss";
-
-interface Answer {
-  id: string;
-  content: string;
-  point: number;
-}
-
-interface Question {
-  id: string;
-  contentQ: string;
-  answerList: Answer[];
-}
+import { Question } from "../../types/Question";
+import { Answer } from "../../types/Answer";
 
 const SurveyEdit: React.FC = () => {
   const { surveyId } = useParams<{ surveyId: string }>();
