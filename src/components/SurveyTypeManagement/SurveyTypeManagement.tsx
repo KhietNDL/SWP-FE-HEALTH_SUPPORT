@@ -99,7 +99,6 @@ const SurveyTypeManagement: React.FC = () => {
     survey.surveyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Modified openEditPopup function that doesn't rely on fetchSurveyById
   const openEditPopup = (surveyId: string) => {
     // Find the survey in our existing data instead of fetching it again
     const surveyToEdit = surveys.find(survey => survey.id === surveyId);

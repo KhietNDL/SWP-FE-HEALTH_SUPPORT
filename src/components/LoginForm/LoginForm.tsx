@@ -56,7 +56,8 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     try {
       const userData = await handleLogin(formData.email, formData.password);
-      // localStorage.setItem("token", userData.token);
+      //Thắc mắc: để đây làm đc j khum
+      localStorage.setItem("token", userData.token);
       navigate("/");
     } catch (error) {
       setErrors({ auth: "Đăng nhập thất bại. Vui lòng thử lại." });

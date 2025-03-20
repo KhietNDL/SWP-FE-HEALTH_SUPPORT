@@ -1,33 +1,22 @@
-import { toast, ToastOptions, Zoom } from 'react-toastify';
+import { toast, ToastOptions } from 'react-toastify';
 
 // Cấu hình mặc định
 export const toastConfig: ToastOptions = {
   position: "top-center",
-  autoClose: 3000,
-  theme: "dark",
-  pauseOnHover: false,
-  pauseOnFocusLoss: false,
-  closeOnClick: true,
-  transition: Zoom,
   closeButton: false,
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "dark",
 };
 
-// Helper functions để hiển thị toast với cấu hình đã định sẵn
+// Hoặc nếu toastService đã được sử dụng ở UserSurveyList, thêm export dưới đây:
 export const toastService = {
-  success: (message: string, options?: ToastOptions) => {
-    toast.dismiss(); // Xóa các toast đang hiển thị trước
-    return toast.success(message, { ...toastConfig, ...options });
-  },
-  error: (message: string, options?: ToastOptions) => {
-    toast.dismiss(); // Xóa các toast đang hiển thị trước
-    return toast.error(message, { ...toastConfig, ...options });
-  },
-  info: (message: string, options?: ToastOptions) => {
-    toast.dismiss(); // Xóa các toast đang hiển thị trước
-    return toast.info(message, { ...toastConfig, ...options });
-  },
-  warning: (message: string, options?: ToastOptions) => {
-    toast.dismiss(); // Xóa các toast đang hiển thị trước
-    return toast.warning(message, { ...toastConfig, ...options });
-  }
+  success: (message: string) => toast.success(message, toastConfig),
+  error: (message: string) => toast.error(message, toastConfig),
+  info: (message: string) => toast.info(message, toastConfig),
+  warning: (message: string) => toast.warning(message, toastConfig),
 };
