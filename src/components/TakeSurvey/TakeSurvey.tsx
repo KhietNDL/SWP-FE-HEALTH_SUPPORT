@@ -1,25 +1,15 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { surveyApi, surveyTypeApi, surveyResultApi } from "../../services/SurveyApiService";
+import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./TakeSurvey.scss";
-
-interface Answer {
-  id: string;
-  content: string;
-  point: number;
-}
-
-interface Question {
-  id: string;
-  contentQ: string;
-  answerList: Answer[];
-}
+import { Question } from "../../types/Question";
 
 interface SurveyData {
   id: string;
-  surveyTypeId: string;
+  surveyTypeId?: string;
   surveyName: string;
   maxScore: number;
   questionList: Question[];
@@ -30,176 +20,163 @@ interface StoredSurveyProgress {
   currentQuestion: number;
 }
 
-const TakeSurvey = () => {
+const TakeSurvey: React.FC = () => {
   const { surveyId } = useParams<{ surveyId: string }>();
   const navigate = useNavigate();
-
+  
+  // Survey state
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  
+  // Progress state
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
 
-  // Load saved progress from localStorage when component mounts
-  useEffect(() => {
-    console.log("TakeSurvey mounted with surveyId:", surveyId);
+  // Fetch survey data
+  const fetchSurveyData = useCallback(async () => {
     if (!surveyId) {
-      console.error("No surveyId provided in URL");
-      toast.error("Không tìm thấy mã khảo sát!");
+      toast.error("Không tìm thấy mã khảo sát!", toastConfig);
       navigate("/survey");
       return;
     }
 
-    fetchSurveyData();
-  }, [surveyId, navigate]);
-
-  const fetchSurveyData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      console.log("Fetching survey data for ID:", surveyId);
-
-      if (!surveyId) {
-        throw new Error("Survey ID is required");
+      // Get all surveys to find the current one
+      const surveys = await surveyApi.getAll();
+      const currentSurvey = surveys.find((s: any) => s.id === surveyId);
+      
+      if (!currentSurvey) {
+        throw new Error("Không tìm thấy khảo sát");
       }
-
-      // Lấy thông tin khảo sát
-      const url = `http://localhost:5199/Survey/${surveyId}`;
-      console.log("Making API call to:", url);
-      const surveyResponse = await axios.get(url);
-      console.log("Survey response:", surveyResponse);
-
-      if (!surveyResponse.data) {
-        throw new Error("No survey data received");
-      }
-
-      // Check if survey type ID is valid
-      if (!surveyResponse.data.surveyTypeId || surveyResponse.data.surveyTypeId === '00000000-0000-0000-0000-000000000000') {
-        console.warn("Invalid or missing survey type ID");
-        // Use a default name if survey type is not available
-        const surveyData = {
-          ...surveyResponse.data,
-          surveyName: "Khảo sát không có tên"
-        };
-        setSurvey(surveyData);
-        loadSavedProgress(surveyData);
-        return;
-      }
-
-      // Lấy thông tin loại khảo sát để có tên khảo sát
-      const surveyTypeResponse = await axios.get(`http://localhost:5199/SurveyType/${surveyResponse.data.surveyTypeId}`);
-      console.log("Survey type response:", surveyTypeResponse);
-
-      const surveyData = {
-        ...surveyResponse.data,
-        surveyName: surveyTypeResponse.data.surveyName
+      
+      // Get all survey types to find the name
+      const surveyTypes = await surveyTypeApi.getAll();
+      const surveyType = surveyTypes.find((t: any) => 
+        t.id === currentSurvey.surveyTypeId
+      );
+      
+      const surveyName = surveyType ? surveyType.surveyName : "Khảo sát không xác định";
+      
+      // Fetch complete survey data with questions
+      const surveyData = await surveyApi.getById(surveyId);
+      
+      // Format the data
+      const formattedSurvey = {
+        ...surveyData,
+        surveyName
       };
-
-      if (!surveyData.questionList || surveyData.questionList.length === 0) {
-        toast.error("Khảo sát này chưa có câu hỏi!");
-        navigate("/survey");
-        return;
+      
+      if (!formattedSurvey.questionList || formattedSurvey.questionList.length === 0) {
+        toast.error("Khảo sát này chưa có câu hỏi nào!", toastConfig);
       }
-
-      setSurvey(surveyData);
-      loadSavedProgress(surveyData);
+      
+      setSurvey(formattedSurvey);
+      loadSavedProgress(formattedSurvey);
     } catch (error) {
       console.error("Error fetching survey:", error);
-      toast.error("Có lỗi xảy ra khi tải dữ liệu khảo sát!");
+      toast.error("Có lỗi xảy ra khi tải dữ liệu khảo sát!", toastConfig);
+      navigate("/survey");
     } finally {
       setLoading(false);
     }
-  };
+  }, [surveyId, navigate]);
 
-  // Initialize default answers and load saved progress
+  useEffect(() => {
+    fetchSurveyData();
+  }, [fetchSurveyData]);
+
+  // Load saved progress or initialize default answers
   const loadSavedProgress = (surveyData: SurveyData) => {
     // First set default answers (lowest point value for each question)
     const defaultAnswers: Record<string, string> = {};
-    
+
     surveyData.questionList.forEach(question => {
+      if (!question.answerList || question.answerList.length === 0) {
+        return;
+      }
+
       // Find answer with lowest point value
       let lowestPointAnswer = question.answerList[0];
-      
       for (const answer of question.answerList) {
         if (answer.point < lowestPointAnswer.point) {
           lowestPointAnswer = answer;
         }
       }
-      
       defaultAnswers[question.id] = lowestPointAnswer.id;
     });
-    
-    // Then try to load saved progress from localStorage
+
+    // Check if there's a completed result
     try {
-      const savedProgressJson = localStorage.getItem(`survey_progress_${surveyId}`);
-      if (savedProgressJson) {
-        const savedProgress: StoredSurveyProgress = JSON.parse(savedProgressJson);
+      const completedResult = localStorage.getItem(`survey_result_${surveyId}`);
+      if (completedResult) {
+        const parsedResult = JSON.parse(completedResult);
+        setSelectedAnswers(parsedResult.answers || defaultAnswers);
+        setScore(parsedResult.score || 0);
+        setIsCompleted(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error loading completed result:", error);
+    }
+
+    // Try to load saved progress
+    try {
+      const savedProgress = localStorage.getItem(`survey_progress_${surveyId}`);
+      if (savedProgress) {
+        const { selectedAnswers: savedAnswers, currentQuestion: savedCurrentQuestion } = 
+          JSON.parse(savedProgress) as StoredSurveyProgress;
         
-        // Merge saved answers with default answers (for any new questions)
-        const mergedAnswers = { ...defaultAnswers, ...savedProgress.selectedAnswers };
-        
-        setSelectedAnswers(mergedAnswers);
-        setCurrentQuestion(savedProgress.currentQuestion);
-        
-        console.log("Loaded saved progress:", savedProgress);
+        setSelectedAnswers(savedAnswers || defaultAnswers);
+        setCurrentQuestion(savedCurrentQuestion || 0);
       } else {
-        // If no saved progress, just use the default answers
         setSelectedAnswers(defaultAnswers);
       }
     } catch (error) {
       console.error("Error loading saved progress:", error);
-      // Fallback to default answers
       setSelectedAnswers(defaultAnswers);
-    }
-    
-    // Check if there's a completed result
-    try {
-      const savedResultJson = localStorage.getItem(`survey_result_${surveyId}`);
-      if (savedResultJson) {
-        const savedResult = JSON.parse(savedResultJson);
-        setScore(savedResult.score);
-        setIsCompleted(true);
-        console.log("Loaded saved result:", savedResult);
-      }
-    } catch (error) {
-      console.error("Error loading saved result:", error);
     }
   };
 
   // Save progress to localStorage
   const saveProgress = () => {
     if (!surveyId) return;
-    
+
     const progressData: StoredSurveyProgress = {
       selectedAnswers,
       currentQuestion
     };
-    
+
     localStorage.setItem(`survey_progress_${surveyId}`, JSON.stringify(progressData));
-    console.log("Saved progress to localStorage");
   };
 
+  // Handle answer selection
   const handleAnswerSelect = (questionId: string, answerId: string) => {
     const newSelectedAnswers = {
       ...selectedAnswers,
       [questionId]: answerId
     };
-    
+
     setSelectedAnswers(newSelectedAnswers);
-    
+
     // Save to localStorage whenever an answer is selected
-    localStorage.setItem(`survey_progress_${surveyId}`, JSON.stringify({
-      selectedAnswers: newSelectedAnswers,
-      currentQuestion
-    }));
+    if (surveyId) {
+      localStorage.setItem(`survey_progress_${surveyId}`, JSON.stringify({
+        selectedAnswers: newSelectedAnswers,
+        currentQuestion
+      }));
+    }
   };
 
+  // Navigation
   const handleNext = () => {
-    if (currentQuestion < (survey?.questionList.length || 0) - 1) {
+    if (!survey) return;
+
+    if (currentQuestion < (survey.questionList.length - 1)) {
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
-      
-      // Save progress
       saveProgress();
     } else {
       calculateResult();
@@ -208,26 +185,28 @@ const TakeSurvey = () => {
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-      
-      // Save progress
+      const prevQuestion = currentQuestion - 1;
+      setCurrentQuestion(prevQuestion);
       saveProgress();
     }
   };
 
+  // Calculate result
   const calculateResult = () => {
     if (!survey) return;
 
     let totalScore = 0;
 
-    // Tính điểm dựa trên câu trả lời đã chọn
+    // Calculate total score based on selected answers
     Object.keys(selectedAnswers).forEach(questionId => {
       const answerId = selectedAnswers[questionId];
       const question = survey.questionList.find(q => q.id === questionId);
-      const answer = question?.answerList.find(a => a.id === answerId);
-
-      if (answer) {
-        totalScore += answer.point;
+      
+      if (question) {
+        const answer = question.answerList.find(a => a.id === answerId);
+        if (answer) {
+          totalScore += answer.point;
+        }
       }
     });
 
@@ -241,151 +220,146 @@ const TakeSurvey = () => {
       answers: selectedAnswers
     }));
 
-    // Có thể gửi kết quả lên server ở đây
+    // Send result to server
     saveResult(totalScore);
   };
 
+  // Save result to server
   const saveResult = async (totalScore: number) => {
-    try {
-      // Giả định API lưu kết quả (có thể điều chỉnh theo API thực tế)
-      await axios.post('http://localhost:5199/api/SurveyAnswerRecord', {
-        surveyId: surveyId,
-        userId: "user-id", // Có thể lấy từ đăng nhập
-        score: totalScore,
-        completedDate: new Date().toISOString(),
-        answers: Object.keys(selectedAnswers).map(questionId => ({
-          questionId,
-          answerId: selectedAnswers[questionId]
-        }))
-      });
+    if (!surveyId) return;
 
+    try {
+      await surveyResultApi.saveResult(surveyId, totalScore, selectedAnswers);
+      toast.success("Kết quả khảo sát đã được lưu lại thành công!", toastConfig);
     } catch (error) {
-      console.error("Error saving result:", error);
-      toast.error("Có lỗi xảy ra khi lưu kết quả!");
+      console.error("Error saving survey result:", error);
+      toast.error("Không thể lưu kết quả khảo sát!", toastConfig);
     }
   };
 
+  // Retake survey
   const handleRetake = () => {
-    // Reset state
-    if (survey) {
-      loadSavedProgress(survey); // This will reload the default answers
-    }
+    if (!survey || !surveyId) return;
     
+    // Reset state
+    const defaultAnswers: Record<string, string> = {};
+    survey.questionList.forEach(question => {
+      if (question.answerList && question.answerList.length > 0) {
+        defaultAnswers[question.id] = question.answerList[0].id;
+      }
+    });
+    
+    setSelectedAnswers(defaultAnswers);
     setCurrentQuestion(0);
     setIsCompleted(false);
     setScore(0);
-    
+
     // Clear saved result from localStorage
     localStorage.removeItem(`survey_result_${surveyId}`);
   };
 
+  // Return to survey list
   const handleBackToList = () => {
     navigate("/survey");
   };
 
   if (loading) {
-    return <div className="loading-container">
-      <div className="loader"></div>
-      <p>Đang tải khảo sát...</p>
-    </div>;
+    return <div className="loading-container">Đang tải khảo sát...</div>;
   }
 
   if (!survey) {
-    return <div className="error-container">
-      <h2>Không tìm thấy khảo sát</h2>
-      <button onClick={handleBackToList} className="btn-primary">Quay lại danh sách</button>
-    </div>;
+    return (
+      <div className="error-container">
+        <h2>Không thể tải khảo sát</h2>
+        <button onClick={handleBackToList}>Quay lại danh sách</button>
+      </div>
+    );
   }
 
+  // Results screen
   if (isCompleted) {
     return (
-      <div className="take-survey-container">
-        <div className="result-container">
-          <h1>Kết quả khảo sát</h1>
-          <h2>{survey.surveyName}</h2>
-
+      <div className="survey-result-container">
+        <ToastContainer position="top-center" autoClose={3000} />
+        
+        <h1>{survey.surveyName} - Kết quả</h1>
+        <div className="result-card">
           <div className="score-display">
-            <div className="score-circle">
-              <span className="score-value">{score}</span>
-              <span className="score-max">/{survey.maxScore}</span>
+            <h2>Điểm của bạn</h2>
+            <div className="score">{score} / {survey.maxScore}</div>
+            
+            <div className="score-percentage">
+              {Math.round((score / survey.maxScore) * 100)}%
             </div>
           </div>
-
-          <div className="score-message">
-            {score >= survey.maxScore * 0.8 && (
-              <p>Xuất sắc! Bạn đã hoàn thành bài khảo sát với kết quả rất cao.</p>
-            )}
-            {score >= survey.maxScore * 0.6 && score < survey.maxScore * 0.8 && (
-              <p>Tốt! Bạn đã hoàn thành bài khảo sát với kết quả khá.</p>
-            )}
-            {score < survey.maxScore * 0.6 && (
-              <p>Cảm ơn bạn đã hoàn thành bài khảo sát.</p>
-            )}
-          </div>
-
+          
           <div className="result-actions">
-            <button onClick={handleRetake} className="btn-secondary">Làm lại</button>
-            <button onClick={handleBackToList} className="btn-primary">Quay lại danh sách</button>
+            <button className="retake-button" onClick={handleRetake}>
+              Làm lại khảo sát
+            </button>
+            <button className="back-button" onClick={handleBackToList}>
+              Quay lại danh sách
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  const currentQuestionData = survey.questionList[currentQuestion];
+  // Safety check for current question data
+  if (!survey.questionList || currentQuestion >= survey.questionList.length) {
+    return (
+      <div className="error-container">
+        <h2>Lỗi dữ liệu khảo sát</h2>
+        <button onClick={handleBackToList}>Quay lại danh sách</button>
+      </div>
+    );
+  }
 
+  // Survey taking screen
+  const currentQuestionData = survey.questionList[currentQuestion];
   return (
     <div className="take-survey-container">
       <ToastContainer position="top-center" autoClose={3000} />
 
       <div className="survey-header">
         <h1>{survey.surveyName}</h1>
-        <div className="progress-container">
-          <div className="progress-text">
-            Câu hỏi {currentQuestion + 1}/{survey.questionList.length}
-          </div>
-          <div className="progress-bar">
-            <div
-              className="progress-fill"
-              style={{ width: `${((currentQuestion + 1) / survey.questionList.length) * 100}%` }}
-            ></div>
-          </div>
+        <div className="progress-indicator">
+          Câu hỏi {currentQuestion + 1} / {survey.questionList.length}
         </div>
       </div>
 
       <div className="question-container">
-        <h2 className="question-text">{currentQuestionData.contentQ}</h2>
+        <div className="question">
+          <h2>{currentQuestionData.contentQ}</h2>
+        </div>
 
-        <div className="answers-container">
+        <div className="answers-list">
           {currentQuestionData.answerList.map((answer) => (
-            <div
-              key={answer.id}
-              className={`answer-option ${selectedAnswers[currentQuestionData.id] === answer.id ? 'selected' : ''}`}
-              onClick={() => handleAnswerSelect(currentQuestionData.id, answer.id)}
-            >
-              <div className="answer-radio">
-                <div className="radio-inner"></div>
-              </div>
-              <div className="answer-text">{answer.content}</div>
-            </div>
+            <label key={answer.id} className="answer-option">
+              <input
+                type="radio"
+                name={`question_${currentQuestionData.id}`}
+                checked={selectedAnswers[currentQuestionData.id] === answer.id}
+                onChange={() => handleAnswerSelect(currentQuestionData.id, answer.id)}
+              />
+              <span className="answer-text">{answer.content}</span>
+            </label>
           ))}
         </div>
       </div>
 
-      <div className="survey-navigation">
-        <button
-          onClick={handlePrevious}
-          className="btn-secondary"
+      <div className="navigation-buttons">
+        <button 
+          className="prev-button" 
+          onClick={handlePrevious} 
           disabled={currentQuestion === 0}
         >
           Câu trước
         </button>
-
-        <button
-          onClick={handleNext}
-          className="btn-primary"
-        >
-          {currentQuestion === survey.questionList.length - 1 ? 'Hoàn thành' : 'Câu tiếp theo'}
+        
+        <button className="next-button" onClick={handleNext}>
+          {currentQuestion < survey.questionList.length - 1 ? "Câu tiếp theo" : "Hoàn thành"}
         </button>
       </div>
     </div>

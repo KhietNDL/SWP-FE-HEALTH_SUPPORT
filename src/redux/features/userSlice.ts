@@ -16,6 +16,8 @@ const userSlice = createSlice({
     },
     logout: () => {
       localStorage.removeItem("userInfo"); // Xóa khỏi localStorage khi logout
+      localStorage.removeItem("BearerToken");
+      sessionStorage.removeItem("token");
       return null;
     },
     updateUserInfo: (state, action) => {

@@ -29,9 +29,46 @@ const OrderDetail: React.FC = () => {
   }
 
   // Xử lý điều hướng khi xác nhận đơn hàng
-  const handleConfirm = () => {
-    console.log("Navigating to payment page");
-    navigate(`/payment`);
+  const handleConfirm = async () => {
+    try {
+      console.log("Fetching progress data and navigating to payment page");
+
+      // Fetch progress data using subscriptionName
+      const response = await fetch(`http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(order.subscriptionName)}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch progress data: ${response.status}`);
+      }
+
+      const progressData = await response.json();
+      console.log("Progress data fetched successfully:", progressData);
+
+      // Navigate to payment page
+      navigate(`/payment`);
+    } catch (error) {
+      console.error("Error fetching progress data:", error);
+      alert("Không thể lấy tiến trình. Vui lòng thử lại sau.");
+    }
+  };
+
+  // xử lí khi bấm nút hủy: 
+  const handleCancel = async () => {
+    try {
+      console.log("Hủy đơn hàng, xóa khỏi cơ sở dữ liệu");
+      const response = await fetch(`http://localhost:5199/Order/${order.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete order: ${response.status}`);
+      }
+
+      console.log("Đơn hàng đã được xóa thành công");
+      dispatch(setOrder(null));
+      navigate(-1);
+    } catch (error) {
+      console.error("Lỗi khi xóa đơn hàng:", error);
+      alert("Không thể xóa đơn hàng. Vui lòng thử lại sau.");
+    }
   };
 
   return (
@@ -51,7 +88,8 @@ const OrderDetail: React.FC = () => {
 
         <div className="bill-footer">
           <button className="confirm-button" onClick={handleConfirm}>✔ Đồng ý</button>
-          <button className="cancel-button">❌ Hủy</button>
+          
+          <button className="cancel-button" onClick={handleCancel}>❌ Hủy</button>
         </div>
       </div>
     </div>

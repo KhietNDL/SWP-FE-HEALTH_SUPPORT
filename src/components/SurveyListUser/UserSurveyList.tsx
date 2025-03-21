@@ -1,38 +1,39 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { FiSearch, FiClipboard, FiRefreshCw } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
-import "./UserSurveyList.scss";
+import { surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
 import { Survey } from "../../types/Survey";
 import { SurveyType } from "../../types/SurveyType";
-import { toastService } from "../../types/toastConfig";
+import { toastConfig } from "../../types/toastConfig";
+import "./UserSurveyList.scss";
+
+interface MergedSurvey extends Survey {
+  surveyName: string;
+}
 
 const UserSurveyList = () => {
-  const [surveys, setSurveys] = useState([]);
+  const [surveys, setSurveys] = useState<MergedSurvey[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchActiveSurveys();
-  }, []);
-
-  const fetchActiveSurveys = async () => {
+  const fetchActiveSurveys = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://localhost:5199/Survey");
-      // Lọc chỉ lấy các khảo sát còn hoạt động (không bị xóa)
-      const activeSurveys = response.data.filter((survey: Survey) => !survey.isDeleted);
+      // Fetch data in parallel for better performance
+      const [surveysResponse, typesResponse] = await Promise.all([
+        surveyApi.getAll(),
+        surveyTypeApi.getAll()
+      ]);
       
-      // Lấy thông tin loại khảo sát
-      const typesResponse = await axios.get("http://localhost:5199/SurveyType");
-      const surveyTypes = typesResponse.data;
+      // Filter active surveys
+      const activeSurveys = surveysResponse.filter((survey: Survey) => !survey.isDeleted);
+      const surveyTypes = typesResponse;
       
-      // Gộp thông tin khảo sát với tên loại khảo sát
+      // Merge survey data with type names
       const mergedSurveys = activeSurveys.map((survey: Survey) => {
-        // Convert both IDs to strings to ensure proper comparison
         const surveyType = surveyTypes.find((type: SurveyType) => 
           String(type.id) === String(survey.surveyTypeId)
         );
@@ -44,30 +45,33 @@ const UserSurveyList = () => {
       });
       
       setSurveys(mergedSurveys);
-      toastService.success("Đã tải danh sách khảo sát thành công");
+      toast.success("Đã tải danh sách khảo sát thành công", toastConfig);
     } catch (error) {
       console.error("Error fetching surveys:", error);
-      toastService.error("Không thể tải danh sách khảo sát. Vui lòng thử lại sau.");
+      toast.error("Không thể tải danh sách khảo sát. Vui lòng thử lại sau.", toastConfig);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const startSurvey = (survey: Survey) => {
+  useEffect(() => {
+    fetchActiveSurveys();
+  }, [fetchActiveSurveys]);
+
+  const startSurvey = (survey: MergedSurvey) => {
     if (survey && survey.id) {
       navigate(`/take-survey/${survey.id}`);
     } else {
-      toastService.error("Không thể bắt đầu khảo sát. ID khảo sát không tồn tại.");
+      toast.error("Không thể bắt đầu khảo sát. ID khảo sát không tồn tại.", toastConfig);
     }
   };
 
-  const filteredSurveys: Survey[] = surveys.filter((survey: Survey) =>
+  const filteredSurveys = surveys.filter((survey) =>
     survey.surveyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="user-survey-list">
-      {/* Mỗi component có ToastContainer riêng */}
       <ToastContainer />
       
       <div className="survey-header">

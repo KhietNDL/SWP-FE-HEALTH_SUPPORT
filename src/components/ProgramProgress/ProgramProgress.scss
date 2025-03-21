@@ -1,0 +1,190 @@
+// Course Progress SCSS - Two Column Layout
+.course-container {
+    font-family: 'Roboto', sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+    
+    .course-content {
+      padding: 20px;
+      
+      .course-title {
+        color: #008000;
+        font-size: 28px;
+        margin-bottom: 20px;
+      }
+    }
+  }
+  
+  // Two-column layout
+  .content-layout {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 600px; // Fixed height for scrolling
+    
+    // Left column - Sessions sidebar
+    .sessions-sidebar {
+      width: 200px;
+      border-right: 1px solid #ccc;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      
+      .sidebar-title {
+        padding: 15px;
+        margin: 0;
+        font-size: 18px;
+        border-bottom: 1px solid #ddd;
+        background-color: #eaeaea;
+      }
+      
+      .sessions-list {
+        overflow-y: auto;
+        flex: 1;
+        
+        .session-item {
+          padding: 15px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          
+          &:hover {
+            background-color: #f0f0f0;
+          }
+          
+          &.active {
+            background-color: #e8f4d9;
+            border-left: 4px solid #9ACD32;
+          }
+          
+          .session-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          
+          .session-date {
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+    }
+    
+    // Right column - Session content
+    .session-content-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #fff;
+      
+      .session-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        
+        h2 {
+          margin: 0 0 10px 0;
+          color: #444;
+        }
+        
+        .session-meta {
+          color: #666;
+          font-size: 14px;
+        }
+      }
+      
+      .session-description {
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        
+        h3 {
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size: 16px;
+        }
+        
+        p {
+          line-height: 1.6;
+          margin: 0;
+        }
+      }
+      
+      .session-info {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        
+        .info-item {
+          display: flex;
+          margin-bottom: 8px;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+          
+          .info-label {
+            width: 100px;
+            font-weight: bold;
+            color: #666;
+          }
+          
+          .info-value {
+            flex: 1;
+          }
+        }
+      }
+      
+      .no-session {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #666;
+        font-style: italic;
+      }
+    }
+  }
+  
+  // Loading indicator
+  .loading {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .content-layout {
+      flex-direction: column;
+      height: auto;
+      
+      .sessions-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        max-height: 300px;
+      }
+    }
+  }
+
+  .back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #096dd9;
+    }
+  }

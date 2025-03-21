@@ -3,6 +3,6 @@ import { Answer } from './Answer';
 export interface Question {
     id: string;
     contentQ: string;
-    answersList: Answer[];
+    answerList: Answer[];
     isDelete: boolean;
   }

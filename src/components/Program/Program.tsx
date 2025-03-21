@@ -73,8 +73,6 @@ function Program() {
                   </p>
                   <p><strong>Giá:</strong> ${program.price.toLocaleString()}</p>
                   <p><strong>Thời gian:</strong> {program.duration} ngày</p>
-                  <p><strong>Danh mục:</strong> {program.categoryName}</p>
-                  <p><strong>Chuyên gia:</strong> {program.psychologistName}</p>
                   <button className="view-more" onClick={() => handleViewMore(program.id)}>
                     Xem thêm
                   </button>

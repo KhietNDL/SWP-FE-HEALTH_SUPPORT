@@ -3,7 +3,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import loginBg from "../../images/login.jpg";
 import "./LoginForm.scss";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "../../redux/features/userSlice";
 import { jwtDecode } from "jwt-decode";
 
@@ -56,6 +56,7 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     try {
       const userData = await handleLogin(formData.email, formData.password);
+      //Thắc mắc: để đây làm đc j khum
       localStorage.setItem("token", userData.token);
       if (userData.roleName === "Manager") {
         navigate("/manage");
@@ -141,7 +142,7 @@ const LoginPage: React.FC = () => {
       };
       const userInfo = await fetchUserInfo(userId);
 
-      localStorage.setItem("token", token);
+      localStorage.setItem("BearerToken", token);
       sessionStorage.setItem("token", token)
 
       dispatch(login(userInfo));
