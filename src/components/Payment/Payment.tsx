@@ -17,7 +17,7 @@ const Payment: React.FC = () => {
   };
 
   // Chỉ mở modal khi bấm "Pay Now"
-  const handlePayNow = () => {
+  const handlePayNow = () => {  
     if (!selectedMethod) {
       alert("Vui lòng chọn phương thức thanh toán!"); // Cảnh báo nếu chưa chọn
       return;

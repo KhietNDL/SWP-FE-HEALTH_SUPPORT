@@ -49,18 +49,13 @@ const ProgressInformation: React.FC = () => {
 
     const fetchOrders = async () => {
       try {
-        // Gọi API với accountEmail hiện tại
         const response = await fetch(`http://localhost:5199/Order?accountEmail=${encodeURIComponent(accountEmail)}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch orders: ${response.status}`);
         }
 
         const data: Order[] = await response.json();
-
-        // Lọc danh sách đơn hàng theo accountEmail (nếu cần thiết)
-        const filteredOrders = data.filter(order => order.accountEmail === accountEmail);
-
-        setOrders(filteredOrders);
+        setOrders(data);
         setIsLoadingOrders(false);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -69,7 +64,7 @@ const ProgressInformation: React.FC = () => {
     };
 
     fetchOrders();
-  }, [accountEmail]); // Chạy lại khi accountEmail thay đổi
+  }, [accountEmail]);
 
   const fetchProgress = async (subscriptionName: string) => {
     setIsLoadingProgress(true);
@@ -125,12 +120,12 @@ const ProgressInformation: React.FC = () => {
   return (
     <div className="course-container">
       <div className="course-content">
-        <h1 className="course-title">Chương trình Tham Gia</h1>
+        <h1 className="course-title">Danh sách đơn hàng</h1>
 
         {isLoadingOrders ? (
-          <div className="loading">Đang tải danh sách chương trình ...</div>
+          <div className="loading">Đang tải danh sách đơn hàng...</div>
         ) : orders.length === 0 ? (
-          <div className="no-orders">Bạn đang không tham gia chương trình nào.</div>
+          <div className="no-orders">Không có đơn hàng nào.</div>
         ) : (
           <div className="orders-list">
             {orders.map((order) => (
@@ -144,7 +139,7 @@ const ProgressInformation: React.FC = () => {
                   <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
                   {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
                 </div>
-                {!order.isDeleted && (
+                {!order.isDeleted && order.isActive && (
                   <>
                     <button
                       className="view-progress-button"

@@ -60,6 +60,47 @@ const OrderProgress: React.FC = () => {
     fetchProgress();
   }, [location.search]);
 
+  const handleComplete = async (progressId: string) => {
+    try {
+      // Tìm mục cần cập nhật trong progressData
+      const progressToUpdate = progressData.find((progress) => progress.id === progressId);
+      if (!progressToUpdate) {
+        throw new Error("Progress not found");
+      }
+
+      // Tạo payload đầy đủ giống như trong ProgressManagement
+      const payload = {
+        ...progressToUpdate, // Gửi toàn bộ dữ liệu của progress
+        isCompleted: true, // Cập nhật trạng thái isCompleted
+        modifiedAt: new Date().toISOString(), // Cập nhật thời gian sửa đổi
+      };
+
+      const response = await fetch(`http://localhost:5199/SubscriptionProgress/${progressId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text(); // Lấy thông tin chi tiết từ backend
+        throw new Error(`Failed to update progress: ${response.status} - ${errorText}`);
+      }
+
+      // Cập nhật trạng thái trong progressData
+      setProgressData((prevData) =>
+        prevData.map((progress) =>
+          progress.id === progressId ? { ...progress, isCompleted: true } : progress
+        )
+      );
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
+  };
+
+  const completedPercentage = Math.round(
+    (progressData.filter((p) => p.isCompleted).length / progressData.length) * 100
+  );
+
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString("vi-VN", {
@@ -84,6 +125,17 @@ const OrderProgress: React.FC = () => {
           Quay lại
         </button>
 
+        {/* Progress Bar */}
+        <div className="progress-bar-container">
+          <div className="progress-bar">
+            <div
+              className="progress-bar-fill"
+              style={{ width: `${completedPercentage}%` }}
+            ></div>
+          </div>
+          <p className="progress-percentage">{completedPercentage}% hoàn thành</p>
+        </div>
+
         <div className="content-layout">
           {/* Sidebar */}
           <div className="sessions-sidebar">
@@ -104,6 +156,18 @@ const OrderProgress: React.FC = () => {
                   >
                     <div className="session-number">Buổi {progress.section}</div>
                     <div className="session-date">Ngày: {formatDate(progress.date.toString())}</div>
+                    {!progress.isCompleted && (
+                      <button
+                        className="complete-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleComplete(progress.id);
+                        }}
+                      >
+                        Hoàn thành
+                      </button>
+                    )}
+                    {progress.isCompleted && <p className="completed-label">Đã hoàn thành</p>}
                   </div>
                 ))}
               </div>

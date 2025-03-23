@@ -40,6 +40,7 @@ function ProgramDetail() {
   const toggleSection = (section: string) => {
     setExpandedSections((prev) =>
       prev.includes(section)
+    
         ? prev.filter((s) => s !== section)
         : [...prev, section]
     );
@@ -191,7 +192,7 @@ function ProgramDetail() {
 
         <div className="program-detail-footer">
           <p className="duration">Thời gian liệu trình: {programData.duration} ngày</p>
-          <p className="price">Giá: ${programData.price.toFixed(2)}</p>
+          <p className="price">Giá: {programData.price.toFixed(2)}VND</p>
           <button className="register-button" onClick={handleRegister}>
             Đăng ký
           </button>

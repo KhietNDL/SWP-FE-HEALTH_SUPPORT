@@ -101,7 +101,7 @@ const CourseProgress: React.FC = () => {
                     }`}
                     onClick={() => setActiveProgress(progress.id)}
                   >
-                    <div className="session-number">Buổi {progress.section}</div>
+                    <div className="session-number">Tuần {progress.section}</div>
                     <div className="session-date">
                       Ngày: {progress.date}
                     </div>
@@ -118,7 +118,7 @@ const CourseProgress: React.FC = () => {
             ) : activeProgress ? (
               <div className="session-details">
                 <div className="session-header">
-                  <h2>Buổi {getCurrentProgress()?.section}</h2>
+                  <h2>Tuần {getCurrentProgress()?.section}</h2>
                   <div className="session-meta">
                     Ngày tạo: {formatDate(getCurrentProgress()?.createAt || "")}
                   </div>

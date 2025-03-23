@@ -71,7 +71,7 @@ function Program() {
                       ? `${program.description.substring(0, MAX_DESCRIPTION_LENGTH)}...`
                       : program.description}
                   </p>
-                  <p><strong>Giá:</strong> ${program.price.toLocaleString()}</p>
+                  <p><strong>Giá:</strong> {program.price.toLocaleString()} VND</p>
                   <p><strong>Thời gian:</strong> {program.duration} ngày</p>
                   <button className="view-more" onClick={() => handleViewMore(program.id)}>
                     Xem thêm

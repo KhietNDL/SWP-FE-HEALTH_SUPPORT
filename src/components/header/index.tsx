@@ -6,13 +6,9 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/Store";
-<<<<<<< HEAD
-import { UserOutlined, LogoutOutlined, BellOutlined } from "@ant-design/icons";
 import { formatDate } from "../moment.js";
-=======
 import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined } from "@ant-design/icons";
 
->>>>>>> 4c82395877155afc605a7fb096bfdf1f8913f1cc
 import { setOrder } from "../../redux/features/orderSlice";
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
