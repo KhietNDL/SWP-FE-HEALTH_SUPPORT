@@ -86,14 +86,31 @@ const ProgressInformation: React.FC = () => {
 
   const cancelOrder = async (orderId: string) => {
     try {
-      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
-        method: "DELETE",
+      console.log(`Sending PUT request to cancel order with ID: ${orderId}`);
+
+      // Tạo payload JSON
+      const payload = {
+        subscriptionDataId: orderId,
+        quantity: 1, // Số lượng, có thể thay đổi nếu cần
+        isActive: false,
+        isDeleted: true,
+        modifiedAt: new Date().toISOString(), // Thời gian hiện tại
+      };
+
+      const response = await fetch(`http://localhost:5199/Order/${orderId}/cancel`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // Gửi payload JSON
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to cancel order: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Failed to cancel order: ${response.status} - ${errorText}`);
       }
 
+      console.log("Order canceled successfully");
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderId ? { ...order, isDeleted: true } : order
@@ -101,6 +118,7 @@ const ProgressInformation: React.FC = () => {
       );
     } catch (error) {
       console.error("Error canceling order:", error);
+      alert("Không thể hủy đơn hàng. Vui lòng thử lại sau.");
     }
   };
 
@@ -124,41 +142,42 @@ const ProgressInformation: React.FC = () => {
 
         {isLoadingOrders ? (
           <div className="loading">Đang tải danh sách đơn hàng...</div>
-        ) : orders.length === 0 ? (
+        ) : orders.filter((order) => !order.isDeleted).length === 0 ? ( // Lọc các đơn hàng chưa bị hủy
           <div className="no-orders">Không có đơn hàng nào.</div>
         ) : (
           <div className="orders-list">
-            {orders.map((order) => (
-              <div
-                key={order.id}
-                className={`order-item ${order.isDeleted ? "canceled" : ""}`}
-              >
-                <div className="order-info">
-                  <p><strong>Tên gói:</strong> {order.subscriptionName}</p>
-                  <p><strong>Ngày đặt:</strong> {formatDate(order.createAt)}</p>
-                  <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
-                  {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
+            {orders
+              .filter((order) => !order.isDeleted) // Lọc các đơn hàng chưa bị hủy
+              .map((order) => (
+                <div
+                  key={order.id}
+                  className={`order-item ${order.isDeleted ? "canceled" : ""}`}
+                >
+                  <div className="order-info">
+                    <p><strong>Tên gói:</strong> {order.subscriptionName}</p>
+                    <p><strong>Ngày đặt:</strong> {formatDate(order.createAt)}</p>
+                    <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
+                  </div>
+                  {order.isActive && (
+                    <>
+                      <button
+                        className="view-progress-button"
+                        onClick={() =>
+                          navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
+                        }
+                      >
+                        Xem tiến trình
+                      </button>
+                      <button
+                        className="cancel-order-button"
+                        onClick={() => cancelOrder(order.id)}
+                      >
+                        Hủy tiến trình
+                      </button>
+                    </>
+                  )}
                 </div>
-                {!order.isDeleted && order.isActive && (
-                  <>
-                    <button
-                      className="view-progress-button"
-                      onClick={() =>
-                        navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
-                      }
-                    >
-                      Xem tiến trình
-                    </button>
-                    <button
-                      className="cancel-order-button"
-                      onClick={() => cancelOrder(order.id)}
-                    >
-                      Hủy tiến trình
-                    </button>
-                  </>
-                )}
-              </div>
-            ))}
+              ))}
           </div>
         )}
 

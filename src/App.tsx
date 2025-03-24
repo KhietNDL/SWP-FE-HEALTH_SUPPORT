@@ -31,6 +31,7 @@ import TakeSurveyPage from "./pages/TakeSurvey";
 import ProgressManagePage from "./pages/ProgressManagement";
 import ProgressPage from "./pages/ProgramProgress";
 import OrderProgressPage from "./pages/OrderProgress";
+import OrderProgress from "./components/OrderProgress/OrderProgress";
 
 const router = createBrowserRouter([
   {
@@ -72,7 +73,7 @@ const router = createBrowserRouter([
       { path: "payment", element: <PaymentPage /> },
       { path: "progress-program", element: <ProgressPage /> },
       { path: "progress-information/:orderId", element: <Progress /> },
-      { path: "progress/:orderId", element: <OrderProgressPage /> },
+      { path: "progress/:orderId", element: <OrderProgressPage /> }, // Route đúng
     ],
   },
 ]);
