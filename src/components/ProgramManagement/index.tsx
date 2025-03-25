@@ -164,18 +164,37 @@ const SubscriptionManagement: React.FC = () => {
   // Xóa Subscription
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this subscription?")) return;
-
+  
     try {
+      // Fetch all orders
+      const ordersResponse = await fetch(`http://localhost:5199/Order`);
+      if (!ordersResponse.ok) throw new Error("Failed to fetch orders");
+  
+      const orders = await ordersResponse.json();
+  
+      // Filter orders by subscriptionId
+      const relatedOrders = orders.filter((order: any) => order.subscriptionName === subscriptions.find((sub) => sub.id === id)?.subscriptionName);
+  
+      // Check if any order has isJoined = true
+      const hasJoinedOrders = relatedOrders.some((order: any) => order.isJoined === true);
+  
+      if (hasJoinedOrders) {
+        alert("Cannot delete this subscription because it has participants.");
+        return;
+      }
+  
+      // Proceed with deletion if no joined orders exist
       const response = await fetch(`http://localhost:5199/Subscription/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete subscription");
-
-      // 🔥 Sau khi xóa, gọi lại API để cập nhật danh sách
+  
+      // Refresh the subscription list
       fetchSubscriptions();
     } catch (error) {
       console.error("Error deleting subscription:", error);
       alert("Failed to delete subscription. Please try again.");
     }
   };
+  
 
   // 🔹 Fix lỗi `.toLowerCase()` bị undefined
   const filteredSubs = subscriptions.filter((sub) =>
