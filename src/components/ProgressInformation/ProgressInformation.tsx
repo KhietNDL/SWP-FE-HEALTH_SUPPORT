@@ -16,6 +16,7 @@ interface Order {
   modifiedAt: string | null;
   isActive: boolean;
   isDeleted: boolean; // Use isDeleted instead of isCanceled
+  isJoined?: boolean; // Add isJoined property
 }
 
 interface Progress {
@@ -86,31 +87,14 @@ const ProgressInformation: React.FC = () => {
 
   const cancelOrder = async (orderId: string) => {
     try {
-      console.log(`Sending PUT request to cancel order with ID: ${orderId}`);
-
-      // Tạo payload JSON
-      const payload = {
-        subscriptionDataId: orderId,
-        quantity: 1, // Số lượng, có thể thay đổi nếu cần
-        isActive: false,
-        isDeleted: true,
-        modifiedAt: new Date().toISOString(), // Thời gian hiện tại
-      };
-
-      const response = await fetch(`http://localhost:5199/Order/${orderId}/cancel`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload), // Gửi payload JSON
+      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to cancel order: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to cancel order: ${response.status}`);
       }
 
-      console.log("Order canceled successfully");
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderId ? { ...order, isDeleted: true } : order
@@ -118,7 +102,40 @@ const ProgressInformation: React.FC = () => {
       );
     } catch (error) {
       console.error("Error canceling order:", error);
-      alert("Không thể hủy đơn hàng. Vui lòng thử lại sau.");
+    }
+  };
+
+  const joinOrder = async (orderId: string) => {
+    try {
+      const orderToUpdate = orders.find((order) => order.id === orderId);
+      if (!orderToUpdate) {
+        throw new Error("Order not found");
+      }
+
+      const updatedOrder = {
+        ...orderToUpdate,
+        isJoined: true, // Cập nhật trạng thái isJoined
+      };
+
+      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedOrder),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update order: ${response.status} - ${errorText}`);
+      }
+
+      // Cập nhật trạng thái trong state
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, isJoined: true } : order
+        )
+      );
+    } catch (error) {
+      console.error("Error joining order:", error);
     }
   };
 
@@ -142,42 +159,51 @@ const ProgressInformation: React.FC = () => {
 
         {isLoadingOrders ? (
           <div className="loading">Đang tải danh sách đơn hàng...</div>
-        ) : orders.filter((order) => !order.isDeleted).length === 0 ? ( // Lọc các đơn hàng chưa bị hủy
+        ) : orders.length === 0 ? (
           <div className="no-orders">Không có đơn hàng nào.</div>
         ) : (
           <div className="orders-list">
-            {orders
-              .filter((order) => !order.isDeleted) // Lọc các đơn hàng chưa bị hủy
-              .map((order) => (
-                <div
-                  key={order.id}
-                  className={`order-item ${order.isDeleted ? "canceled" : ""}`}
-                >
-                  <div className="order-info">
-                    <p><strong>Tên gói:</strong> {order.subscriptionName}</p>
-                    <p><strong>Ngày đặt:</strong> {formatDate(order.createAt)}</p>
-                    <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
-                  </div>
-                  {order.isActive && (
-                    <>
-                      <button
-                        className="view-progress-button"
-                        onClick={() =>
-                          navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
-                        }
-                      >
-                        Xem tiến trình
-                      </button>
-                      <button
-                        className="cancel-order-button"
-                        onClick={() => cancelOrder(order.id)}
-                      >
-                        Hủy tiến trình
-                      </button>
-                    </>
-                  )}
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className={`order-item ${order.isDeleted ? "canceled" : ""}`}
+              >
+                <div className="order-info">
+                  <p><strong>Tên gói:</strong> {order.subscriptionName}</p>
+                  <p><strong>Ngày đặt:</strong> {formatDate(order.createAt)}</p>
+                  <p><strong>Giá:</strong> {order.price.toLocaleString()} VNĐ</p>
+                  {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
                 </div>
-              ))}
+                {!order.isDeleted && (
+                  <>
+                    <button
+                      className="view-progress-button"
+                      onClick={() =>
+                        navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
+                      }
+                    >
+                      Xem tiến trình
+                    </button>
+                    {!order.isJoined ? (
+                      <>
+                        <button
+                          className="join-order-button"
+                          onClick={() => joinOrder(order.id)}
+                        >
+                          Tham gia
+                        </button>
+                        <button
+                          className="cancel-progress-button"
+                          onClick={() => cancelOrder(order.id)}
+                        >
+                          Hủy Tiến Trình
+                        </button>
+                      </>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         )}
 

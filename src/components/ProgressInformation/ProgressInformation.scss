@@ -200,28 +200,50 @@
       flex: 1;
     }
 
-    .view-progress-button {
+    .view-progress-button,
+    .join-order-button,
+    .cancel-order-button {
       padding: 10px 15px;
-      background-color: #1890ff;
-      color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .view-progress-button {
+      background-color: #1890ff;
+      color: white;
 
       &:hover {
         background-color: #096dd9;
       }
     }
 
+    .join-order-button {
+      background-color: #52c41a;
+      color: white;
+
+      &:hover {
+        background-color: #389e0d;
+      }
+    }
+
     .cancel-order-button {
-      padding: 10px 15px;
       background-color: #ff4d4f;
       color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
 
       &:hover {
         background-color: #d9363e;
@@ -244,5 +266,30 @@
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
+  }
+}
+
+.cancel-progress-button {
+  background-color: #ff4d4f;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #d9363e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    background-color: #b71c1c;
+    transform: translateY(0);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   }
 }
