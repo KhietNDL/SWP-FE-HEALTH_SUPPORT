@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { toastConfig } from "../../types/toastConfig";
 import "react-toastify/dist/ReactToastify.css";
 import "./RegisterForm.scss";
@@ -132,7 +132,7 @@ const RegistrationForm: React.FC = () => {
 
         if (response.ok) {
           const result = await response.clone().json();
-          toast.success(result.message || "Đăng ký thành công!", { ...toastConfig});
+          toast.success(result.message || "Đăng ký thành công!", { ...toastConfig });
           localStorage.setItem("email", formData.email);
           setFormData({
             userName: "",
@@ -152,7 +152,7 @@ const RegistrationForm: React.FC = () => {
           toast.error(errorText);
         } else {
           const errorData = await response.clone().json();
-          toast.error(errorData.message || "Đăng ký thất bại!", { ...toastConfig});
+          toast.error(errorData.message || "Đăng ký thất bại!", { ...toastConfig });
         }
       } catch (error: any) {
         console.error("Đăng ký lỗi:", error);
@@ -445,7 +445,7 @@ const RegistrationForm: React.FC = () => {
                         {errors.confirmPassword && (
                           <p className="error-message">{errors.confirmPassword}</p>
                         )}
-                      </div>                      
+                      </div>
 
                       <div className="form-buttons">
                         <button type="button" onClick={() => setCurrentStep(1)} className="back-button">

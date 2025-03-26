@@ -45,7 +45,7 @@ const UserSurveyList = () => {
       });
       
       setSurveys(mergedSurveys);
-      toast.success("Đã tải danh sách khảo sát thành công", toastConfig);
+      //toast.success("Đã tải danh sách khảo sát thành công", toastConfig);
     } catch (error) {
       console.error("Error fetching surveys:", error);
       toast.error("Không thể tải danh sách khảo sát. Vui lòng thử lại sau.", toastConfig);
@@ -77,7 +77,7 @@ const UserSurveyList = () => {
       <div className="survey-header">
         <h1>Danh Sách Khảo Sát</h1>
         <div className="controls">
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <FiSearch className="search-icon" />
             <input
               type="text"
@@ -93,7 +93,7 @@ const UserSurveyList = () => {
           >
             <FiRefreshCw className={isLoading ? "spinning" : ""} />
             Làm mới
-          </button>
+          </button> */}
         </div>
       </div>
       

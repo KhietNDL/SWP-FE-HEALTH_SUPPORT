@@ -3,6 +3,7 @@ import HomePage from "./pages/home";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register/register";
 import RegisterValidation from "./pages/RegisterValidation/RegisterValidation";
+import RegisterAvatar from "./pages/RegisterAvatar/RegisterAvatar";
 import "./main.css";
 import Info from "./pages/info-user";
 import Progress from "./pages/ProgressInformation"
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
       { path: "register-valid", element: <RegisterValidation /> },
+      { path: "upload-avatar", element: <RegisterAvatar /> },
       { path: "booking", element: <Booking /> },
       { path: "booking-detail/:id", element: <BookingDetail /> },
       { path: "blog", element: <Blog /> },

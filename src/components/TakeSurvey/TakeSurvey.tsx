@@ -31,8 +31,10 @@ const TakeSurvey: React.FC = () => {
   // Progress state
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
-  const [isCompleted, setIsCompleted] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
+  
+  // Remove isCompleted and score states as they're not needed
+  // const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  // const [score, setScore] = useState<number>(0);
 
   // Fetch survey data
   const fetchSurveyData = useCallback(async () => {
@@ -114,29 +116,21 @@ const TakeSurvey: React.FC = () => {
       if (completedResult) {
         const parsedResult = JSON.parse(completedResult);
         setSelectedAnswers(parsedResult.answers || defaultAnswers);
-        setScore(parsedResult.score || 0);
-        setIsCompleted(true);
+        // setScore(parsedResult.score || 0);
+        // setIsCompleted(true);
         return;
       }
     } catch (error) {
       console.error("Error loading completed result:", error);
     }
 
-    // Try to load saved progress
-    try {
-      const savedProgress = localStorage.getItem(`survey_progress_${surveyId}`);
-      if (savedProgress) {
-        const { selectedAnswers: savedAnswers, currentQuestion: savedCurrentQuestion } = 
-          JSON.parse(savedProgress) as StoredSurveyProgress;
-        
-        setSelectedAnswers(savedAnswers || defaultAnswers);
-        setCurrentQuestion(savedCurrentQuestion || 0);
-      } else {
-        setSelectedAnswers(defaultAnswers);
-      }
-    } catch (error) {
-      console.error("Error loading saved progress:", error);
-      setSelectedAnswers(defaultAnswers);
+    // Always start from the beginning with default answers
+    setSelectedAnswers(defaultAnswers);
+    setCurrentQuestion(0);
+    
+    // Clear any previously saved progress
+    if (surveyId) {
+      localStorage.removeItem(`survey_progress_${surveyId}`);
     }
   };
 
@@ -195,6 +189,20 @@ const TakeSurvey: React.FC = () => {
   const calculateResult = () => {
     if (!survey) return;
 
+    // Check if user is logged in before calculating result
+    const isAuthenticated = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!isAuthenticated) {
+      // Store the survey ID in session storage to redirect back after login
+      if (surveyId) {
+        sessionStorage.setItem('pendingSurveyResult', surveyId);
+      }
+      toast.warning("Vui lòng đăng nhập để xem kết quả khảo sát!", toastConfig);
+      setTimeout(() => {
+        navigate("/login");
+      }, 3500);
+      return;
+    }
+
     let totalScore = 0;
 
     // Calculate total score based on selected answers
@@ -210,9 +218,6 @@ const TakeSurvey: React.FC = () => {
       }
     });
 
-    setScore(totalScore);
-    setIsCompleted(true);
-
     // Save result to localStorage
     localStorage.setItem(`survey_result_${surveyId}`, JSON.stringify({
       score: totalScore,
@@ -222,6 +227,9 @@ const TakeSurvey: React.FC = () => {
 
     // Send result to server
     saveResult(totalScore);
+    
+    // Redirect to results page
+    navigate(`/survey-results/${surveyId}`);
   };
 
   // Save result to server
@@ -251,8 +259,8 @@ const TakeSurvey: React.FC = () => {
     
     setSelectedAnswers(defaultAnswers);
     setCurrentQuestion(0);
-    setIsCompleted(false);
-    setScore(0);
+    // setIsCompleted(false);
+    // setScore(0);
 
     // Clear saved result from localStorage
     localStorage.removeItem(`survey_result_${surveyId}`);
@@ -276,35 +284,8 @@ const TakeSurvey: React.FC = () => {
     );
   }
 
-  // Results screen
-  if (isCompleted) {
-    return (
-      <div className="survey-result-container">
-        <ToastContainer position="top-center" autoClose={3000} />
-        
-        <h1>{survey.surveyName} - Kết quả</h1>
-        <div className="result-card">
-          <div className="score-display">
-            <h2>Điểm của bạn</h2>
-            <div className="score">{score} / {survey.maxScore}</div>
-            
-            <div className="score-percentage">
-              {Math.round((score / survey.maxScore) * 100)}%
-            </div>
-          </div>
-          
-          <div className="result-actions">
-            <button className="retake-button" onClick={handleRetake}>
-              Làm lại khảo sát
-            </button>
-            <button className="back-button" onClick={handleBackToList}>
-              Quay lại danh sách
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Remove the Results screen section since we're redirecting to a separate page
+  // if (isCompleted) { ... }
 
   // Safety check for current question data
   if (!survey.questionList || currentQuestion >= survey.questionList.length) {
