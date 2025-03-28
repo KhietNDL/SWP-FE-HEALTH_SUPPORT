@@ -34,7 +34,10 @@ const OrderDetail: React.FC = () => {
       console.log("Fetching progress data and navigating to payment page");
 
       // Fetch progress data using subscriptionName
-      const response = await fetch(`http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(order.subscriptionName)}`);
+      const response = await fetch(
+        `http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
+      );
+
       if (!response.ok) {
         throw new Error(`Failed to fetch progress data: ${response.status}`);
       }

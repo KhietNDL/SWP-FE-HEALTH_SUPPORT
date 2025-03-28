@@ -15,7 +15,7 @@ interface ProgramItem {
 }
 
 const API_URL = "http://localhost:5199/Subscription";
-const MAX_DESCRIPTION_LENGTH = 50; // ✅ Giới hạn ký tự mô tả để hiển thị 1 dòng
+const MAX_DESCRIPTION_LENGTH = 80; // ✅ Tăng giới hạn ký tự mô tả để hiển thị rõ hơn
 
 function Program() {
   const [programs, setPrograms] = useState<ProgramItem[]>([]);
@@ -49,14 +49,16 @@ function Program() {
       <main className="program-content">
         {/* ✅ Tiêu đề lớn & mô tả */}
         <div className="program-hero">
-          <h1 className="main-title">Các dịch vụ đánh giá tâm lý</h1>
-          <p className="sub-title">Hệ thống đánh giá toàn diện theo tiêu chuẩn quốc tế</p>
+          <h1 className="main-title">Khám phá các dịch vụ tâm lý</h1>
+          <p className="sub-title">
+            Chúng tôi cung cấp các chương trình đánh giá tâm lý chuyên sâu, phù hợp với mọi nhu cầu.
+          </p>
         </div>
 
         {/* ✅ Hiển thị danh sách dịch vụ theo 2 cột */}
         <div className="services-grid">
           {programs.length === 0 ? (
-            <p className="no-data">Không có chương trình nào.</p>
+            <p className="no-data">Hiện tại không có chương trình nào.</p>
           ) : (
             programs.map((program) => (
               <div key={program.id} className="service-card">
@@ -74,7 +76,7 @@ function Program() {
                   <p><strong>Giá:</strong> {program.price.toLocaleString()} VND</p>
                   <p><strong>Thời gian:</strong> {program.duration} ngày</p>
                   <button className="view-more" onClick={() => handleViewMore(program.id)}>
-                    Xem thêm
+                    Xem chi tiết
                   </button>
                 </div>
               </div>
