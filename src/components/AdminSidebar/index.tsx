@@ -1,8 +1,8 @@
-import { BookOpen, Users, ClipboardList, Calendar, LogOut } from "lucide-react";
+import { BookOpen, Users, ClipboardList, Calendar, LogOut, LineChart } from "lucide-react";
 import "./index.scss";
 import { useEffect, useState } from "react";
 import SurveyTypeManagement from "../SurveyTypeManagement/SurveyTypeManagement";
-
+import LineChartManagement from "../LineChart/Linechart"
 import logo from "../../images/Logo.png";
 import UserManagement from "../UserManagement";
 import SubscriptionManagement from "../ProgramManagement";
@@ -51,6 +51,12 @@ const Sidebar = () => {
           <li>
             <Calendar /> <span>Appointments</span>
           </li>
+          <li
+            className={activePage === "LineChart" ? "active" : ""}
+            onClick={() => setActivePage("LineChart")}
+          >
+            <LineChart /> <span>Line Chart</span>
+          </li>
         </ul>
         <div className="consultant-info">
           <img className="consultant-avatar" src={`http://localhost:5199${User?.imgUrl}`} alt="Avatar" />
@@ -70,6 +76,7 @@ const Sidebar = () => {
         {activePage === "Surveys" && <SurveyTypeManagement />}
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
+        {activePage === "LineChart" && <LineChartManagement />}
       </div>
     </div>
   );
