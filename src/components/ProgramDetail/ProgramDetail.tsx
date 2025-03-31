@@ -105,7 +105,9 @@ function ProgramDetail() {
       dispatch(setOrder(latestOrder));
   
       setIsModalOpen(false);
-      navigate(`/order-detail/${latestOrder.id}`);
+      navigate(`/order-detail/${latestOrder.id}`, {
+        state: { subscriptionId: programData.id }, // Truyền subscriptionId qua state
+      });
     } catch (error: unknown) {
       const errMessage = error instanceof Error ? error.message : "Lỗi không xác định";
       console.error("❌ Lỗi:", errMessage);

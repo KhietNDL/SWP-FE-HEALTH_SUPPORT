@@ -344,7 +344,7 @@ const OrderProgress: React.FC = () => {
                   >
                     <div className="session-number">Buổi {progress.section}</div>
                     <div className="session-date">Ngày: {formatDate(progress.date.toString())}</div>
-                    {progress.isCompleted ? ( // Check isCompleted from UserProgress
+                    {progress.isCompleted ? ( // Kiểm tra chính xác giá trị isCompleted
                       <p className="completed-label">Đã hoàn thành</p>
                     ) : (
                       <button

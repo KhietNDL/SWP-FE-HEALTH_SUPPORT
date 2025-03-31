@@ -263,34 +263,16 @@ const ProgressInformation: React.FC = () => {
                   {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
                 </div>
                 {!order.isDeleted && (
-                  <>
-                    <button
-                      className="view-progress-button"
-                      onClick={() =>
-                        navigate(
-                          `/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
-                        )
-                      }
-                    >
-                      Xem tiến trình
-                    </button>
-                    {!order.isJoined ? (
-                      <>
-                        <button
-                          className="join-order-button"
-                          onClick={() => joinOrder(order.id, order.subscriptionName)}
-                        >
-                          Tham gia
-                        </button>
-                        <button
-                          className="cancel-progress-button"
-                          onClick={() => cancelOrder(order.id)}
-                        >
-                          Hủy Tiến Trình
-                        </button>
-                      </>
-                    ) : null}
-                  </>
+                  <button
+                    className="view-progress-button"
+                    onClick={() =>
+                      navigate(
+                        `/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
+                      )
+                    }
+                  >
+                    {order.isJoined ? "Xem Tiến Trình" : "Tham gia"}
+                  </button>
                 )}
               </div>
             ))}

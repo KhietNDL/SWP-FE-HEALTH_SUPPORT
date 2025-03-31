@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { RootState } from "../../redux/Store";
 import { setOrder } from "../../redux/features/orderSlice";
 import "../../components/OrderDetail/OrderDetail.scss";
@@ -9,19 +9,18 @@ const OrderDetail: React.FC = () => {
   console.log("🔥 OrderDetail.tsx đã render");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  // Lấy dữ liệu từ Redux Store
+  // Lấy subscriptionId từ state được truyền qua navigate
+  const subscriptionId = location.state?.subscriptionId;
+
+  // Get data from Redux Store
   const order = useSelector((state: RootState) => state.order?.currentOrder);
   const user = useSelector((state: RootState) => state.user) || { fullname: "Đang cập nhật" };
 
   console.log("Redux Order:", order);
   console.log("Redux User:", user);
-
-  useEffect(() => {
-    if (!order) {
-      console.warn("Không tìm thấy đơn hàng!");
-    }
-  }, [order]);
+  console.log("Subscription ID from state:", subscriptionId);
 
   // Xử lý nếu không tìm thấy đơn hàng
   if (!order) {
@@ -31,25 +30,64 @@ const OrderDetail: React.FC = () => {
   // Xử lý điều hướng khi xác nhận đơn hàng
   const handleConfirm = async () => {
     try {
-      console.log("Fetching progress data and navigating to payment page");
+        console.log("Preparing data to send to API...");
 
-      // Fetch progress data using subscriptionName
-      const response = await fetch(
-        `http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
-      );
+        if (!order) {
+            console.error("Order data is missing!");
+            alert("Không tìm thấy thông tin đơn hàng. Vui lòng thử lại.");
+            return;
+        }
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch progress data: ${response.status}`);
-      }
+        if (!subscriptionId) {
+            console.error("Subscription ID is missing!");
+            alert("Không tìm thấy thông tin gói dịch vụ. Vui lòng thử lại.");
+            return;
+        }
 
-      const progressData = await response.json();
-      console.log("Progress data fetched successfully:", progressData);
+        // Dữ liệu gửi đến API - sử dụng subscriptionId từ state
+        const requestData = {
+            subscriptionId: subscriptionId, // Lấy từ location.state
+            accountId: user.id,
+            quantity: order.quantity,
+            createAt: order.createAt,
+        };
 
-      // Navigate to payment page
-      navigate(`/payment`);
+        console.log("Request Data:", requestData);
+
+        // Gửi request đến API
+        const response = await fetch("http://localhost:5199/Order/CreateVnPay", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        console.log("API Response Status:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API Error Response:", errorText);
+            throw new Error(`Failed to create VNPAY: ${response.status}`);
+        }
+
+        // Lấy paymentUrl từ API
+        const responseData = await response.json();
+        console.log("API Response Data:", responseData);
+
+        const paymentUrl = responseData.paymentUrl;
+
+        if (!paymentUrl) {
+            throw new Error("API did not return a payment URL");
+        }
+
+        console.log("Redirecting to payment URL:", paymentUrl);
+
+        // Điều hướng đến paymentUrl
+        window.location.href = paymentUrl;
     } catch (error) {
-      console.error("Error fetching progress data:", error);
-      alert("Không thể lấy tiến trình. Vui lòng thử lại sau.");
+        console.error("Error creating VNPAY:", error);
+        alert("Không thể tạo thanh toán. Vui lòng thử lại sau.");
     }
   };
 

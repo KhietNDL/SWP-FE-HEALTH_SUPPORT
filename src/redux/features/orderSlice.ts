@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Order {
   id: string;
+  subscriptionId: string;  // Add this line
   subscriptionName: string;
   accountName: string;
   createAt: string;
