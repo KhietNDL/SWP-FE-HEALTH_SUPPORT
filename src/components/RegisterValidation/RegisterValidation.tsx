@@ -222,6 +222,8 @@ const VerificationPage: React.FC = () => {
                             onChange={(e) => handleInput(idx, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(idx, e as React.KeyboardEvent<HTMLInputElement>)}
                             onPaste={handlePaste}
+                            aria-label={`Digit ${idx + 1} of verification code`}
+                            title={`Verification code digit ${idx + 1}`}
                         />
                     ))}
                 </div>

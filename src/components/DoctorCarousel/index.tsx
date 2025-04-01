@@ -23,7 +23,7 @@ export default function DoctorCarousel({
 
   const fetchMovies = async () => {
     const response = await axios.get(
-      "http://localhost:5199/api/Psychologist"
+      "http://localhost:5199/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
@@ -45,7 +45,7 @@ export default function DoctorCarousel({
       className={`doctor-carousel ${numberOfSlides > 1 ? "multi" : ""}`}
     >
       {poster.map((doctor) => (
-        <SwiperSlide>
+        <SwiperSlide key={doctor.id}>
           <div className="doctor-card">
             <div className="doctor-image">
               <img src={doctor.imgUrl} alt={doctor.name} />

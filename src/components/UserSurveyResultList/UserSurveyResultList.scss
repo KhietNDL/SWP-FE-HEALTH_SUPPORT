@@ -1,0 +1,91 @@
+.user-survey-result-list {
+  background-color: #f5fdf6; // Màu nền xanh lá nhạt
+  color: #2c3e50; // Màu chữ xanh đậm
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    color: #27ae60; // Màu xanh lá đậm
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff; // Màu nền bảng trắng
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    thead {
+      background-color: #3498db; // Màu xanh dương
+      color: #ffffff; // Màu chữ trắng
+
+      th {
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+      }
+    }
+
+    tbody {
+      tr {
+        &:nth-child(even) {
+          background-color: #eafaf1; // Màu xanh lá nhạt cho hàng chẵn
+        }
+
+        &:hover {
+          background-color: #d4edda; // Màu xanh lá nhạt hơn khi hover
+        }
+
+        td {
+          padding: 12px;
+          border-bottom: 1px solid #ddd;
+
+          .view-details {
+            color: #2980b9; // Màu xanh dương
+            text-decoration: none;
+            font-weight: bold;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    font-size: 18px;
+    color: #27ae60; // Màu xanh lá đậm
+  }
+
+  .sort-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 8px;
+    padding: 0;
+    color: #ffffff;
+  }
+
+  .delete-button {
+    margin-left: 10px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #d9363e;
+    }
+  }
+}

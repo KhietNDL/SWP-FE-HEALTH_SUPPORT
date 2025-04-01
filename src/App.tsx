@@ -15,7 +15,8 @@ import Document from "./pages/Document/index";
 import DocumentDetail from "./pages/DocumentDetail/index";
 import "./main.css"
 import SurveyListPage from "./pages/SurveyListUser";
-import SurveyResult from "./components/SurveyResult/SurveyResult";
+import SurveyResultPage from "./components/SurveyResult/SurveyResult";
+import UserSurveyResultListPage from "./pages/UserSurveyResultList/UserSurveyResultList";
 import ProgramPage from "./pages/Program/index";
 import ProgramDetail from "./pages/ProgramDetail/index";
 import "./main.css";
@@ -53,7 +54,8 @@ const router = createBrowserRouter([
       { path: "tai-lieu/:id", element: <DocumentDetail /> },
       { path: "survey", element: <SurveyListPage /> },
       { path: "take-survey/:surveyId", element: <TakeSurveyPage /> },
-      { path: "survey_result", element: <SurveyResult /> },
+      { path: "survey-result/:accountSurveyId", element: <SurveyResultPage /> },
+      { path: "user-survey-result-list", element: <UserSurveyResultListPage /> },
       { path: "dich-vu", element: <ProgramPage /> },
       { path: "danh-gia/:id", element: <ProgramDetail /> },
       { path: "reset-password", element: <ResetPassword /> },

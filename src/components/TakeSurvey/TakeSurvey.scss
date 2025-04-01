@@ -3,7 +3,7 @@
     min-height: 600px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: #f9fafb;
+    background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
@@ -13,15 +13,15 @@
 
         h1 {
             font-size: 1.8rem;
-            color: #2c3e50;
+            color: #3498db;
             margin-bottom: 1rem;
             font-weight: 600;
         }
 
         .progress-indicator {
             display: inline-block;
-            background-color: #e3f2fd;
-            color: #2980b9;
+            background-color: #e8f5e9;
+            color: #27ae60;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-weight: 500;
@@ -30,7 +30,7 @@
     }
 
     .question-container {
-        background-color: white;
+        background-color: #ffffff;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
         padding: 2rem;
@@ -38,10 +38,10 @@
 
         .question {
             margin-bottom: 1.5rem;
-            
+
             h2 {
                 font-size: 1.3rem;
-                color: #2c3e50;
+                color: #27ae60;
                 margin-top: 0;
                 font-weight: 600;
                 line-height: 1.4;
@@ -63,9 +63,13 @@
                 transition: all 0.2s ease;
                 position: relative;
 
+                &:focus-within {
+                    outline: none;
+                }
+
                 &:hover {
-                    background-color: #f8f9fa;
-                    border-color: #b2bec3;
+                    background-color: #e8f5e9;
+                    border-color: #27ae60;
                 }
 
                 input[type="radio"] {
@@ -74,19 +78,19 @@
                     cursor: pointer;
                     height: 0;
                     width: 0;
-                    
-                    &:checked + .answer-text {
-                        color: #2980b9;
-                        font-weight: 500;
-                        
-                        &:before {
-                            border-color: #3498db;
-                            background-color: #3498db;
-                        }
+
+                    &:focus {
+                        outline: none;
                     }
-                    
-                    &:focus + .answer-text {
-                        outline: 2px solid rgba(52, 152, 219, 0.4);
+
+                    &:checked + .answer-text {
+                        color: #27ae60;
+                        font-weight: 500;
+
+                        &:before {
+                            border-color: #27ae60;
+                            background-color: #27ae60;
+                        }
                     }
                 }
 
@@ -96,7 +100,7 @@
                     padding-left: 35px;
                     position: relative;
                     width: 100%;
-                    
+
                     &:before {
                         content: '';
                         position: absolute;
@@ -109,19 +113,6 @@
                         border-radius: 50%;
                         background-color: white;
                         transition: all 0.2s ease;
-                    }
-                    
-                    &:after {
-                        content: '';
-                        position: absolute;
-                        left: 7px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        width: 8px;
-                        height: 8px;
-                        border-radius: 50%;
-                        background-color: white;
-                        transition: all 0.1s ease;
                     }
                 }
             }
@@ -140,7 +131,7 @@
             cursor: pointer;
             transition: all 0.2s;
             border: none;
-            
+
             &:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
@@ -149,7 +140,7 @@
             &.prev-button {
                 background-color: #edf2f7;
                 color: #4a5568;
-                
+
                 &:hover:not(:disabled) {
                     background-color: #e2e8f0;
                 }
@@ -158,96 +149,14 @@
             &.next-button {
                 background-color: #3498db;
                 color: white;
-                
+
                 &:hover:not(:disabled) {
-                    background-color: #2980b9;
+                    background-color: #27ae60;
                 }
             }
         }
     }
 
-    // Result Screen
-    &.survey-result-container {
-        text-align: center;
-        
-        h1 {
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 2rem;
-        }
-        
-        .result-card {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            padding: 3rem 2rem;
-            
-            .score-display {
-                margin-bottom: 2.5rem;
-                
-                h2 {
-                    font-size: 1.2rem;
-                    color: #718096;
-                    margin-bottom: 1.5rem;
-                    font-weight: 500;
-                }
-                
-                .score {
-                    font-size: 3.5rem;
-                    font-weight: bold;
-                    color: #3498db;
-                    margin-bottom: 0.5rem;
-                }
-                
-                .score-percentage {
-                    display: inline-block;
-                    background-color: #ebf8ff;
-                    color: #2b6cb0;
-                    font-size: 1.2rem;
-                    font-weight: 600;
-                    padding: 0.5rem 1.2rem;
-                    border-radius: 20px;
-                }
-            }
-            
-            .result-actions {
-                display: flex;
-                justify-content: center;
-                gap: 1rem;
-                flex-wrap: wrap;
-
-                button {
-                    padding: 0.8rem 1.8rem;
-                    border-radius: 25px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    border: none;
-
-                    &.retake-button {
-                        background-color: #3498db;
-                        color: white;
-
-                        &:hover {
-                            background-color: #2980b9;
-                        }
-                    }
-
-                    &.back-button {
-                        background-color: white;
-                        color: #3498db;
-                        border: 1.5px solid #3498db;
-
-                        &:hover {
-                            background-color: #f7fafc;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Loading & Error states
     .loading-container {
         text-align: center;
         padding: 3rem;
@@ -258,7 +167,7 @@
         justify-content: center;
         color: #718096;
         font-size: 1.1rem;
-        
+
         &:before {
             content: '';
             display: block;
@@ -270,9 +179,11 @@
             border-top-color: #3498db;
             animation: spin 1s ease-in-out infinite;
         }
-        
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     }
 
@@ -299,94 +210,7 @@
             transition: background-color 0.2s;
 
             &:hover {
-                background-color: #2980b9;
-            }
-        }
-    }
-}
-
-// Fix for survey result container
-.survey-result-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #f9fafb;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    
-    h1 {
-        font-size: 2rem;
-        color: #2c3e50;
-        margin-bottom: 2rem;
-    }
-    
-    .result-card {
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        padding: 3rem 2rem;
-        
-        .score-display {
-            margin-bottom: 2.5rem;
-            
-            h2 {
-                font-size: 1.2rem;
-                color: #718096;
-                margin-bottom: 1.5rem;
-                font-weight: 500;
-            }
-            
-            .score {
-                font-size: 3.5rem;
-                font-weight: bold;
-                color: #3498db;
-                margin-bottom: 0.5rem;
-            }
-            
-            .score-percentage {
-                display: inline-block;
-                background-color: #ebf8ff;
-                color: #2b6cb0;
-                font-size: 1.2rem;
-                font-weight: 600;
-                padding: 0.5rem 1.2rem;
-                border-radius: 20px;
-            }
-        }
-        
-        .result-actions {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            
-            button {
-                padding: 0.8rem 1.8rem;
-                border-radius: 25px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.2s;
-                
-                &.retake-button {
-                    background-color: #3498db;
-                    color: white;
-                    border: none;
-                    
-                    &:hover {
-                        background-color: #2980b9;
-                    }
-                }
-                
-                &.back-button {
-                    background-color: white;
-                    color: #3498db;
-                    border: 1.5px solid #3498db;
-                    
-                    &:hover {
-                        background-color: #f7fafc;
-                    }
-                }
+                background-color: #27ae60;
             }
         }
     }

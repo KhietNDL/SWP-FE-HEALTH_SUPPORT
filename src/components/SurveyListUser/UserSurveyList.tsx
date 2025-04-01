@@ -59,6 +59,16 @@ const UserSurveyList = () => {
   }, [fetchActiveSurveys]);
 
   const startSurvey = (survey: MergedSurvey) => {
+    const isAuthenticated = localStorage.getItem("BearerToken") || sessionStorage.getItem("token");
+
+    if (!isAuthenticated) {
+      toast.warning("Vui lòng đăng nhập để thực hiện khảo sát!", toastConfig);
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      return;
+    }
+
     if (survey && survey.id) {
       navigate(`/take-survey/${survey.id}`);
     } else {
