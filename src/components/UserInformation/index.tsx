@@ -4,7 +4,7 @@ import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store"; // Điều chỉnh đường dẫn nếu cần
 import axios from "axios";
-import { updateUserInfo } from "../../redux/features/userSlice";
+import { login } from "../../redux/features/userSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function UserInformation() {
@@ -58,23 +58,28 @@ function UserInformation() {
       passwordHash: passwordHash || reduxUser.passwordHash,
       passwordSalt,
     };
-
+  
     try {
-      const response = await axios.put(
-        `http://localhost:5199/Account/${reduxUser.id}`,
-        updatedData
-      );
-
-      console.log("User information updated:", response.data);
-      console.log("User information updated:", reduxUser);
+      // Gửi request cập nhật thông tin
+      await axios.put(`http://localhost:5199/Account/${reduxUser.id}`, updatedData);
+      console.log("Cập nhật thông tin thành công!");
+  
+      // Gọi API GET để lấy thông tin mới nhất sau khi update thành công
+      const response = await axios.get(`http://localhost:5199/Account/${reduxUser.id}`);
       
+      // Cập nhật Redux với dữ liệu mới nhất từ server
+      dispatch(login(response.data));
+  
+      // Lưu vào Local Storage để giữ thông tin sau khi reload
+      localStorage.setItem("userState", JSON.stringify(response.data));
+  
       toast.success("Cập nhật thông tin thành công!");
     } catch (error) {
       toast.error("Cập nhật thông tin thất bại!");
-      console.error("Error updating user information:", error);
+      console.error("Lỗi khi cập nhật thông tin:", error);
     }
-    
   };
+  
 
   const handleUpdatePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -102,37 +107,36 @@ function UserInformation() {
       toast.error("Cập nhật mật khẩu thất bại!");
     }
   };
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
-
-  const handleUploadAvatar = async () => {
-    if (!selectedFile) {
-      alert("Vui lòng chọn file ảnh trước khi cập nhật!");
-      return;
-    }
+    if (!file) return;
+  
+    setSelectedFile(file);
   
     const formData = new FormData();
-    formData.append("file", selectedFile);
-
+    formData.append("file", file);
+  
     try {
-      const response = await axios.put(
+      const avatar = await axios.put(
         `http://localhost:5199/Account/${reduxUser.id}/avatar`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      console.log("Cập nhật avatar thành công");
-      setAvatarUrl(response.data.avatarUrl);
-      dispatch(updateUserInfo(response.data));
-      alert("Cập nhật avatar thành công!");
+      setAvatarUrl(avatar.data.avatarUrl);
+            // Gọi API GET để lấy thông tin mới nhất sau khi update thành công
+      const response = await axios.get(`http://localhost:5199/Account/${reduxUser.id}`);
+      
+      // Cập nhật Redux với dữ liệu mới nhất từ server
+      dispatch(login(response.data));
+      toast.success("Cập nhật avatar thành công!");
     } catch (error) {
       console.error("Lỗi khi cập nhật avatar:", error);
-      alert("Cập nhật avatar thất ");
+      toast.error("Cập nhật avatar thất bại!");
     }
   };
+  
+
+  
   // Render form thông tin người dùng và đổi mật khẩu
   const renderUserInfoForm = () => (
     <div className="user-information__content">
@@ -171,20 +175,20 @@ function UserInformation() {
       </div>
 
       <div className="user-information__avatar">
-        <div className="avatar-section">
-          <label>Hình đại diện</label>
-          <div className="avatar-container">
-            <img src={`http://localhost:5199/${avatarUrl}`} alt="avatar" />
-          </div>
-          <input type="file" accept="image/*" onChange={handleAvatarChange} />
-          <Button
-            type="primary"
-            className="update-btn"
-            onClick={handleUploadAvatar}
-          >
-            Cập nhật Avatar
-          </Button>
-        </div>
+      <div className="avatar-section">
+    <label>Hình đại diện</label>
+    <div className="avatar-container" onClick={() => document.getElementById("avatarInput")?.click()}>
+      <img src={`http://localhost:5199/${avatarUrl}`} alt="avatar" />
+      <div className="avatar-overlay">+</div>
+    </div>
+    <input
+      type="file"
+      id="avatarInput"
+      accept="image/*"
+      style={{ display: "none" }}
+      onChange={handleAvatarChange}
+    />
+  </div>
 
         <div className="form-group">
           <label>Họ và Tên</label>

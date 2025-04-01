@@ -11,6 +11,7 @@ import "./index.scss";
 import { User } from "../../types/user";
 import { useNavigate } from "react-router-dom";
 import avt from "../../images/User.png";
+import axios from "axios";
 const UserManagement: React.FC = () => {
   // Khởi tạo state users là mảng rỗng
   const [users, setUsers] = useState<User[]>([]);
@@ -28,7 +29,7 @@ const UserManagement: React.FC = () => {
     email: "",
     phone: 0,
     address: "",
-    roleName: "User",
+    roleName: "Student",
     imgUrl: "",
   });
 
@@ -54,25 +55,6 @@ const UserManagement: React.FC = () => {
     return matchesSearch && matchesRole;
   });
 
-  // Mở modal thêm mới user
-  const handleOpenAddModal = () => {
-    setEditingUserId(null);
-    setCurrentUser({
-      id: "",
-      userName: "",
-      fullname: "",
-      email: "",
-      phone: 0,
-      address: "",
-      roleName: "User",
-      imgUrl: "",
-    });
-    // Reset lại mật khẩu khi mở modal thêm mới
-    setPassword("");
-    setConfirmPassword("");
-    setShowModal(true);
-  };
-
   // Mở modal chỉnh sửa user
   const handleOpenEditModal = (user: User) => {
     setEditingUserId(user.id);
@@ -97,7 +79,7 @@ const UserManagement: React.FC = () => {
     setPassword("");
     setConfirmPassword("");
   };
-  
+
   // Xử lý submit user (cả thêm mới và cập nhật)
   const handleSubmitUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -184,6 +166,27 @@ const UserManagement: React.FC = () => {
       })
       .catch((error) => console.error("Error deleting user:", error));
   };
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && editingUserId) { 
+      const formData = new FormData();
+      formData.append("file", file);
+      console.log("Uploading for user ID:", formData);
+      console.log("Uploading for user ID:", editingUserId);
+      try {
+        await axios.put(
+          `http://localhost:5199/Account/${editingUserId}/avatar`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+  
+      } catch (error) {
+        console.error("Lỗi tải ảnh: ", error);
+      }
+    }
+  };
+  
+
   const navigate = useNavigate();
 
   const handleCreateUser = () => {
@@ -194,11 +197,10 @@ const UserManagement: React.FC = () => {
       {/* HEADER */}
       <div className="user-header">
         <h2>User Management</h2>
-        
-          <button className="add-button" onClick={handleCreateUser}>
-            <Plus size={16} /> Add New User
-          </button>
-      
+
+        <button className="add-button" onClick={handleCreateUser}>
+          <Plus size={16} /> Add New User
+        </button>
       </div>
 
       {/* CONTROLS: Search + Filter */}
@@ -265,7 +267,6 @@ const UserManagement: React.FC = () => {
                     style={{ width: 40, height: 40, borderRadius: "50%" }}
                   />
                 ) : (
-                  
                   <img
                     src={avt}
                     alt="avatar"
@@ -379,15 +380,13 @@ const UserManagement: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>Avatar URL</label>
+                <label>Avatar</label>
                 <input
-                  type="text"
-                  placeholder="https://..."
-                  value={currentUser.imgUrl}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, imgUrl: e.target.value })
-                  }
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                 />
+                
               </div>
               {/* Hiển thị các trường mật khẩu chỉ khi thêm mới user */}
               {!editingUserId && (

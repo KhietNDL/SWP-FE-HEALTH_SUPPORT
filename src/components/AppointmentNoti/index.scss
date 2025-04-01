@@ -31,6 +31,11 @@
     font-size: 14px;
     color: #333;
   }
+  .notification-card .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
   
   .notification-card button {
     background: #4CAF50;
@@ -44,5 +49,13 @@
   
   .notification-card button:hover {
     background: #45a049;
+  }
+  .notification-card button:last-child {
+    background: #e74c3c;
+    color: white;
+  }
+  
+  .notification-card button:last-child:hover {
+    background: #c0392b;
   }
   

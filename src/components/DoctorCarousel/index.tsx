@@ -23,7 +23,7 @@ export default function DoctorCarousel({
 
   const fetchMovies = async () => {
     const response = await axios.get(
-      "http://localhost:5199/api/Psychologist"
+      "http://localhost:5199/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
@@ -53,7 +53,9 @@ export default function DoctorCarousel({
             <div className="doctor-info">
               <h2>{doctor.name}</h2>
               <p className="title">{doctor.specialization}</p>
-              <p className="info">{doctor.description}</p>
+              {numberOfSlides === 1 && (
+                  <p className="info">{doctor.description}</p>
+                )}
               <Link to={`/booking-detail/${doctor.id}`}>
               <Button type="primary" className="doctor-button">
                 Xem thêm

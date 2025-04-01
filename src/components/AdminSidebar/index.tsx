@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/features/userSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import AppointmentManagement from "../AppointmentManagement";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -48,7 +49,10 @@ const Sidebar = () => {
           >
             <ClipboardList /> <span>Surveys</span>
           </li>
-          <li>
+          <li
+            className={activePage === "Appointments" ? "active" : ""}
+            onClick={() => setActivePage("Appointments")}
+          >
             <Calendar /> <span>Appointments</span>
           </li>
         </ul>
@@ -70,6 +74,7 @@ const Sidebar = () => {
         {activePage === "Surveys" && <SurveyTypeManagement />}
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
+        {activePage === "Appointments" && <AppointmentManagement />}
       </div>
     </div>
   );
