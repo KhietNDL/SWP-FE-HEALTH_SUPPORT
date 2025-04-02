@@ -1,20 +1,30 @@
 .user-survey-list {
-  max-width: 1200px;
-  min-height: 524px;
+
+  $primary-green: #2E7D32;
+  $secondary-blue: #1565C0;
+  $white: #FFFFFF;
+  $light-bg: #F9FBFA;
+  $border-light: #E0E7E3;
+
+  max-width: 700px;
+  min-height: 85vh;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: $light-bg;
 
   .survey-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-self: center;
     margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 15px;
 
     h1 {
       font-size: 1.8rem;
-      color: #333;
+      color: $primary-green;
       margin: 0;
     }
 
@@ -24,80 +34,95 @@
       align-items: center;
     }
 
-    .search-bar {
-      position: relative;
+    // .search-bar {
+    //   position: relative;
 
-      .search-icon {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #666;
-      }
+    //   .search-icon {
+    //     position: absolute;
+    //     left: 10px;
+    //     top: 50%;
+    //     transform: translateY(-50%);
+    //     color: $primary-green;
+    //   }
 
-      input {
-        padding: 10px 10px 10px 35px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        width: 250px;
-        font-size: 0.9rem;
+    //   input {
+    //     padding: 10px 10px 10px 35px;
+    //     border: 1px solid $border-light;
+    //     border-radius: 4px;
+    //     width: 250px;
+    //     font-size: 0.9rem;
 
-        &:focus {
-          outline: none;
-          border-color: #4a90e2;
-          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-        }
-      }
-    }
+    //     &:focus {
+    //       outline: none;
+    //       border-color: $secondary-blue;
+    //       box-shadow: 0 0 0 2px rgba($secondary-blue, 0.2);
+    //     }
+    //   }
+    // }
 
-    .refresh-button {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.2s;
+  //    .refresh-button {
+    //   display: flex;
+    //   align-items: center;
+    //   gap: 5px;
+    //   background-color: $white;
+    //   border: 1px solid $border-light;
+    //   border-radius: 4px;
+    //   padding: 10px 15px;
+    //   cursor: pointer;
+    //   transition: all 0.2s;
+    //   color: $primary-green;
 
-      &:hover {
-        background-color: #e9e9e9;
-      }
+    //   &:hover {
+    //     background-color: lighten($primary-green, 55%);
+    //   }
 
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-      }
+    //   &:disabled {
+    //     opacity: 0.7;
+    //     cursor: not-allowed;
+    //   }
 
-      .spinning {
-        animation: spin 1s linear infinite;
-      }
+    //   .spinning {
+    //     animation: spin 1s linear infinite;
+    //   }
 
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
+    //   @keyframes spin {
+    //     from {
+    //       transform: rotate(0deg);
+    //     }
 
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    }
+    //     to {
+    //       transform: rotate(360deg);
+    //     }
+    //   }
+    // }
   }
 
   .survey-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
     .loading-message {
       text-align: center;
       padding: 40px;
-      color: #666;
+      color: $primary-green;
       font-size: 1.1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .empty-message {
       text-align: center;
       padding: 40px;
-      color: #666;
+      color: $primary-green;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
       .empty-icon {
         font-size: 3rem;
@@ -113,8 +138,11 @@
 
     .survey-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 20px;
+      flex-grow: 1;
+      grid-auto-rows: minmax(250px, auto);
+      align-content: space-between;
     }
 
     .survey-card {
@@ -122,43 +150,66 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #ddd;
+      border: 1px solid $border-light;
       border-radius: 8px;
       padding: 20px;
+      height: 100%;
       transition: transform 0.2s, box-shadow 0.2s;
-      background-color: white;
+      background-color: $white;
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 15px rgba($primary-green, 0.15);
+        border-color: $primary-green;
       }
 
       .survey-info {
+        width: 100%;
+        text-align: center;
+
         h3 {
           margin-top: 0;
           margin-bottom: 10px;
-          color: #333;
+          color: $primary-green;
           font-size: 1.3rem;
         }
 
+        .survey-image {
+          height: 120px;
+          width: 100%;
+          margin: 10px 0;
+          background-color: $light-bg;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+          }
+        }
+
         p {
-          color: #666;
+          color: #555;
           margin-bottom: 15px;
         }
       }
 
       .start-button {
-        margin-top: 10px;
+        margin-top: auto;
         padding: 10px 20px;
-        background-color: #4a90e2;
-        color: white;
+        background-color: $secondary-blue;
+        color: $white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.2s;
 
         &:hover {
-          background-color: #3a7bc8;
+          background-color: rgb(162, 134, 95);
         }
       }
     }

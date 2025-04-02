@@ -45,7 +45,7 @@ export default function DoctorCarousel({
       className={`doctor-carousel ${numberOfSlides > 1 ? "multi" : ""}`}
     >
       {poster.map((doctor) => (
-        <SwiperSlide>
+        <SwiperSlide key={doctor.id}>
           <div className="doctor-card">
             <div className="doctor-image">
               <img src={`http://localhost:5199${doctor.imgUrl}`} alt={doctor.name} />

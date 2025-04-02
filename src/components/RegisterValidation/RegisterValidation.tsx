@@ -21,11 +21,9 @@ const VerificationPage: React.FC = () => {
     const User = useSelector((state: RootState) => state.user);
     // Debugging: Log all localStorage contents
     useEffect(() => {
-        console.log("All localStorage contents:", localStorage);
         
         // Retrieve email from localStorage with additional logging
         const storedEmail = localStorage.getItem("email");
-        console.log("Stored email:", storedEmail);
         
         if (!storedEmail) {
             // If no email is found, redirect to registration or show an error
@@ -67,6 +65,19 @@ const VerificationPage: React.FC = () => {
         }
     };
 
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const pasteData = e.clipboardData.getData("text");
+        if (/^\d{6}$/.test(pasteData)) {
+            const newCode = pasteData.split("");
+            setVerificationCode(newCode);
+            setError("");
+            inputRefs.current[5]?.focus(); // Focus on the last input
+        } else {
+            toast.error("Mã OTP không hợp lệ. Vui lòng thử lại.", toastConfig);
+        }
+    };
+
     const handleVerification = async () => {
         const code = verificationCode.join("");
         if (code.length !== 6) {
@@ -74,10 +85,9 @@ const VerificationPage: React.FC = () => {
             toast.error("Vui lòng nhập đủ 6 chữ số", toastConfig);
             return;
         }
-        
+
         setLoading(true);
         try {
-            // Rigorous email validation
             const email = localStorage.getItem("email");
             if (!email) {
                 throw new Error("Không tìm thấy email. Vui lòng đăng ký lại.");
@@ -85,10 +95,8 @@ const VerificationPage: React.FC = () => {
 
             const otpData = {
                 email: email,
-                otp: code
+                otp: code,
             };
-
-            console.log("Sending OTP verification request:", otpData);
 
             const response = await fetch("http://localhost:5199/Account/otp", {
                 method: "POST",
@@ -98,31 +106,24 @@ const VerificationPage: React.FC = () => {
                 body: JSON.stringify(otpData),
             });
 
-            // Log the full response for debugging
             const data = await response.json();
-            console.log("Server response:", response.status, data);
 
             if (response.ok) {
                 setSuccess(true);
                 setError("");
                 toast.success("Xác thực email thành công!", toastConfig);
-                
-                // Check user role and navigate accordingly
-                
-                if (User?.roleName === "Manager") {
-                    setTimeout(() => navigate("/manage"), 3000);
-                } else {
-                    setTimeout(() => navigate("/login"), 3000);
+
+                const accountId = await fetchAccountIdByEmail();
+                if (accountId) {
+                    localStorage.setItem("accountId", accountId);
+                    navigate("/upload-avatar");
                 }
-                
-                localStorage.removeItem("email");
             } else {
                 const errorMessage = data.message || "Mã xác thực không hợp lệ";
                 setError(errorMessage);
                 toast.error(errorMessage, toastConfig);
             }
         } catch (err) {
-            console.error("Verification error:", err);
             const errorMessage = err instanceof Error ? err.message : "Xác thực thất bại. Vui lòng thử lại.";
             setError(errorMessage);
             toast.error(errorMessage, toastConfig);
@@ -141,7 +142,6 @@ const VerificationPage: React.FC = () => {
             }
 
             const resendData = { email: email };
-            console.log("Sending OTP resend request:", resendData);
 
             const response = await fetch("http://localhost:5199/Account/otp", {
                 method: "POST",
@@ -152,7 +152,6 @@ const VerificationPage: React.FC = () => {
             });
 
             const data = await response.json();
-            console.log("Resend server response:", response.status, data);
 
             if (response.ok) {
                 toast.info("Mã xác thực mới đã được gửi", toastConfig);
@@ -160,11 +159,44 @@ const VerificationPage: React.FC = () => {
                 toast.error(data.message || "Không thể gửi lại mã xác thực", toastConfig);
             }
         } catch (err) {
-            console.error("Resend error:", err);
             toast.error("Không thể gửi lại mã xác thực", toastConfig);
             
             // Redirect to registration if email is missing
             navigate("/register");
+        }
+    };
+
+    const fetchAccountIdByEmail = async () => {
+        try {
+            const email = localStorage.getItem("email")?.trim().toLowerCase();
+            if (!email) {
+                throw new Error("Không tìm thấy email. Vui lòng đăng ký lại.");
+            }
+
+            const response = await fetch("http://localhost:5199/Account", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const accounts = await response.json();
+
+            if (response.ok) {
+                const account = accounts.find(
+                    (acc: { email: string }) => acc.email.trim().toLowerCase() === email
+                );
+                if (account) {
+                    return account.id;
+                } else {
+                    throw new Error("Không tìm thấy tài khoản với email này.");
+                }
+            } else {
+                throw new Error("Không thể lấy danh sách tài khoản.");
+            }
+        } catch (err) {
+            toast.error("Không thể lấy thông tin tài khoản", toastConfig);
+            return null;
         }
     };
 
@@ -189,6 +221,9 @@ const VerificationPage: React.FC = () => {
                             value={digit}
                             onChange={(e) => handleInput(idx, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(idx, e as React.KeyboardEvent<HTMLInputElement>)}
+                            onPaste={handlePaste}
+                            aria-label={`Digit ${idx + 1} of verification code`}
+                            title={`Verification code digit ${idx + 1}`}
                         />
                     ))}
                 </div>

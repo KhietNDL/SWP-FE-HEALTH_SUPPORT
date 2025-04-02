@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/Store";
 import { Button, Badge, Dropdown, Menu, Modal } from "antd";
-import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined, FileTextOutlined } from "@ant-design/icons";
 import { formatDate } from "../moment.js";
 import { setOrder } from "../../redux/features/orderSlice";
 import logo from "../../images/Logo.png";
@@ -123,10 +123,11 @@ function Header() {
               <span className="user-name">{user.userName}</span>
             </div>
             <ul className="dropdown-content">
-              <li><Link to ="/info-user"><UserOutlined/> Thông tin</Link></li>
-              <li><Link to = "/progress"><StockOutlined/> Lộ Trình</Link></li>
-              <li><button onClick={handleLogout}><LogoutOutlined/> Đăng xuất</button></li>
-            </ul>
+            <li><Link to ="/info-user"><UserOutlined/> Thông tin</Link></li>
+            <li><Link to = "/progress"><StockOutlined/> Lộ Trình</Link></li>
+            <li><Link to = "/user-survey-result-list"><FileTextOutlined/> Lịch Sử Khảo Sát</Link></li>
+            <li><button onClick={handleLogout}><LogoutOutlined/> Đăng xuất</button></li>
+          </ul>
           </div>
           <Modal title="Chi tiết cuộc hẹn" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} className="appointment-modal">
             {selectedAppointment && (
@@ -140,6 +141,7 @@ function Header() {
               </div>
             )}
           </Modal>
+          
         </div>
       ) : (
         <Link to="/login">
