@@ -17,18 +17,17 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const User = useSelector((state: RootState) => state.user);
-  
 
   const handleLogout = () => {
-      dispatch(logout());
-      localStorage.removeItem("token");
-      navigate("/");
-    };
+    dispatch(logout());
+    localStorage.removeItem("token");
+    navigate("/");
+  };
   return (
     <div className="dashboard">
       <div className="sidebar">
         <h2 className="sidebar-title">
-        <img src={logo} width={80} alt="Logo" /> Admin Portal
+          <img src={logo} width={80} alt="Logo" /> Admin Portal
         </h2>
         <ul className="sidebar-menu">
           <li
@@ -57,10 +56,8 @@ const Sidebar = () => {
           </li>
         </ul>
         <div className="consultant-info">
-          <img className="consultant-avatar" src={`http://localhost:5199${User?.imgUrl}`} alt="Avatar" />
-
           <div className="consultant-details">
-            <strong>{User?.userName}</strong>
+            <strong>{User?.fullname}</strong>
             <p>{User?.roleName}</p>
           </div>
         </div>

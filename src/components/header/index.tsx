@@ -133,7 +133,7 @@ function Header() {
               <div>
                 <p><strong>Chuyên gia:</strong> {selectedAppointment.psychologist.name}</p>
                 <p><strong>Email:</strong> {selectedAppointment.psychologist.email}</p>
-                <p><strong>SĐT:</strong> {selectedAppointment.psychologist.phone}</p>
+                <p><strong>SĐT:</strong> {selectedAppointment.psychologist.phoneNumber}</p>
                 <p><strong>Thời gian tạo:</strong> {formatDate(selectedAppointment.appointmentDate)}</p>
                 <p><strong>Nội dung ghi:</strong> {selectedAppointment.content}</p>
                 <Button type="danger" onClick={() => handleCancelAppointment(selectedAppointment.id)}>Hủy cuộc hẹn</Button>

@@ -40,6 +40,7 @@ function DoctorInfo() {
           `http://localhost:5199/api/Psychologist/${id}`
         );
         setDoctor(response.data);
+        console.log("Doctor data:", response.data); // Log dữ liệu bác sĩ
       } catch (error) {
         console.error("Lỗi khi lấy thông tin bác sĩ:", error);
         // Có thể thêm thông báo lỗi cho người dùng ở đây
@@ -199,7 +200,7 @@ function DoctorInfo() {
          <div className="doctor-profile">
            <div className="doctor-image">
              {/* Sử dụng imgUrl thay vì poster_path nếu DoctorType định nghĩa vậy */}
-             <img src={doctor?.imgUrl || "/placeholder-avatar.png"} alt={doctor?.name || "Bác sĩ"} />
+             <img src={`http://localhost:5199${doctor?.imgUrl}`} alt={doctor?.name || "Bác sĩ"} />
            </div>
            <h2 className="doctor-name">{doctor?.name || "Đang tải..."}</h2>
            <p className="doctor-position">{doctor?.specialization}</p>
@@ -233,7 +234,7 @@ function DoctorInfo() {
              <div className="info-item">
                <div className="label">Website:</div>
                {/* Website nên lấy từ dữ liệu nếu có */}
-               <div className="value">{doctor?.website || "www.braincare.vn"}</div>
+               <div className="value">www.braincare.vn</div>
              </div>
            </div>
          </div>

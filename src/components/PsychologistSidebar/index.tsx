@@ -44,10 +44,10 @@ const ConsultantSidebar = () => {
 
         {/* Consultant Info */}
         <div className="consultant-info">
-          <img className="consultant-avatar" src={`http://localhost:5199${User?.imgUrl}`} alt="Avatar" />
+          
 
           <div className="consultant-details">
-            <strong>{User?.userName}</strong>
+            <strong>{User?.fullname}</strong>
             <p>{User?.roleName}</p>
           </div>
         </div>

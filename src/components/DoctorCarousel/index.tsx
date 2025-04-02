@@ -48,7 +48,7 @@ export default function DoctorCarousel({
         <SwiperSlide>
           <div className="doctor-card">
             <div className="doctor-image">
-              <img src={doctor.imgUrl} alt={doctor.name} />
+              <img src={`http://localhost:5199${doctor.imgUrl}`} alt={doctor.name} />
             </div>
             <div className="doctor-info">
               <h2>{doctor.name}</h2>
