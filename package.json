@@ -34,7 +34,7 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "sass": "^1.84.0",
-    "swiper": "^11.2.2"
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@types/react": "^18.2.55",

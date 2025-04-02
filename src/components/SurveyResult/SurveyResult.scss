@@ -6,34 +6,58 @@
   margin: 0 auto;
   min-height: 90vh;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding-bottom: 0%;
+  border-radius: 8px;
 
-  .user-info {
+  .card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06); // Tăng độ rõ ràng của bóng
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1); // Hiệu ứng bóng khi hover
+    }
+  }
+
+  .user-info-card {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 2rem;
 
-    img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-right: 1rem;
-    }
+    .user-info {
+      display: flex;
+      align-items: center;
 
-    h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        object-fit: cover;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-    p {
-      color: #6b7280;
+      h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0;
+        color: #374151;
+      }
+
+      p {
+        margin: 0.5rem 0 0;
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
     }
   }
 
   .tabs {
     display: flex;
     justify-content: center;
+    margin-bottom: 1.5rem;
 
     button {
       padding: 0.5rem 1rem;
@@ -43,9 +67,17 @@
       margin-right: 1rem;
       border-radius: 0.375rem;
       cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
 
       &.active {
         background: #2563eb;
+        color: #fff;
+      }
+
+      &:hover {
+        background: green;
+        content: "green";
         color: #fff;
       }
 
@@ -63,6 +95,82 @@
   }
 
   .content {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .recommendations {
+      .title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #374151;
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          display: flex;
+          align-items: center;
+          margin-bottom: 0.75rem;
+
+          svg {
+            margin-right: 0.5rem;
+            color: #2563eb;
+          }
+
+          span {
+            font-size: 1rem;
+            color: #4b5563;
+          }
+        }
+      }
+
+      .suggestions {
+        margin-top: 2rem;
+
+        .suggestion {
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          background-color: #f9fafb;
+
+          h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            color: #374151;
+          }
+
+          p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: #6b7280;
+          }
+
+          .register-course-button,
+          .book-expert-button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #2563eb;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+              background-color: #10b981;
+            }
+          }
+        }
+      }
+    }
+
     .score-overview {
       background: #fff;
       padding: 1.5rem;
@@ -74,55 +182,56 @@
         font-weight: bold;
         margin-bottom: 1rem;
         text-align: center;
+        color: #374151;
       }
 
-      .progress-bar-container {
-        position: relative;
-        width: 100%;
-        margin-bottom: 3rem; // Add spacing between the progress bar and the score
-        margin: 1rem 0;
-      }
+      // .progress-bar-container {
+      //   position: relative;
+      //   width: 100%;
+      //   margin-bottom: 3rem; // Add spacing between the progress bar and the score
+      //   margin: 1rem 0;
+      // }
 
-      .progress-bar {
-        position: relative;
-        height: 20px; // Adjusted height for better visibility
-        display: flex; // Use flexbox to align segments
-        border-radius: 10px;
-        overflow: hidden;
+      // .progress-bar {
+      //   position: relative;
+      //   height: 20px; // Adjusted height for better visibility
+      //   display: flex; // Use flexbox to align segments
+      //   border-radius: 10px;
+      //   overflow: hidden;
 
-        .progress-segment {
-          height: 100%;
-        }
+      //   .progress-segment {
+      //     height: 100%;
+      //   }
 
-        .progress-marker {
-          position: absolute;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 16px;
-          height: 16px;
-          background-color: #ffffff; // White marker
-          border: 2px solid #000000; // Black border for contrast
-          border-radius: 50%;
-          z-index: 1;
-        }
-      }
+      //   .progress-marker {
+      //     position: absolute;
+      //     top: 50%;
+      //     transform: translate(-50%, -50%);
+      //     width: 16px;
+      //     height: 16px;
+      //     background-color: #ffffff; // White marker
+      //     border: 2px solid #000000; // Black border for contrast
+      //     border-radius: 50%;
+      //     z-index: 1;
+      //   }
+      // }
 
-      .progress {
-        height: 100%;
-        background-color: #ffc107; // Yellow for the progress fill
-        border-radius: 5px 0 0 5px;
-      }
+      // .progress {
+      //   height: 100%;
+      //   background-color: #ffc107; // Yellow for the progress fill
+      //   border-radius: 5px 0 0 5px;
+      // }
 
-      .progress-marker {
-        position: absolute;
-        top: 0%;
-        width: 12px;
-        height: 12px;
-        background-color: #000; // Black for the marker
-        border: 2px solid #ffffff; // White border for better visibility
-        border-radius: 50%;
-        transform: translateX(-50%);
-      }
+      // .progress-marker {
+      //   position: absolute;
+      //   top: 0%;
+      //   width: 12px;
+      //   height: 12px;
+      //   background-color: #000; // Black for the marker
+      //   border: 2px solid #ffffff; // White border for better visibility
+      //   border-radius: 50%;
+      //   transform: translateX(-50%);
+      // }
 
       .progress-labels {
         display: flex;
@@ -162,13 +271,13 @@
         }
 
         .score {
-          font-size: 1.5rem;
+          font-size: 2rem;
           font-weight: bold;
-          color: #374151; // Neutral gray for the score text
+          color: #2563eb;
         }
 
         .anxiety-level {
-          color: #10b981; // Green for the anxiety level text
+          // color: #10b981; // Green for the anxiety level text
           font-weight: bold;
         }
       }
@@ -212,86 +321,59 @@
     .details {
       background: #fff;
       padding: 1.5rem;
-      border-radius: 0.375rem;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
       table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background-color: white;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        border: 1px solid #424242;
+        border-collapse: separate; // Để áp dụng bo tròn
+        border-spacing: 0; // Loại bỏ khoảng cách giữa các ô
+        margin-top: 1rem;
+        background-color: #fff;
+        border: 1px solid #e5e7eb; // Đường viền ngoài bảng
+        border-radius: 8px; // Bo tròn các cạnh của bảng
 
         th,
         td {
-          padding: 0.85rem;
-          border-right: 1px solid #424242;
-          border-bottom: 1px solid #424242;
-        }
-
-        th:last-child,
-        td:last-child {
-          border-right: none;
-        }
-
-        tr:last-child td {
-          border-bottom: none;
+          padding: 0.75rem 1rem; // Thêm khoảng cách bên trong ô
+          text-align: center; // Căn giữa nội dung
+          border: 1px solid #6b7280; // Đường viền giữa các ô
         }
 
         th {
-          background: #1e88e5; // Vibrant blue header
-          color: white;
-          text-align: center;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border-bottom: 2px solid #1565c0; // Stronger border below headers
-        }
+          background-color: #2563eb; // Màu nền cho tiêu đề bảng
+          color: #fff; // Màu chữ trắng
+          font-weight: bold;
+          text-transform: uppercase; // Chữ in hoa
 
-        tr {
-          border-bottom: 1px solid #e3f2fd; // Uncommented - Light blue border
-          text-align: center;
-          transition: background-color 0.2s ease;
+          &:first-child {
+            border-top-left-radius: 8px; // Bo tròn góc trên trái
+          }
 
           &:last-child {
-            border-bottom: none;
+            border-top-right-radius: 8px; // Bo tròn góc trên phải
           }
+        }
 
-          &:hover {
-            background-color: #f1f8e9; // Light green hover effect
-          }
+        tr:last-child td:first-child {
+          border-bottom-left-radius: 8px; // Bo tròn góc dưới trái
+        }
 
-          &:nth-child(even) {
-            background-color: #f5f9ff; // Light blue background for alternating rows
-          }
+        tr:last-child td:last-child {
+          border-bottom-right-radius: 8px; // Bo tròn góc dưới phải
+        }
+
+        tr:nth-child(even) {
+          background-color: #ebffca; // Màu nền xen kẽ cho các hàng
+        }
+
+        tr:hover {
+          background-color: greenyellow; // Màu nền khi hover
         }
 
         td {
-          color: #424242;
-        }
-
-        .frequency {
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.375rem;
-          color: #fff;
-
-          &.score-green {
-            background: #10b981;
-          }
-
-          &.score-yellow {
-            background: #fbbf24;
-          }
-
-          &.score-orange {
-            background: #f97316;
-          }
-
-          &.score-red {
-            background: #ef4444;
-          }
+          font-size: 0.875rem; // Kích thước chữ nhỏ hơn
+          color: #374151; // Màu chữ tối
         }
       }
     }
@@ -346,5 +428,29 @@
     padding: 20px 0;
     background-color: #f0f2f5;
   }
+}
 
+.anxiety-level {
+  font-weight: bold;
+  font-size: 1.25rem;
+
+  &.score-green {
+    color: #10b981; // Màu xanh lá cho điểm thấp
+  }
+
+  &.score-yellow {
+    color: #fbbf24; // Màu vàng cho điểm trung bình
+  }
+
+  &.score-orange {
+    color: #f97316; // Màu cam cho điểm cao
+  }
+
+  &.score-red {
+    color: #ef4444; // Màu đỏ cho điểm rất cao
+  }
+
+  &.score-gray {
+    color: #6b7280; // Màu xám mặc định nếu không xác định
+  }
 }

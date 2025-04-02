@@ -156,6 +156,34 @@ const getLevelColor = (level: number) => {
   return colors[level - 1] || "#ccc"; // Default color if level is out of range
 };
 
+const generateRecommendations = (score: number, anxietyLevel: string) => {
+  if (anxietyLevel === "Rất nặng") {
+    return [
+      "Liên hệ ngay với chuyên gia tâm lý để được hỗ trợ khẩn cấp.",
+      "Tham gia các buổi trị liệu chuyên sâu với bác sĩ tâm lý.",
+      "Thực hiện các bài tập thư giãn và giảm căng thẳng hàng ngày.",
+    ];
+  } else if (anxietyLevel === "Nặng") {
+    return [
+      "Tham gia liệu pháp tâm lý với chuyên gia.",
+      "Đặt lịch hẹn với bác sĩ tâm lý để được tư vấn chi tiết.",
+      "Thực hiện các bài tập thư giãn như thiền hoặc yoga.",
+    ];
+  } else if (anxietyLevel === "Vừa phải") {
+    return [
+      "Thực hành kỹ thuật thở sâu hàng ngày.",
+      "Tập thể dục thường xuyên để giảm căng thẳng.",
+      "Tham gia các khóa học về quản lý căng thẳng.",
+    ];
+  } else {
+    return [
+      "Duy trì lối sống lành mạnh và cân bằng.",
+      "Thực hiện các hoạt động giải trí để thư giãn.",
+      "Theo dõi cảm xúc và viết nhật ký hàng ngày.",
+    ];
+  }
+};
+
 const SurveyResultsDashboard = () => {
   const { accountSurveyId } = useParams<{ accountSurveyId: string }>();
   const [accountData, setAccountData] = useState<{ fullname: string; imgUrl: string } | null>(null);
@@ -276,25 +304,24 @@ const SurveyResultsDashboard = () => {
 
   const getScoreColor = (score: number, filteredResults: any[]) => {
     if (!filteredResults || filteredResults.length === 0) {
-      return "score-gray"; // Default color if no results are available
+      return "score-gray"; // Mặc định nếu không có dữ liệu
     }
   
-    // Find the matching result based on the score
+    // Tìm khoảng điểm phù hợp
     const matchingResult = filteredResults.find(
       (result: any) => score >= result.minScore && score <= result.maxScore
     );
   
-    // Return a color based on the matching result
+    // Trả về lớp CSS dựa trên khoảng điểm
     if (matchingResult) {
-      const { minScore, maxScore } = matchingResult;
+      const { maxScore } = matchingResult;
       if (maxScore <= 4) return "score-green";
       if (maxScore <= 9) return "score-yellow";
       if (maxScore <= 14) return "score-orange";
-      if (maxScore <= 21) return "score-purple";
-      return "score-red";
+      if (maxScore <= 19) return "score-red";
     }
   
-    return "score-gray"; // Default color if no match is found
+    return "score-gray"; // Mặc định nếu không tìm thấy
   };
 
   const getAnxietyLevel = (score: number, filteredResults: any[]) => {
@@ -302,7 +329,6 @@ const SurveyResultsDashboard = () => {
       return "Không xác định";
     }
   
-    // Find the result description based on the score
     const matchingResult = filteredResults.find(
       (result: any) => score >= result.minScore && score <= result.maxScore
     );
@@ -337,8 +363,8 @@ const SurveyResultsDashboard = () => {
         <div className="score-details">
           <h3>Điểm số của bạn</h3>
           <p className="score">{mockData.scores.overall}</p>
-          <p className={`anxiety-level ${getScoreColor(mockData.scores.overall, sortedResults)}`}>
-            {getAnxietyLevel(mockData.scores.overall, sortedResults)}
+          <p className={`anxiety-level ${getScoreColor(totalScore, filteredResults)}`}>
+            {getAnxietyLevel(totalScore, filteredResults)}
           </p>
         </div>
         <div className="result-descriptions">
@@ -411,11 +437,13 @@ const SurveyResultsDashboard = () => {
     <>
       <Header />
       <div className="survey-results-dashboard">
-        <div className="user-info">
-          <img src={mockData.user.profilePic} alt="Ảnh đại diện" />
-          <div>
-            <h1>{mockData.user.name}</h1>
-            <p>Ngày đánh giá: {mockData.user.surveyDate}</p>
+        <div className="user-info-card card">
+          <div className="user-info">
+            <img src={mockData.user.profilePic} alt="Ảnh đại diện" />
+            <div>
+              <h1>{mockData.user.name}</h1>
+              <p>Ngày đánh giá: {mockData.user.surveyDate}</p>
+            </div>
           </div>
         </div>
 
@@ -436,20 +464,46 @@ const SurveyResultsDashboard = () => {
           {activeTab === "chi tiết" && <Details />}
           {activeTab === "khuyến nghị" && (
             <div className="recommendations">
-              <h2 className="title">Khuyến nghị</h2>
-              {mockData.recommendations.map((rec, index) => (
-                <div key={index} className="recommendation">
-                  <h3>{rec.type === "ngắn hạn" ? "Mục tiêu ngắn hạn" : "Chiến lược dài hạn"}</h3>
-                  <ul>
-                    {rec.items.map((item, idx) => (
-                      <li key={idx}>
-                        <FaArrowRight />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              <h2 className="title">Gợi ý</h2>
+              <ul>
+                {generateRecommendations(totalScore, getAnxietyLevel(totalScore, filteredResults)).map((item, index) => (
+                  <li key={index}>
+                    <FaArrowRight />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Gợi ý đăng ký hoặc đặt lịch */}
+              <div className="suggestions">
+                {totalScore < 15 ? (
+                  <div className="suggestion">
+                    <h3>Gợi ý thêm</h3>
+                    <p>Chúng tôi khuyến nghị bạn đăng ký một khóa học để cải thiện sức khỏe tinh thần.</p>
+                    <button
+                      className="register-course-button"
+                      onClick={() => {
+                        window.location.href = "/dich-vu";
+                      }}
+                    >
+                      Đăng ký khóa học
+                    </button>
+                  </div>
+                ) : (
+                  <div className="suggestion">
+                    <h3>Gợi ý thêm</h3>
+                    <p>Chúng tôi khuyến nghị bạn đặt lịch với chuyên gia để được tư vấn chi tiết.</p>
+                    <button
+                      className="book-expert-button"
+                      onClick={() => {
+                        window.location.href = "/booking";
+                      }}
+                    >
+                      Đặt lịch với chuyên gia
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

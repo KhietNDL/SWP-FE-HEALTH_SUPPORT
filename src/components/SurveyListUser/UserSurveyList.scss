@@ -34,67 +34,67 @@
       align-items: center;
     }
 
-    .search-bar {
-      position: relative;
+    // .search-bar {
+    //   position: relative;
 
-      .search-icon {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: $primary-green;
-      }
+    //   .search-icon {
+    //     position: absolute;
+    //     left: 10px;
+    //     top: 50%;
+    //     transform: translateY(-50%);
+    //     color: $primary-green;
+    //   }
 
-      input {
-        padding: 10px 10px 10px 35px;
-        border: 1px solid $border-light;
-        border-radius: 4px;
-        width: 250px;
-        font-size: 0.9rem;
+    //   input {
+    //     padding: 10px 10px 10px 35px;
+    //     border: 1px solid $border-light;
+    //     border-radius: 4px;
+    //     width: 250px;
+    //     font-size: 0.9rem;
 
-        &:focus {
-          outline: none;
-          border-color: $secondary-blue;
-          box-shadow: 0 0 0 2px rgba($secondary-blue, 0.2);
-        }
-      }
-    }
+    //     &:focus {
+    //       outline: none;
+    //       border-color: $secondary-blue;
+    //       box-shadow: 0 0 0 2px rgba($secondary-blue, 0.2);
+    //     }
+    //   }
+    // }
 
-    .refresh-button {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background-color: $white;
-      border: 1px solid $border-light;
-      border-radius: 4px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: $primary-green;
+  //    .refresh-button {
+    //   display: flex;
+    //   align-items: center;
+    //   gap: 5px;
+    //   background-color: $white;
+    //   border: 1px solid $border-light;
+    //   border-radius: 4px;
+    //   padding: 10px 15px;
+    //   cursor: pointer;
+    //   transition: all 0.2s;
+    //   color: $primary-green;
 
-      &:hover {
-        background-color: lighten($primary-green, 55%);
-      }
+    //   &:hover {
+    //     background-color: lighten($primary-green, 55%);
+    //   }
 
-      &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-      }
+    //   &:disabled {
+    //     opacity: 0.7;
+    //     cursor: not-allowed;
+    //   }
 
-      .spinning {
-        animation: spin 1s linear infinite;
-      }
+    //   .spinning {
+    //     animation: spin 1s linear infinite;
+    //   }
 
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
+    //   @keyframes spin {
+    //     from {
+    //       transform: rotate(0deg);
+    //     }
 
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    }
+    //     to {
+    //       transform: rotate(360deg);
+    //     }
+    //   }
+    // }
   }
 
   .survey-list {
@@ -209,7 +209,7 @@
         transition: background-color 0.2s;
 
         &:hover {
-          background-color: darken($secondary-blue, 10%);
+          background-color: rgb(162, 134, 95);
         }
       }
     }

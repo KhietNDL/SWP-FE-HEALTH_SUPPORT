@@ -1,4 +1,5 @@
 .user-survey-result-list {
+  min-height: 58.2vh;
   background-color: #f5fdf6; // Màu nền xanh lá nhạt
   color: #2c3e50; // Màu chữ xanh đậm
   padding: 20px;
@@ -74,18 +75,18 @@
     color: #ffffff;
   }
 
-  .delete-button {
-    margin-left: 10px;
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  // .delete-button {
+  //   margin-left: 10px;
+  //   background-color: #ff4d4f;
+  //   color: white;
+  //   border: none;
+  //   padding: 5px 10px;
+  //   border-radius: 4px;
+  //   cursor: pointer;
+  //   transition: background-color 0.3s;
   
-    &:hover {
-      background-color: #d9363e;
-    }
-  }
+  //   &:hover {
+  //     background-color: #d9363e;
+  //   }
+  // }
 }

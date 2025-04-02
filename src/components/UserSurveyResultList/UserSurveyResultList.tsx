@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { AccountSurveyApi, surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
 import { Link } from "react-router-dom";
 import "./UserSurveyResultList.scss";
+import Item from "antd/es/list/Item";
 
 interface SurveyResult {
   id: string;
@@ -29,6 +30,7 @@ const UserSurveyResultList: React.FC = () => {
 
       try {
         const data = await AccountSurveyApi.getAccountSurveyByAccountId(accountId);
+        console.log("Account survey data:", data);
 
         // Fetch all surveys and create a mapping of surveyId to surveyName
         const surveys = await surveyApi.getAll();
@@ -58,10 +60,10 @@ const UserSurveyResultList: React.FC = () => {
             }).format(date);
 
             return {
-              id: item.surveyId,
-              surveyName,
-              date: formattedDate, // Gán ngày đã định dạng
-              rawDate: date, // Lưu thêm giá trị ngày thô để sắp xếp
+              id: item.id, //id của AccountSurvey
+              surveyName, // Tên khảo sát
+              date: formattedDate, // Ngày khảo sát
+              rawDate: date, // Ngày khảo sát gốc để sắp xếp
             };
           })
           .sort((a: { rawDate: Date; }, b: { rawDate: Date; }) => b.rawDate.getTime() - a.rawDate.getTime()); // Sắp xếp từ gần nhất đến cũ nhất
