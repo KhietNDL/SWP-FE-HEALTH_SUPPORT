@@ -9,7 +9,7 @@ function DoctorList() {
 
   const fetchDoctor = async () => {
     const response = await axios.get(
-      "http://localhost:5199/api/Psychologist"
+      "http://localhost:5199/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
