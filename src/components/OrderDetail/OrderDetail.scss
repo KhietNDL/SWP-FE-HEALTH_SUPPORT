@@ -2,99 +2,172 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   padding: 20px;
-
-  // 🔥 Thêm background đẹp
-  background: url('../../images/bill.png') no-repeat center center;
-  background-size: cover;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
 
   .order-bill {
-    width: 400px;
-    background: rgba(255, 255, 255, 0.9); // Làm nền hóa đơn hơi trong suốt
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 450px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    border: 2px dashed #333;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #81c784, #4caf50);
+    }
 
     .bill-header {
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 10px;
+      border-bottom: 2px solid #e8f5e9;
+      padding-bottom: 15px;
+      margin-bottom: 10px;
 
       h2 {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 5px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #2e7d32;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
+
       .order-id {
-        font-size: 14px;
-        color: #666;
+        font-size: 16px;
+        color: #558b2f;
+        font-weight: 500;
       }
     }
 
     .bill-content {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      font-size: 14px;
+      gap: 15px;
+      font-size: 16px;
       text-align: left;
-      padding: 15px 0;
+      padding: 20px 0;
 
       .info-row {
         display: flex;
         justify-content: space-between;
-        border-bottom: 1px dashed #ddd;
-        padding-bottom: 5px;
-        font-weight: 500;
-        color: #333;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e8f5e9;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #f1f8e9;
+          padding: 12px 10px;
+          border-radius: 8px;
+        }
+
+        span:first-child {
+          color: #558b2f;
+          font-weight: 500;
+        }
+
+        span:last-child {
+          color: #2e7d32;
+          font-weight: 600;
+        }
       }
 
       .total-price {
-        font-size: 18px;
-        font-weight: bold;
-        color: #e74c3c;
+        font-size: 20px;
+        font-weight: 700;
+        color: #2e7d32;
         text-align: center;
-        padding-top: 10px;
+        padding-top: 15px;
+        margin-top: 10px;
+        border-top: 2px solid #e8f5e9;
       }
     }
 
     .bill-footer {
-      margin-top: 15px;
+      margin-top: 20px;
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 15px;
 
       button {
         flex: 1;
-        padding: 10px;
+        padding: 12px 20px;
         border: none;
-        font-size: 14px;
-        font-weight: bold;
+        font-size: 16px;
+        font-weight: 600;
         cursor: pointer;
-        border-radius: 6px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+
+        &:hover::before {
+          transform: translateX(0);
+        }
       }
 
       .confirm-button {
-        background-color: #2ecc71;
+        background: linear-gradient(135deg, #81c784, #4caf50);
         color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
       }
 
       .cancel-button {
-        background-color: #e74c3c;
+        background: linear-gradient(135deg, #ef5350, #d32f2f);
         color: white;
-      }
+        box-shadow: 0 4px 15px rgba(239, 83, 80, 0.3);
 
-      .confirm-button:hover {
-        background-color: #27ae60;
-      }
-
-      .cancel-button:hover {
-        background-color: #c0392b;
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(239, 83, 80, 0.4);
+        }
       }
     }
   }
+}
+
+// Thêm animation cho các hiệu ứng
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.order-bill {
+  animation: fadeIn 0.5s ease-out;
 }

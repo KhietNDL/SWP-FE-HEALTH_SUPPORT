@@ -265,11 +265,15 @@ const ProgressInformation: React.FC = () => {
                 {!order.isDeleted && (
                   <button
                     className="view-progress-button"
-                    onClick={() =>
-                      navigate(
-                        `/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
-                      )
-                    }
+                    onClick={() => {
+                      if (!order.isJoined) {
+                        joinOrder(order.id, order.subscriptionName); // Gọi hàm tham gia
+                      } else {
+                        navigate(
+                          `/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
+                        ); // Điều hướng đến trang tiến trình
+                      }
+                    }}
                   >
                     {order.isJoined ? "Xem Tiến Trình" : "Tham gia"}
                   </button>

@@ -2,16 +2,14 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-   // Slightly more vibrant green tone
+  background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
 }
 
 .page-header {
   width: 100%;
-  background-color: #A1C73E;
-  // Softer green tone for a more balanced look
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(188, 143, 143, 0.1);
+  background: linear-gradient(135deg, #52c41a, #389e0d);
+  padding: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   .header-content {
     max-width: 1400px;
@@ -22,28 +20,27 @@
 
     .header-left {
       h2 {
-        font-size: 2.8rem;
+        font-size: 3rem;
         font-weight: 800;
         margin: 0;
-        background: linear-gradient(45deg, #ffffff, #e8d1b6); // Adjusted gradient for a brighter look
+        background: linear-gradient(45deg, #ffffff, #e8f5e9);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3); // Increased shadow intensity for better visibility
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
         letter-spacing: -0.5px;
-        font-family: 'Poppins', sans-serif;
-        color: #ffffff; // Soft white color for better contrast
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); // Subtle shadow for depth
+        font-family: 'Playfair Display', serif;
       }
     }
 
     .header-right {
       p {
-        font-size: 1.1rem;
-        color: #f5f5f5; // Light white color for contrast
+        font-size: 1.2rem;
+        color: #ffffff;
         margin: 0;
         font-weight: 500;
         padding-right: 1rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
     }
   }
@@ -53,8 +50,9 @@
   display: flex;
   flex: 1;
   width: 100%;
-  padding: 2rem 0;
-  gap: 1rem; // Reduced gap to bring the image and form closer
+  padding: 3rem 2rem;
+  gap: 2rem;
+  align-items: center;
 }
 
 .login-image-side {
@@ -64,16 +62,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
+  padding: 1rem;
 
   img {
-    width: 98%;
+    width: 100%;
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
     position: relative;
     max-height: 85vh;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
   .overlay {
@@ -91,25 +94,27 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  
 
   .form-wrapper {
     width: 100%;
-    max-width: 420px;
-    padding: 2.5rem;
-    background: rgb(210, 210, 210);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    padding: 3rem;
+    background: rgba(228, 223, 223, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       position: relative;
 
       label {
         display: block;
-        margin-bottom: 0.5rem;
-        color: #333;
-        font-weight: 500;
+        margin-bottom: 0.8rem;
+        color: #4a90e2;
+        font-weight: 600;
+        font-size: 1.1rem;
       }
 
       .input-container {
@@ -119,47 +124,53 @@
 
         .icon {
           position: absolute;
-          left: 0.75rem;
+          left: 1rem;
           top: 50%;
           transform: translateY(-50%);
-          color: #666;
+          color: #4a90e2;
+          font-size: 1.2rem;
           z-index: 1;
           pointer-events: none;
         }
 
         input {
           width: 100%;
-          padding: 0.75rem 2.5rem;
-          border: 1.5px solid #e0e0e0;
-          border-radius: 8px;
+          padding: 1rem 3rem;
+          border: 2px solid #e8f5e9;
+          border-radius: 12px;
           transition: all 0.3s ease;
           font-size: 1rem;
+          background: #f8f9fa;
 
           &:focus {
-            border-color: #0077B6;
-            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.1);
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
             outline: none;
+            background: white;
           }
 
           &.error {
-            border-color: #FF4C4C;
+            border-color: #ff4d4f;
+            background: #fff1f0;
           }
         }
 
         .toggle-password {
           position: absolute;
-          right: 0.75rem;
+          right: 1rem;
           top: 50%;
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: #666;
+          color: #4a90e2;
           cursor: pointer;
-          padding: 0.25rem;
+          padding: 0.5rem;
           z-index: 1;
+          font-size: 1.2rem;
+          transition: color 0.3s ease;
 
           &:hover {
-            color: #0077B6;
+            color: #357abd;
           }
         }
       }
@@ -168,30 +179,38 @@
         position: absolute;
         bottom: -1.5rem;
         left: 0;
-        color: #FF4C4C;
-        font-size: 0.875rem;
+        color: #ff4d4f;
+        font-size: 0.9rem;
+        font-weight: 500;
       }
     }
 
     .submit-button {
       width: 100%;
-      padding: 0.875rem;
-      background-color: #0077B6;
+      padding: 1rem;
+      background: linear-gradient(135deg, #4a90e2, #357abd);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
 
       &:hover {
-        background-color: #005f92;
+        background: linear-gradient(135deg, #357abd, #2c6aa0);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
       }
 
       &:disabled {
-        background-color: #ccc;
+        background: #ccc;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
     }
 
@@ -199,26 +218,30 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 1rem;
-      margin-bottom: 1.5rem;
+      margin: 2rem 0;
 
       .remember-me {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.8rem;
+        color: #4a90e2;
+        font-weight: 500;
 
         input[type="checkbox"] {
-          width: 1rem;
-          height: 1rem;
+          width: 1.2rem;
+          height: 1.2rem;
+          accent-color: #4a90e2;
         }
       }
 
       .forgot-password {
-        color: #0077B6;
+        color: #4a90e2;
         text-decoration: none;
-        font-weight: 500;
+        font-weight: 600;
+        transition: color 0.3s ease;
 
         &:hover {
+          color: #357abd;
           text-decoration: underline;
         }
       }
@@ -226,25 +249,71 @@
 
     .register-section {
       text-align: center;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #e0e0e0;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e8f5e9;
 
       p {
-        color: #666;
-        font-size: 0.95rem;
+        color: #4a90e2;
+        font-size: 1rem;
+        font-weight: 500;
 
         a {
-          color: #0077B6;
-          font-weight: 500;
+          color: #4a90e2;
+          font-weight: 600;
           text-decoration: none;
           margin-left: 0.5rem;
+          transition: color 0.3s ease;
 
           &:hover {
+            color: #357abd;
             text-decoration: underline;
           }
         }
       }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .login-container {
+    flex-direction: column;
+    padding: 2rem 1rem;
+  }
+
+  .login-image-side,
+  .login-form-side {
+    width: 100%;
+  }
+
+  .login-image-side {
+    img {
+      max-height: 60vh;
+    }
+  }
+
+  .login-form-side {
+    .form-wrapper {
+      max-width: 500px;
+      padding: 2rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 1.5rem;
+
+    .header-content {
+      .header-left h2 {
+        font-size: 2.2rem;
+      }
+    }
+  }
+
+  .login-form-side {
+    .form-wrapper {
+      padding: 1.5rem;
     }
   }
 }

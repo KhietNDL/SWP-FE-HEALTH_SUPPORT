@@ -26,6 +26,8 @@ const SubscriptionManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [categories, setCategories] = useState<{ id: string; categoryName: string }[]>([]);
   const [psychologists, setPsychologists] = useState<{ id: string; name: string; specialization: string }[]>([]);
   const [currentSub, setCurrentSub] = useState<Subscription>({
@@ -179,7 +181,8 @@ const SubscriptionManagement: React.FC = () => {
       const hasJoinedOrders = relatedOrders.some((order: any) => order.isJoined === true);
   
       if (hasJoinedOrders) {
-        alert("Cannot delete this subscription because it has participants.");
+        setErrorMessage("Cannot delete this subscription because it has participants.");
+        setShowErrorPopup(true);
         return;
       }
   
@@ -191,7 +194,8 @@ const SubscriptionManagement: React.FC = () => {
       fetchSubscriptions();
     } catch (error) {
       console.error("Error deleting subscription:", error);
-      alert("Failed to delete subscription. Please try again.");
+      setErrorMessage("Failed to delete subscription. Please try again.");
+      setShowErrorPopup(true);
     }
   };
   
@@ -352,6 +356,24 @@ const SubscriptionManagement: React.FC = () => {
                 <button type="submit">{editingId !== null ? "Update" : "Create"}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Error Popup */}
+      {showErrorPopup && (
+        <div className="error-popup-overlay">
+          <div className="error-popup-content">
+            <div className="error-popup-icon">
+              <XCircle size={40} color="#d32f2f" />
+            </div>
+            <p className="error-popup-message">{errorMessage}</p>
+            <button 
+              className="error-popup-button"
+              onClick={() => setShowErrorPopup(false)}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}

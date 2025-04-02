@@ -134,78 +134,40 @@ function ProgramDetail() {
 
         <div className="program-title">
           <h1>{programData.subscriptionName}</h1>
-          <p>Chuyên gia: {programData.psychologistName}</p>
-          <p>Danh mục: {programData.categoryName}</p>
+          <div className="program-info">
+            <p>Chuyên gia: {programData.psychologistName}</p>
+            <p>Danh mục: {programData.categoryName}</p>
+          </div>
         </div>
 
         <div className="program-description">
           <p>{programData.description}</p>
         </div>
 
-        <div className="program-detail-sections">
-          <div className="detail-section">
-            <div className="section-header" onClick={() => toggleSection("purpose")}>
-              <h2>Mục đích</h2>
-              {expandedSections.includes("purpose") ? <FiChevronUp /> : <FiChevronDown />}
-            </div>
-            {expandedSections.includes("purpose") && (
-              <div className="section-content">
-                <p>{programData.purpose}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="detail-section">
-            <div className="section-header" onClick={() => toggleSection("criteria")}>
-              <h2>Các chỉ số đánh giá</h2>
-              {expandedSections.includes("criteria") ? <FiChevronUp /> : <FiChevronDown />}
-            </div>
-            {expandedSections.includes("criteria") && (
-              <div className="section-content">
-                <p>{programData.criteria}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="detail-section">
-            <div className="section-header" onClick={() => toggleSection("focusGroup")}>
-              <h2>Nhóm đối tượng</h2>
-              {expandedSections.includes("focusGroup") ? <FiChevronUp /> : <FiChevronDown />}
-            </div>
-            {expandedSections.includes("focusGroup") && (
-              <div className="section-content">
-                <p>{programData.focusGroup}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="detail-section">
-            <div className="section-header" onClick={() => toggleSection("assessmentTool")}>
-              <h2>Công cụ đánh giá</h2>
-              {expandedSections.includes("assessmentTool") ? <FiChevronUp /> : <FiChevronDown />}
-            </div>
-            {expandedSections.includes("assessmentTool") && (
-              <div className="section-content">
-                <p>{programData.assessmentTool}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="program-detail-footer">
-          <p className="duration">Thời gian liệu trình: {programData.duration} ngày</p>
-          <p className="price">Giá: {programData.price.toFixed(2)}VND</p>
-          <button className="register-button" onClick={handleRegister}>
-            Đăng ký
-          </button>
-          <button
-            className="progress-button"
-            onClick={() =>
-              navigate(`/progress-program?subscriptionName=${encodeURIComponent(programData.subscriptionName)}`)
-            }
-          >
-            Xem tiến trình
-          </button>
+          <div className="program-stats">
+            <div className="stat-item">
+              <div className="label">Thời gian liệu trình</div>
+              <div className="value">{programData.duration} ngày</div>
+            </div>
+            <div className="stat-item price">
+              <div className="label">Giá</div>
+              <div className="value">{programData.price.toFixed(2)}VND</div>
+            </div>
+          </div>
+          <div className="button-group">
+            <button className="register-button" onClick={handleRegister}>
+              Đăng ký
+            </button>
+            <button
+              className="progress-button"
+              onClick={() =>
+                navigate(`/progress-program?subscriptionName=${encodeURIComponent(programData.subscriptionName)}`)
+              }
+            >
+              Xem tiến trình
+            </button>
+          </div>
         </div>
 
         <Modal

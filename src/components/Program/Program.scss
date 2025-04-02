@@ -1,20 +1,45 @@
+.program-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  padding: 2rem 0;
+}
+
 .program-content {
   max-width: 1200px;
   margin: auto;
   padding: 2rem;
   text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
 }
 
 /* ✅ Tiêu đề lớn & mô tả */
 .program-hero {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  position: relative;
+  padding: 2rem 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #0056b3, #0077d9);
+    border-radius: 2px;
+  }
 
   .main-title {
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 3.5rem;
+    font-weight: 800;
     color: #0056b3;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .sub-title {
@@ -22,6 +47,9 @@
     font-weight: 500;
     color: #444;
     text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 }
 
@@ -29,47 +57,67 @@
 .services-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 0 1rem;
 }
 
 /* ✅ Thiết kế Card */
 .service-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   }
 
   .service-header {
-    padding: 1.5rem;
-    background-color: #f0f7ff;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e6f0ff 100%);
     text-align: center;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0056b3, #0077d9);
+    }
 
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: #0056b3;
       margin: 0;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
     }
   }
 
   /* ✅ Mô tả hiển thị khi mở */
   .service-description {
-    padding: 1.5rem;
+    padding: 2rem;
     text-align: left;
-    border-top: 1px solid #f0f0f0;
-    animation: fadeIn 0.3s ease-in-out;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.5s ease-in-out;
+    background: white;
 
     p {
       color: #555;
-      line-height: 1.6;
-      margin-bottom: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
     }
 
     /* ✅ Chỉ hiển thị 1 dòng mô tả */
@@ -78,38 +126,109 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
+      font-size: 1.1rem;
+      color: #666;
     }
 
     .view-more {
       display: block;
       width: 100%;
-      padding: 0.75rem;
-      background: #0056b3;
+      padding: 1rem;
+      background: linear-gradient(135deg, #0056b3, #0077d9);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s ease;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
 
       &:hover {
-        background: #003d82;
+        background: linear-gradient(135deg, #003d82, #0056b3);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
+
+        &::before {
+          transform: translateX(0);
+        }
       }
     }
   }
 }
 
+/* ✅ Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ✅ Responsive */
 @media (max-width: 768px) {
+  .program-content {
+    padding: 1rem;
+  }
+
   .services-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  .program-hero .main-title {
-    font-size: 2.5rem;
+  .program-hero {
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+
+    .main-title {
+      font-size: 2.5rem;
+    }
+
+    .sub-title {
+      font-size: 1.2rem;
+      padding: 0 1rem;
+    }
   }
 
-  .program-hero .sub-title {
-    font-size: 1.3rem;
+  .service-card {
+    .service-header {
+      padding: 1.5rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    .service-description {
+      padding: 1.5rem;
+
+      p, .short-description {
+        font-size: 1rem;
+      }
+
+      .view-more {
+        padding: 0.8rem;
+        font-size: 1rem;
+      }
+    }
   }
 }

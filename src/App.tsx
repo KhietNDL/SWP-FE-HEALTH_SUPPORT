@@ -32,6 +32,7 @@ import ProgressManagePage from "./pages/ProgressManagement";
 import ProgressPage from "./pages/ProgramProgress";
 import OrderProgressPage from "./pages/OrderProgress";
 import OrderProgress from "./components/OrderProgress/OrderProgress";
+import PaymentCallback from "./components/PaymentCallback/PaymentCallback";
 
 
 const router = createBrowserRouter([
@@ -75,6 +76,8 @@ const router = createBrowserRouter([
       { path: "progress-program", element: <ProgressPage /> },
       { path: "progress-information/:orderId", element: <Progress /> },
       { path: "progress/:orderId", element: <OrderProgressPage /> }, // Route đúng
+     
+      { path: "/vnpay/callback", element: <PaymentCallback /> },
     ],
   },
 ]);
