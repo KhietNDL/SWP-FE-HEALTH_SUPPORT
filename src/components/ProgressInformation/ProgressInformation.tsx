@@ -4,6 +4,7 @@ import { RootState } from "../../redux/Store";
 import { useNavigate } from "react-router-dom";
 import "./ProgressInformation.scss";
 
+
 interface Order {
   id: string;
   subscriptionName: string;
@@ -16,7 +17,9 @@ interface Order {
   modifiedAt: string | null;
   isActive: boolean;
   isDeleted: boolean; // Use isDeleted instead of isCanceled
+  isJoined?: boolean; // Add isJoined property
 }
+
 
 interface Progress {
   id: string;
@@ -29,38 +32,53 @@ interface Progress {
   modifiedAt: string | null;
 }
 
+
 const ProgressInformation: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [subscriptions, setSubscriptions] = useState<{ id: string; name: string }[]>([]); // State to store all subscriptions
   const [progressData, setProgressData] = useState<Progress[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState<boolean>(false);
   const [activeOrder, setActiveOrder] = useState<string | null>(null);
 
+
   // Get accountEmail from Redux Store
   const accountEmail = useSelector((state: RootState) => state.user?.email);
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    setOrders([]); // Reset orders khi accountEmail thay đổi hoặc khi đăng xuất
+    console.log("Current accountEmail:", accountEmail); // Debug log
+    setOrders([]); // Reset orders khi accountEmail thay đổi
+    setIsLoadingOrders(true); // Hiển thị trạng thái loading
+
+
     if (!accountEmail) {
+      console.log("No accountEmail provided."); // Debug log
       setIsLoadingOrders(false);
       return;
     }
 
+
     const fetchOrders = async () => {
       try {
-        // Gọi API với accountEmail hiện tại
+        console.log("Fetching orders for accountEmail:", accountEmail); // Debug log
         const response = await fetch(`http://localhost:5199/Order?accountEmail=${encodeURIComponent(accountEmail)}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch orders: ${response.status}`);
         }
 
+
         const data: Order[] = await response.json();
+        console.log("Fetched orders:", data); // Debug log
 
-        // Lọc danh sách đơn hàng theo accountEmail (nếu cần thiết)
+
+        // Filter orders to ensure they belong to the current accountEmail
         const filteredOrders = data.filter(order => order.accountEmail === accountEmail);
+        console.log("Filtered orders:", filteredOrders); // Debug log
 
-        setOrders(filteredOrders);
+
+        setOrders(filteredOrders); // Cập nhật dữ liệu mới
         setIsLoadingOrders(false);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -68,18 +86,56 @@ const ProgressInformation: React.FC = () => {
       }
     };
 
+
     fetchOrders();
-  }, [accountEmail]); // Chạy lại khi accountEmail thay đổi
+  }, [accountEmail]); // Thêm accountEmail vào dependency để gọi lại khi thay đổi
+
+
+  useEffect(() => {
+    // Clear orders when accountEmail changes to avoid showing stale data
+    setOrders([]);
+  }, [accountEmail]);
+
+
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      try {
+        const response = await fetch(`http://localhost:5199/Subscription`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch subscriptions: ${response.status}`);
+        }
+
+
+        const data = await response.json();
+        console.log("Fetched subscriptions:", data);
+        setSubscriptions(data); // Save all subscriptions to state
+      } catch (error) {
+        console.error("Error fetching subscriptions:", error);
+      }
+    };
+
+
+    fetchSubscriptions();
+  }, []);
+
 
   const fetchProgress = async (subscriptionName: string) => {
     setIsLoadingProgress(true);
     try {
-      const response = await fetch(`http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(subscriptionName)}`);
+      const response = await fetch(
+        `http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(subscriptionName)}`
+      );
+
+
       if (!response.ok) {
         throw new Error(`Failed to fetch progress data: ${response.status}`);
       }
 
+
       const data: Progress[] = await response.json();
+      console.log("Fetched progress data:", data);
+
+
       data.sort((a, b) => a.section - b.section); // Sort by section in ascending order
       setProgressData(data);
       setIsLoadingProgress(false);
@@ -89,15 +145,18 @@ const ProgressInformation: React.FC = () => {
     }
   };
 
+
   const cancelOrder = async (orderId: string) => {
     try {
       const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
         method: "DELETE",
       });
 
+
       if (!response.ok) {
         throw new Error(`Failed to cancel order: ${response.status}`);
       }
+
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
@@ -109,8 +168,64 @@ const ProgressInformation: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string): string => {
+
+  const joinOrder = async (orderId: string, subscriptionName: string) => {
+    try {
+      const orderToUpdate = orders.find((order) => order.id === orderId);
+      if (!orderToUpdate) {
+        throw new Error("Order not found");
+      }
+
+
+      // Cập nhật trạng thái isJoined trong backend
+      const updatedOrder = {
+        ...orderToUpdate,
+        isJoined: true, // Đánh dấu là đã tham gia
+      };
+
+
+      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedOrder),
+      });
+
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update order: ${response.status} - ${errorText}`);
+      }
+
+
+      // Cập nhật trạng thái trong state
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, isJoined: true } : order
+        )
+      );
+
+
+      console.log("Order joined successfully:", updatedOrder);
+
+
+      // Điều hướng đến trang OrderProgress
+      navigate(`/progress/${orderId}?subscriptionName=${encodeURIComponent(subscriptionName)}`);
+    } catch (error) {
+      console.error("Error joining order:", error);
+    }
+  };
+
+
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) {
+      return "Không xác định"; // Trả về giá trị mặc định nếu dateString không hợp lệ
+    }
+ 
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "Không hợp lệ"; // Trả về giá trị nếu dateString không thể chuyển đổi thành ngày
+    }
+ 
     return date.toLocaleDateString("vi-VN", {
       day: "2-digit",
       month: "2-digit",
@@ -118,19 +233,22 @@ const ProgressInformation: React.FC = () => {
     });
   };
 
+
   const getCurrentProgress = () => {
     return progressData.find((p) => p.id === activeOrder) || null;
   };
 
+
   return (
     <div className="course-container">
       <div className="course-content">
-        <h1 className="course-title">Chương trình Tham Gia</h1>
+        <h1 className="course-title">Danh sách đơn hàng</h1>
+
 
         {isLoadingOrders ? (
-          <div className="loading">Đang tải danh sách chương trình ...</div>
+          <div className="loading">Đang tải danh sách đơn hàng...</div>
         ) : orders.length === 0 ? (
-          <div className="no-orders">Bạn đang không tham gia chương trình nào.</div>
+          <div className="no-orders">Không có đơn hàng nào.</div> // Hiển thị thông báo nếu không có đơn hàng
         ) : (
           <div className="orders-list">
             {orders.map((order) => (
@@ -145,27 +263,26 @@ const ProgressInformation: React.FC = () => {
                   {order.isDeleted && <p className="canceled-label">Đã hủy</p>}
                 </div>
                 {!order.isDeleted && (
-                  <>
-                    <button
-                      className="view-progress-button"
-                      onClick={() =>
-                        navigate(`/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`)
+                  <button
+                    className="view-progress-button"
+                    onClick={() => {
+                      if (!order.isJoined) {
+                        joinOrder(order.id, order.subscriptionName); // Gọi hàm tham gia
+                      } else {
+                        navigate(
+                          `/progress/${order.id}?subscriptionName=${encodeURIComponent(order.subscriptionName)}`
+                        ); // Điều hướng đến trang tiến trình
                       }
-                    >
-                      Xem tiến trình
-                    </button>
-                    <button
-                      className="cancel-order-button"
-                      onClick={() => cancelOrder(order.id)}
-                    >
-                      Hủy tiến trình
-                    </button>
-                  </>
+                    }}
+                  >
+                    {order.isJoined ? "Xem Tiến Trình" : "Tham gia"}
+                  </button>
                 )}
               </div>
             ))}
           </div>
         )}
+
 
         {activeOrder && (
           <div className="content-layout">
@@ -193,6 +310,7 @@ const ProgressInformation: React.FC = () => {
                 </div>
               )}
             </div>
+
 
             {/* Content Area */}
             <div className="session-content-area">
@@ -240,4 +358,6 @@ const ProgressInformation: React.FC = () => {
   );
 };
 
+
 export default ProgressInformation;
+

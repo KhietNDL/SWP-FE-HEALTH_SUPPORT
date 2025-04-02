@@ -1,4 +1,4 @@
-import { BookOpen, Users, ClipboardList, Calendar, LogOut } from "lucide-react";
+import { BookOpen, Users, ClipboardList, Calendar, LogOut, LineChart } from "lucide-react";
 import "./index.scss";
 import { useEffect, useState } from "react";
 import SurveyTypeManagement from "../SurveyTypeManagement/SurveyTypeManagement";
@@ -12,6 +12,7 @@ import { logout } from "../../redux/features/userSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import AppointmentManagement from "../AppointmentManagement";
+import LineChartManagementPage from "../../pages/LineChartmanage";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -54,6 +55,12 @@ const Sidebar = () => {
           >
             <Calendar /> <span>Appointments</span>
           </li>
+          <li
+            className={activePage === "LineChart" ? "active" : ""}
+            onClick={() => setActivePage("LineChart")}
+          >
+            <LineChart /> <span>Line Chart</span>
+          </li>
         </ul>
         <div className="consultant-info">
           <div className="consultant-details">
@@ -72,6 +79,7 @@ const Sidebar = () => {
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
         {activePage === "Appointments" && <AppointmentManagement />}
+        {activePage === "LineChart" && <LineChartManagementPage />}
       </div>
     </div>
   );

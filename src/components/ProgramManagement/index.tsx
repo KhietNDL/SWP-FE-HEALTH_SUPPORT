@@ -26,6 +26,8 @@ const SubscriptionManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [categories, setCategories] = useState<{ id: string; categoryName: string }[]>([]);
   const [psychologists, setPsychologists] = useState<{ id: string; name: string; specialization: string }[]>([]);
   const [currentSub, setCurrentSub] = useState<Subscription>({
@@ -164,18 +166,39 @@ const SubscriptionManagement: React.FC = () => {
   // Xóa Subscription
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this subscription?")) return;
-
+  
     try {
+      // Fetch all orders
+      const ordersResponse = await fetch(`http://localhost:5199/Order`);
+      if (!ordersResponse.ok) throw new Error("Failed to fetch orders");
+  
+      const orders = await ordersResponse.json();
+  
+      // Filter orders by subscriptionId
+      const relatedOrders = orders.filter((order: any) => order.subscriptionName === subscriptions.find((sub) => sub.id === id)?.subscriptionName);
+  
+      // Check if any order has isJoined = true
+      const hasJoinedOrders = relatedOrders.some((order: any) => order.isJoined === true);
+  
+      if (hasJoinedOrders) {
+        setErrorMessage("Cannot delete this subscription because it has participants.");
+        setShowErrorPopup(true);
+        return;
+      }
+  
+      // Proceed with deletion if no joined orders exist
       const response = await fetch(`http://localhost:5199/Subscription/${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete subscription");
-
-      // 🔥 Sau khi xóa, gọi lại API để cập nhật danh sách
+  
+      // Refresh the subscription list
       fetchSubscriptions();
     } catch (error) {
       console.error("Error deleting subscription:", error);
-      alert("Failed to delete subscription. Please try again.");
+      setErrorMessage("Failed to delete subscription. Please try again.");
+      setShowErrorPopup(true);
     }
   };
+  
 
   // 🔹 Fix lỗi `.toLowerCase()` bị undefined
   const filteredSubs = subscriptions.filter((sub) =>
@@ -333,6 +356,24 @@ const SubscriptionManagement: React.FC = () => {
                 <button type="submit">{editingId !== null ? "Update" : "Create"}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Error Popup */}
+      {showErrorPopup && (
+        <div className="error-popup-overlay">
+          <div className="error-popup-content">
+            <div className="error-popup-icon">
+              <XCircle size={40} color="#d32f2f" />
+            </div>
+            <p className="error-popup-message">{errorMessage}</p>
+            <button 
+              className="error-popup-button"
+              onClick={() => setShowErrorPopup(false)}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}

@@ -11,6 +11,11 @@
     align-items: center;
     margin-bottom: 20px;
 
+    .header-buttons {
+      display: flex;
+      gap: 10px; /* Add spacing between buttons */
+    }
+
     h2 {
       font-size: 20px;
       font-weight: bold;
@@ -32,6 +37,28 @@
 
       &:hover {
         background: #1565c0;
+      }
+    }
+
+    .navigate-button {
+      display: flex;
+      align-items: center;
+      background: #4caf50; /* Green background */
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background: #388e3c; /* Darker green on hover */
+        transform: scale(1.05); /* Slight zoom effect */
+      }
+
+      &:active {
+        transform: scale(0.95); /* Slight shrink effect on click */
       }
     }
   }
@@ -195,5 +222,82 @@
         }
       }
     }
+  }
+}
+
+/* Error Popup Styles */
+.error-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  animation: slideIn 0.3s ease;
+}
+
+.error-popup-icon {
+  margin-bottom: 20px;
+}
+
+.error-popup-message {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.error-popup-button {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #b71c1c;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

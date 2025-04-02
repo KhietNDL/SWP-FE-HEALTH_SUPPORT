@@ -1,6 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import loginBg from "../../images/login.jpg";
+import loginBg from "../../images/login2.jpg";
 import "./LoginForm.scss";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";

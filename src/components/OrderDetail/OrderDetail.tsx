@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { RootState } from "../../redux/Store";
 import { setOrder } from "../../redux/features/orderSlice";
 import "../../components/OrderDetail/OrderDetail.scss";
@@ -9,44 +9,101 @@ const OrderDetail: React.FC = () => {
   console.log("🔥 OrderDetail.tsx đã render");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { id } = useParams(); // Lấy orderId từ URL
 
-  // Lấy dữ liệu từ Redux Store
+  // Lấy subscriptionId từ state được truyền qua navigate
+  const subscriptionId = location.state?.subscriptionId;
+
+  // Get data from Redux Store
   const order = useSelector((state: RootState) => state.order?.currentOrder);
   const user = useSelector((state: RootState) => state.user) || { fullname: "Đang cập nhật" };
 
+  // Fetch order details if not in Redux store
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (!order && id) {
+        try {
+          const response = await fetch(`http://localhost:5199/Order/${id}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch order: ${response.status}`);
+          }
+          const orderData = await response.json();
+          dispatch(setOrder(orderData));
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+        }
+      }
+    };
+
+    fetchOrderDetails();
+  }, [id, order, dispatch]);
+
   console.log("Redux Order:", order);
   console.log("Redux User:", user);
-
-  useEffect(() => {
-    if (!order) {
-      console.warn("Không tìm thấy đơn hàng!");
-    }
-  }, [order]);
+  console.log("Subscription ID from state:", subscriptionId);
+  console.log("Order ID from URL:", id);
 
   // Xử lý nếu không tìm thấy đơn hàng
   if (!order) {
-    return <div className="order-detail-container">Không tìm thấy đơn hàng!</div>;
+    return <div className="order-detail-container">Đang tải thông tin đơn hàng...</div>;
   }
 
   // Xử lý điều hướng khi xác nhận đơn hàng
   const handleConfirm = async () => {
     try {
-      console.log("Fetching progress data and navigating to payment page");
+        console.log("Preparing data to send to API...");
 
-      // Fetch progress data using subscriptionName
-      const response = await fetch(`http://localhost:5199/SubscriptionProgress?subscriptionName=${encodeURIComponent(order.subscriptionName)}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch progress data: ${response.status}`);
-      }
+        if (!order) {
+            console.error("Order data is missing!");
+            alert("Không tìm thấy thông tin đơn hàng. Vui lòng thử lại.");
+            return;
+        }
 
-      const progressData = await response.json();
-      console.log("Progress data fetched successfully:", progressData);
+        // Dữ liệu gửi đến API
+        const requestData = { 
+            orderId: order.id,
+           
+        };
 
-      // Navigate to payment page
-      navigate(`/payment`);
+        console.log("Request Data:", requestData);
+
+        // Gửi request đến API
+        const response = await fetch("http://localhost:5199/api/Transaction/vnpay/url", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Origin": window.location.origin,
+                "Referer": window.location.href
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        console.log("API Response Status:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API Error Response:", errorText);
+            throw new Error(`Failed to create VNPAY: ${response.status}`);
+        }
+
+        // Lấy phản hồi từ API (dạng chuỗi)
+        const paymentUrl = await response.text();
+        console.log("Payment URL:", paymentUrl);
+
+        if (!paymentUrl.startsWith("http")) {
+            throw new Error("API did not return a valid payment URL");
+        }
+
+        // Lưu transactionId vào LocalStorage
+        localStorage.setItem("transactionId", order.id);
+
+        // Điều hướng đến sandbox VNPay
+        console.log("Redirecting to sandbox VNPay...");
+        window.location.href = paymentUrl;
     } catch (error) {
-      console.error("Error fetching progress data:", error);
-      alert("Không thể lấy tiến trình. Vui lòng thử lại sau.");
+        console.error("Error creating VNPAY:", error);
+        alert("Không thể tạo thanh toán. Vui lòng thử lại sau.");
     }
   };
 
