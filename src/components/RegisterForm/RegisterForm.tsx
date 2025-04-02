@@ -299,7 +299,7 @@ const RegistrationForm: React.FC = () => {
                           <option value="">Chọn vai trò</option>
                           <option value="Student">Học Sinh</option>
                           <option value="Parent">Phụ Huynh</option>
-                          <option value="Manager">Quản Trị Viên</option>
+                          
                         </select>
                         {errors.roleName && (
                           <p className="error-message">{errors.roleName}</p>
