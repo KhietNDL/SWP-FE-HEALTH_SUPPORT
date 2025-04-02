@@ -11,14 +11,22 @@ const PaymentCallback: React.FC = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Lấy tất cả query parameters từ URL
+        // Lấy parameters từ URL sau khi backend redirect về
         const params = new URLSearchParams(location.search);
         const paymentStatus = params.get('paymentStatus');
         const transactionId = params.get('transactionId');
 
+        console.log("Payment Status:", paymentStatus);
+        console.log("Transaction ID:", transactionId);
+
+        const transactionDetails = await fetch(`http://localhost:5199/api/Transaction/${transactionId}`);
+
         if (paymentStatus === "success") {
           setStatus("success");
           setMessage("Thanh toán thành công! Bạn sẽ được chuyển hướng về trang chủ sau 5 giây.");
+          
+          // Có thể cập nhật Redux store hoặc thực hiện các tác vụ khác
+          
           setTimeout(() => {
             navigate("/");
           }, 5000);
@@ -32,10 +40,7 @@ const PaymentCallback: React.FC = () => {
       } catch (error) {
         console.error("Error processing payment callback:", error);
         setStatus("error");
-        setMessage("Có lỗi xảy ra khi xử lý thanh toán. Bạn sẽ được chuyển hướng về trang chủ sau 5 giây.");
-        setTimeout(() => {
-          navigate("/");
-        }, 5000);
+        setMessage("Có lỗi xảy ra khi xử lý thanh toán.");
       }
     };
 
@@ -47,6 +52,7 @@ const PaymentCallback: React.FC = () => {
       <div className={`status-message ${status}`}>
         <h2>{message}</h2>
         <p>Vui lòng đợi trong giây lát...</p>
+        {/* Có thể thêm thông tin chi tiết về giao dịch */}
       </div>
     </div>
   );

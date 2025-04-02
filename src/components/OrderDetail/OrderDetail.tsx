@@ -63,7 +63,7 @@ const OrderDetail: React.FC = () => {
         // Dữ liệu gửi đến API
         const requestData = { 
             orderId: order.id,
-            returnUrl: "http://localhost:5199/api/Transaction/vnpay/callback" // Use callback URL for transaction creation
+           
         };
 
         console.log("Request Data:", requestData);
