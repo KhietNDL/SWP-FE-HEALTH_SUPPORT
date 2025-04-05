@@ -1,0 +1,114 @@
+.payment-detail-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    
+    .header {
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      
+      img {
+        height: 40px;
+      }
+    }
+  
+    .title {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .bank-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      img {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+      }
+      
+      .bank-name {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+      
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        
+        &:focus {
+          outline: none;
+          border-color: #007bff;
+        }
+      }
+    }
+    
+    .submit-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+    
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      
+      .contact {
+        display: flex;
+        align-items: center;
+        
+        .phone, .email {
+          display: flex;
+          align-items: center;
+          margin-right: 15px;
+          font-size: 13px;
+          
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
+      
+      .security {
+        display: flex;
+        img {
+          height: 30px;
+        }
+      }
+    }
+  }

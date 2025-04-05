@@ -261,9 +261,9 @@ const SubscriptionManagement: React.FC = () => {
               <td>VND{sub.price.toLocaleString()}</td>
               <td>{sub.duration} days</td>
               {/* Hiển thị tên Category dựa trên categoryId */}
-              <td>{categories.find((c) => c.id === sub.categoryId)?.categoryName || "Unknown"}</td>
+              <td>{sub.categoryName}</td>
               {/* Hiển thị tên Psychologist dựa trên psychologistId */}
-              <td>{psychologists.find((p) => p.id === sub.psychologistId)?.name || "Unknown"}</td>
+              <td>{sub.psychologistName}</td>
               <td>{sub.purpose}</td>
               <td>{sub.criteria}</td>
               <td>{sub.focusGroup}</td>
