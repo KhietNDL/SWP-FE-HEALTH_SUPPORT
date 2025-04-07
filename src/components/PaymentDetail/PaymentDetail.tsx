@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './PaymentDetail.scss';
 import { Modal, Spin } from 'antd';
-import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, LoadingOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 // Import bank logos
 import vcbLogo from '../../images/vcb.png';
@@ -46,6 +46,9 @@ const PaymentDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isCancelSuccess, setIsCancelSuccess] = useState(false);
   const [bankData, setBankData] = useState<BankInfo | null>(null);
   const [formData, setFormData] = useState<FormData>({
     accountNumber: '',
@@ -91,47 +94,69 @@ const PaymentDetail: React.FC = () => {
     setIsProcessing(true);
 
     try {
-      const transactionData = {
-        orderId: orderId,
-        amount: parseFloat(amount || "0"),
-        paymentMethod: "VNPay"
-      };
-
-      const response = await fetch('http://localhost:5199/api/Transaction', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(transactionData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Transaction failed');
-      }
-
       // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       setIsProcessing(false);
-
-      // Show success modal
-      setIsSuccessModalVisible(true);
-
-      // Auto redirect after 5 seconds
-      setTimeout(() => {
-        setIsSuccessModalVisible(false);
-        navigate('/');
-      }, 5000);
-
+      
+      // Redirect to OTP page with orderId and amount
+      navigate(`/otp?orderId=${orderId}&price=${amount}`);
+      
     } catch (error) {
-      console.error('Error creating transaction:', error);
+      console.error('Error:', error);
       setIsProcessing(false);
       Modal.error({
-        title: 'Thanh toán thất bại',
-        content: 'Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.',
+        title: 'Lỗi',
+        content: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCancelTransaction = () => {
+    setIsCancelModalVisible(true);
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!orderId) {
+      Modal.error({
+        title: 'Lỗi',
+        content: 'Không tìm thấy thông tin giao dịch.',
+      });
+      return;
+    }
+
+    setIsCancelling(true);
+    setIsCancelModalVisible(false);
+
+    try {
+      const response = await fetch(`http://localhost:5199/Order/${orderId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Lỗi: ${response.status}`);
+      }
+
+      setIsCancelSuccess(true);
+      
+      // Redirect to homepage after 2 seconds
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      console.error('Error cancelling transaction:', error);
+      Modal.error({
+        title: 'Lỗi',
+        content: 'Đã có lỗi xảy ra khi hủy giao dịch. Vui lòng thử lại.',
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  const handleCancelCancel = () => {
+    setIsCancelModalVisible(false);
   };
   
   if (!bankData) {
@@ -199,22 +224,21 @@ const PaymentDetail: React.FC = () => {
           />
         </div>
         
-        <div className="form-group">
-          <label>Mã xác nhận</label>
-          <input 
-            type="text" 
-            name="captcha" 
-            value={formData.captcha}
-            onChange={handleChange}
-            placeholder="Nhập mã xác nhận"
-            required
-          />
-        </div>
+        
         
         <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? 'Đang xử lý...' : 'Thanh toán'}
         </button>
       </form>
+
+      <button 
+        type="button" 
+        className="cancel-button" 
+        onClick={handleCancelTransaction}
+        disabled={isLoading || isCancelling}
+      >
+        Hủy Giao Dịch
+      </button>
       
       <div className="footer">
         <div className="contact">
@@ -240,19 +264,10 @@ const PaymentDetail: React.FC = () => {
         width={300}
         centered
         className="processing-modal"
-        bodyStyle={{
-          padding: '30px',
-          textAlign: 'center',
-        }}
       >
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          gap: '20px'
-        }}>
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />} />
-          <p style={{ margin: '0', color: '#1890ff' }}>Đang xử lý thanh toán...</p>
+        <div className="processing-content">
+          <Spin indicator={<LoadingOutlined />} />
+          <p>Đang xử lý thanh toán...</p>
         </div>
       </Modal>
 
@@ -264,44 +279,62 @@ const PaymentDetail: React.FC = () => {
         width={400}
         centered
         className="success-modal"
-        bodyStyle={{
-          padding: '30px',
-          textAlign: 'center',
-        }}
       >
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          gap: '20px'
-        }}>
-          <CheckCircleOutlined style={{ 
-            fontSize: '60px', 
-            color: '#52c41a'
-          }} />
-          <h2 style={{ 
-            margin: '0',
-            fontSize: '24px',
-            color: '#52c41a'
-          }}>
-            Thanh toán thành công!
-          </h2>
-          <p style={{ 
-            margin: '0',
-            fontSize: '16px',
-            color: '#8c8c8c'
-          }}>
-            Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi
-          </p>
-          <div style={{ 
-            marginTop: '10px',
-            padding: '10px 20px',
-            background: '#f6ffed',
-            border: '1px solid #b7eb8f',
-            borderRadius: '4px',
-            color: '#52c41a'
-          }}>
+        <div className="success-content">
+          <CheckCircleOutlined />
+          <h2>Thanh toán thành công!</h2>
+          <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
+          <div className="redirect-message">
             Tự động chuyển về trang chủ sau 5 giây...
+          </div>
+        </div>
+      </Modal>
+
+      {/* Cancel Confirmation Modal */}
+      <Modal
+        visible={isCancelModalVisible}
+        footer={null}
+        closable={false}
+        width={400}
+        centered
+        className="cancel-confirmation-modal"
+      >
+        <div className="cancel-confirmation-content">
+          <CloseCircleOutlined />
+          <h2>Xác nhận hủy giao dịch</h2>
+          <p>Bạn có chắc là muốn hủy giao dịch không?</p>
+          <div className="button-group">
+            <button 
+              className="cancel-confirm-button"
+              onClick={handleCancelConfirm}
+            >
+              Đồng ý
+            </button>
+            <button 
+              className="cancel-cancel-button"
+              onClick={handleCancelCancel}
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Cancel Success Modal */}
+      <Modal
+        visible={isCancelSuccess}
+        footer={null}
+        closable={false}
+        width={400}
+        centered
+        className="cancel-success-modal"
+      >
+        <div className="cancel-success-content">
+          <CheckCircleOutlined />
+          <h2>Đã hủy giao dịch</h2>
+          <p>Giao dịch của bạn đã được hủy thành công</p>
+          <div className="redirect-message">
+            Tự động chuyển về trang chủ sau 2 giây...
           </div>
         </div>
       </Modal>

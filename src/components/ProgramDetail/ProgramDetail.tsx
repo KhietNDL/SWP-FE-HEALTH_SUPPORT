@@ -17,6 +17,7 @@ function ProgramDetail() {
   const navigate = useNavigate();
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [programData, setProgramData] = useState<any>(null);
   const [imageUrl, setImageUrl] = useState("");
   const accountId = useSelector((state: RootState) => state.user?.id);
@@ -52,67 +53,75 @@ function ProgramDetail() {
   };
 
   const handleModalOk = async () => {
-    console.log("Dữ liệu trước khi đăng ký:", programData);
-    if (!programData?.id) {
-      console.error("❌ Lỗi: subscriptionId bị thiếu.");
-      return;
-    }
-    if (!accountId) {
-      console.error("❌ Lỗi: accountId không hợp lệ.");
-      return;
-    }
-  
-    const orderData = {
-      subscriptionId: programData.id,
-      accountId: accountId,
-      quantity: 1,
-    };
-  
-    console.log("Order Data:", orderData);
-  
-    try {
-      // Gửi request tạo đơn hàng
-      const response = await fetch("http://localhost:5199/Order/Create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Lỗi API: ${response.status} - ${errorText}`);
+    setIsLoading(true);
+    
+    // Add a 3-second delay before processing the order
+    setTimeout(async () => {
+      console.log("Dữ liệu trước khi đăng ký:", programData);
+      if (!programData?.id) {
+        console.error("❌ Lỗi: subscriptionId bị thiếu.");
+        setIsLoading(false);
+        return;
       }
-  
-      console.log("✅ Đơn hàng tạo thành công, đang lấy orderId...");
-  
-      // Gọi API để lấy đơn hàng mới nhất của tài khoản
-      const orderResponse = await fetch(`http://localhost:5199/Order?accountId=${accountId}`);
-      if (!orderResponse.ok) {
-        throw new Error(`Lỗi lấy đơn hàng: ${orderResponse.status}`);
+      if (!accountId) {
+        console.error("❌ Lỗi: accountId không hợp lệ.");
+        setIsLoading(false);
+        return;
       }
-  
-      const orders = await orderResponse.json();
-      if (orders.length === 0) {
-        throw new Error("Không tìm thấy đơn hàng nào.");
+    
+      const orderData = {
+        subscriptionId: programData.id,
+        accountId: accountId,
+        quantity: 1,
+      };
+    
+      console.log("Order Data:", orderData);
+    
+      try {
+        // Gửi request tạo đơn hàng
+        const response = await fetch("http://localhost:5199/Order/Create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Lỗi API: ${response.status} - ${errorText}`);
+        }
+    
+        console.log("✅ Đơn hàng tạo thành công, đang lấy orderId...");
+    
+        // Gọi API để lấy đơn hàng mới nhất của tài khoản
+        const orderResponse = await fetch(`http://localhost:5199/Order?accountId=${accountId}`);
+        if (!orderResponse.ok) {
+          throw new Error(`Lỗi lấy đơn hàng: ${orderResponse.status}`);
+        }
+    
+        const orders = await orderResponse.json();
+        if (orders.length === 0) {
+          throw new Error("Không tìm thấy đơn hàng nào.");
+        }
+    
+        orders.sort((a: any, b: any) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime()); 
+        const latestOrder = orders[0];// Giả sử đơn mới nhất là đơn cuối cùng
+        console.log("✅ Lấy được orderId:", latestOrder.id);
+    
+        dispatch(setOrder(latestOrder));
+    
+        setIsModalOpen(false);
+        navigate(`/order-detail/${latestOrder.id}`, {
+          state: { subscriptionId: programData.id }, // Truyền subscriptionId qua state
+        });
+      } catch (error: unknown) {
+        const errMessage = error instanceof Error ? error.message : "Lỗi không xác định";
+        console.error("❌ Lỗi:", errMessage);
+        alert(`Có lỗi xảy ra! Chi tiết: ${errMessage}`);
+        setIsLoading(false);
       }
-  
-      orders.sort((a: any, b: any) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime()); 
-      const latestOrder = orders[0];// Giả sử đơn mới nhất là đơn cuối cùng
-      console.log("✅ Lấy được orderId:", latestOrder.id);
-  
-      dispatch(setOrder(latestOrder));
-  
-      setIsModalOpen(false);
-      navigate(`/order-detail/${latestOrder.id}`, {
-        state: { subscriptionId: programData.id }, // Truyền subscriptionId qua state
-      });
-    } catch (error: unknown) {
-      const errMessage = error instanceof Error ? error.message : "Lỗi không xác định";
-      console.error("❌ Lỗi:", errMessage);
-      alert(`Có lỗi xảy ra! Chi tiết: ${errMessage}`);
-    }
+    }, 3000);
   };
   
   
@@ -175,9 +184,11 @@ function ProgramDetail() {
           open={isModalOpen}
           onOk={handleModalOk}
           onCancel={handleModalCancel}
-          okText="Đồng ý"
+          okText={isLoading ? "⏳ Đang khởi tạo đơn hàng..." : "Đồng ý"}
           cancelText="Hủy"
           className="program-confirmation-modal"
+          okButtonProps={{ disabled: isLoading }}
+          cancelButtonProps={{ disabled: isLoading }}
         >
           <p>Bạn có chắc là sẽ mua gói này không?</p>
         </Modal>

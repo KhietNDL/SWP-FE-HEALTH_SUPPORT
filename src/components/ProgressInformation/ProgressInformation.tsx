@@ -18,6 +18,7 @@ interface Order {
   isActive: boolean;
   isDeleted: boolean; // Use isDeleted instead of isCanceled
   isJoined?: boolean; // Add isJoined property
+  isSuccessful: boolean;
 }
 
 
@@ -73,8 +74,8 @@ const ProgressInformation: React.FC = () => {
         console.log("Fetched orders:", data); // Debug log
 
 
-        // Filter orders to ensure they belong to the current accountEmail
-        const filteredOrders = data.filter(order => order.accountEmail === accountEmail);
+        // Filter orders to ensure they belong to the current accountEmail and are successful
+        const filteredOrders = data.filter(order => order.accountEmail === accountEmail && order.isSuccessful === true);
         console.log("Filtered orders:", filteredOrders); // Debug log
 
 

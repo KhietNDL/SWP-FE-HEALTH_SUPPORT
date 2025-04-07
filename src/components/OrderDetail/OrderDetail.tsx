@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { RootState } from "../../redux/Store";
@@ -21,6 +21,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Lấy subscriptionId từ state được truyền qua navigate
   const subscriptionId = location.state?.subscriptionId;
@@ -61,8 +62,13 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
 
   // Xử lý điều hướng khi xác nhận đơn hàng
   const handleConfirm = () => {
-    // Navigate to PaymentMethod with orderId and price from Redux store
-    navigate(`/payment-method?orderId=${order.id}&price=${order.price}`);
+    setIsLoading(true);
+    
+    // Add a 3-second delay before navigation
+    setTimeout(() => {
+      // Navigate to PaymentMethod with orderId and price from Redux store
+      navigate(`/payment-method?orderId=${order.id}&price=${order.price}`);
+    }, 3000);
   };
 
   // xử lí khi bấm nút hủy: 
@@ -106,8 +112,10 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         </div>
 
         <div className="bill-footer">
-          <button className="confirm-button" onClick={handleConfirm}>✔ Đồng ý</button>
-          <button className="cancel-button" onClick={handleCancel}>❌ Hủy</button>
+          <button className="confirm-button" onClick={handleConfirm} disabled={isLoading}>
+            {isLoading ? "⏳ Đang xử lý..." : "✔ Đồng ý"}
+          </button>
+          <button className="cancel-button" onClick={handleCancel} disabled={isLoading}>❌ Hủy</button>
         </div>
       </div>
     </div>
