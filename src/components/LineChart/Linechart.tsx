@@ -10,12 +10,12 @@ interface SubscriptionData {
 
 const SubscriptionLineChart: React.FC = () => {
   const [data, setData] = useState<SubscriptionData[]>([
-    { month: 'Jan', totalPrograms: 50, totalRevenue: 75000 },
-    { month: 'Feb', totalPrograms: 65, totalRevenue: 97500 },
-    { month: 'Mar', totalPrograms: 55, totalRevenue: 82500 },
-    { month: 'Apr', totalPrograms: 70, totalRevenue: 105000 },
-    { month: 'May', totalPrograms: 60, totalRevenue: 90000 },
-    { month: 'Jun', totalPrograms: 75, totalRevenue: 112500 }
+    { month: 'Jan', totalPrograms: 0.5, totalRevenue: 75000 },
+    { month: 'Feb', totalPrograms: 1.5, totalRevenue: 97500 },
+    { month: 'Mar', totalPrograms: 1.0, totalRevenue: 82500 },
+    { month: 'Apr', totalPrograms: 2.0, totalRevenue: 105000 },
+    { month: 'May', totalPrograms: 1.5, totalRevenue: 90000 },
+    { month: 'Jun', totalPrograms: 2.5, totalRevenue: 112500 }
   ]);
 
   useEffect(() => {
@@ -85,7 +85,12 @@ const SubscriptionLineChart: React.FC = () => {
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
-          <YAxis yAxisId="left" label={{ value: 'Total Programs', angle: -90, position: 'insideLeft' }} />
+          <YAxis yAxisId="left" 
+            label={{ value: 'Total Programs', angle: -90, position: 'insideLeft' }}
+            tickFormatter={(value) => Math.floor(value).toString()}
+            domain={[0, 'auto']}
+            allowDecimals={false}
+          />
           <YAxis 
             yAxisId="right" 
             orientation="right" 
