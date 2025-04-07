@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 40px;
+  padding: 0px 60px;
   position: relative;
   z-index: 10;
   transition: all 0.3s ease;
@@ -19,7 +19,7 @@
   &__nav {
     ul {
       display: flex;
-      gap: 100px;
+      gap: 120px;
 
       li {
         height: 100%;
@@ -118,7 +118,7 @@
       position: absolute;
       list-style: none;
       background-color: #fff;
-      width: 150px;
+      width: 100%;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
       padding: 8px 0;
@@ -151,13 +151,15 @@
   .header__right {
     display: flex;
     align-items: center;
-    gap: 20px; // Khoảng cách giữa thông báo và avatar
+    gap: 10px; // Khoảng cách giữa thông báo và avatar
   }
   
   .notification-container {
+    border-radius: 50%;
     display: flex;
     align-items: center;
     position: relative;
+    
   }
   
   .notification-icon {
@@ -171,4 +173,27 @@
     justify-content: center;
   }
   
+  
+}
+.appointment-modal{
+  background: white;
+  
+  border-radius: 10px;
+  padding-bottom: 0px;
+  max-width: 400px;
+  width: 100%;
+  
+  
+  
+
+  p {
+    margin: 10px 0;
+  }
+  Button{
+    background-color: red;
+    color: white;
+  }
+  Button:hover{
+    background-color: rgb(194, 0, 0);
+  }
 }

@@ -236,10 +236,14 @@ const SurveyEdit: React.FC = () => {
               <div className="question-content">
                 {editingQuestionId === question.id ? (
                   <div className="edit-question-form">
+                    <label htmlFor="edit-question-input" className="sr-only">Nội dung câu hỏi</label>
                     <input
+                      id="edit-question-input"
                       type="text"
                       value={editQuestionText}
                       onChange={(e) => setEditQuestionText(e.target.value)}
+                      placeholder="Nhập nội dung câu hỏi"
+                      aria-label="Nội dung câu hỏi"
                     />
                     <div className="button-group">
                       <button onClick={() => handleUpdateQuestion(question.id)}>Lưu</button>

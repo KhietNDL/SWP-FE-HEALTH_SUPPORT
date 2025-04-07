@@ -2,6 +2,7 @@ import "./index.scss";
 import {
   FacebookOutlined,
   InstagramOutlined,
+  TikTokOutlined,
   YoutubeOutlined,
 } from "@ant-design/icons";
 function Footer() {
@@ -65,15 +66,27 @@ function Footer() {
         <div className="footer__section">
           <h3>Kết nối với chúng tôi</h3>
           <div className="footer__icon">
-            <div>
+          <a
+              href="https://www.facebook.com/BrainCare.vn/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FacebookOutlined />
-            </div>
-            <div>
+            </a>
+            <a
+              href="https://www.tiktok.com/@braincare.vn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <InstagramOutlined />
-            </div>
-            <div>
+            </a>
+            <a
+              href="https://www.youtube.com/channel/UCHs5FSzv1vM91fqncrMGWsw"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <YoutubeOutlined />
-            </div>
+            </a>
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ export default function DoctorCarousel({
 
   const fetchMovies = async () => {
     const response = await axios.get(
-      "https://679e3cf1946b0e23c062eb69.mockapi.io/Doctor"
+      "http://localhost:5199/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
@@ -45,15 +45,17 @@ export default function DoctorCarousel({
       className={`doctor-carousel ${numberOfSlides > 1 ? "multi" : ""}`}
     >
       {poster.map((doctor) => (
-        <SwiperSlide>
+        <SwiperSlide key={doctor.id}>
           <div className="doctor-card">
             <div className="doctor-image">
-              <img src={doctor.poster_path} alt={doctor.name} />
+              <img src={`http://localhost:5199${doctor.imgUrl}`} alt={doctor.name} />
             </div>
             <div className="doctor-info">
               <h2>{doctor.name}</h2>
-              <p className="title">{doctor.role}</p>
-              <p className="info">{doctor.info}</p>
+              <p className="title">{doctor.specialization}</p>
+              {numberOfSlides === 1 && (
+                  <p className="info">{doctor.description}</p>
+                )}
               <Link to={`/booking-detail/${doctor.id}`}>
               <Button type="primary" className="doctor-button">
                 Xem thêm

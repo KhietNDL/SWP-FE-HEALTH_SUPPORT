@@ -327,7 +327,7 @@ const SurveyTypeManagement: React.FC = () => {
           <div className="popup-content">
             <div className="popup-header">
               <h2>Chỉnh Sửa Khảo Sát</h2>
-              <button className="close-button" onClick={closeEditPopup}>
+              <button className="close-button" onClick={closeEditPopup} aria-label="Close edit popup">
                 <FiX />
               </button>
             </div>
@@ -383,7 +383,7 @@ const SurveyTypeManagement: React.FC = () => {
           <div className="popup-content">
             <div className="popup-header">
               <h2>Thêm Khảo Sát Mới</h2>
-              <button className="close-button" onClick={closeAddPopup}>
+              <button className="close-button" onClick={closeAddPopup} aria-label="Close add popup">
                 <FiX />
               </button>
             </div>

@@ -3,39 +3,54 @@ import axios from "axios";
 import "./index.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { User } from "../../types/user";
-interface Appointment {
-  id: string;
-  createAt: string;
-  modifiedAt: string;
-  appointmentDate: string;
-  accountId: string;
-  account: User;
-  psychologistId: string;
-  status: string;
-}
+import { Appointment } from "../../types/Appointment";
 
 const Notification: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
+
   useEffect(() => {
-    if (user.id) { 
-        console.log(user.id);
-      axios.get(`http://localhost:5199/Appointment/316d922e-5cdd-4df0-bc2e-744b2aa6b42e/Psychologist`)
+    if (user.id) {
+      console.log(user.id);
+      axios.get(`http://localhost:5199/Appointment/by-name/${user?.fullname}/Psychologist`)
         .then(response => {
           setAppointments(response.data.filter((appt: Appointment) => appt.status === "pending"));
         })
         .catch(error => console.error("Error fetching appointments:", error));
     }
-  }, [user.id]); 
-  
+  }, [user.id]);
 
   const confirmAppointment = (id: string) => {
-    axios.put(`http://localhost:5199/Appointment/${id}/confirm`)
+    const appointmentToUpdate = appointments.find(appt => appt.id === id);
+    if (!appointmentToUpdate) return;
+  
+    const updatedAppointment = {
+      accountId: appointmentToUpdate.accountId,
+      psychologistId: appointmentToUpdate.psychologistId,
+      content: appointmentToUpdate.content,
+      appointmentDate: appointmentToUpdate.appointmentDate,
+      status: "approved"
+    };
+  
+    axios.put(`http://localhost:5199/Appointment/${id}`, updatedAppointment)
       .then(() => {
-        setAppointments(prev => prev.map(appt => appt.id === id ? { ...appt, status: "confirmed" } : appt));
+        // Gọi lại API để lấy danh sách cuộc hẹn mới nhất
+        axios.get(`http://localhost:5199/Appointment/by-name/${user?.fullname}/Psychologist`)
+          .then(response => {
+            setAppointments(response.data.filter((appt: Appointment) => appt.status === "pending"));
+          })
+          .catch(error => console.error("Error fetching updated appointments:", error));
       })
       .catch(error => console.error("Error confirming appointment:", error));
+  };
+  
+
+  const rejectAppointment = (id: string) => {
+    axios.delete(`http://localhost:5199/Appointment/${id}`)
+      .then(() => {
+        setAppointments(prev => prev.filter(appt => appt.id !== id));
+      })
+      .catch(error => console.error("Error rejecting appointment:", error));
   };
 
   return (
@@ -50,8 +65,12 @@ const Notification: React.FC = () => {
             <p>Email: {appt.account.email}</p>
             <p>Phone: {appt.account.phone}</p>
             <p>Address: {appt.account.address}</p>
+            <p>Content: {appt.content}</p>
             <p>Appointment Date: {new Date(appt.appointmentDate).toLocaleString()}</p>
+            <div className="button-group">
             <button onClick={() => confirmAppointment(appt.id)}>Confirm</button>
+            <button onClick={() => rejectAppointment(appt.id)}>Reject</button>
+            </div>
           </div>
         ))
       )}

@@ -2,7 +2,7 @@ import { BookOpen, Users, ClipboardList, Calendar, LogOut, LineChart } from "luc
 import "./index.scss";
 import { useEffect, useState } from "react";
 import SurveyTypeManagement from "../SurveyTypeManagement/SurveyTypeManagement";
-import LineChartManagement from "../LineChart/Linechart"
+
 import logo from "../../images/Logo.png";
 import UserManagement from "../UserManagement";
 import SubscriptionManagement from "../ProgramManagement";
@@ -11,23 +11,24 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/features/userSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import AppointmentManagement from "../AppointmentManagement";
+import LineChartManagementPage from "../../pages/LineChartmanage";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const User = useSelector((state: RootState) => state.user);
-  
 
   const handleLogout = () => {
-      dispatch(logout());
-      localStorage.removeItem("token");
-      navigate("/");
-    };
+    dispatch(logout());
+    localStorage.removeItem("token");
+    navigate("/");
+  };
   return (
     <div className="dashboard">
       <div className="sidebar">
         <h2 className="sidebar-title">
-        <img src={logo} width={80} alt="Logo" /> Admin Portal
+          <img src={logo} width={80} alt="Logo" /> Admin Portal
         </h2>
         <ul className="sidebar-menu">
           <li
@@ -48,7 +49,10 @@ const Sidebar = () => {
           >
             <ClipboardList /> <span>Surveys</span>
           </li>
-          <li>
+          <li
+            className={activePage === "Appointments" ? "active" : ""}
+            onClick={() => setActivePage("Appointments")}
+          >
             <Calendar /> <span>Appointments</span>
           </li>
           <li
@@ -59,10 +63,8 @@ const Sidebar = () => {
           </li>
         </ul>
         <div className="consultant-info">
-          <img className="consultant-avatar" src={`http://localhost:5199${User?.imgUrl}`} alt="Avatar" />
-
           <div className="consultant-details">
-            <strong>{User?.userName}</strong>
+            <strong>{User?.fullname}</strong>
             <p>{User?.roleName}</p>
           </div>
         </div>
@@ -76,7 +78,8 @@ const Sidebar = () => {
         {activePage === "Surveys" && <SurveyTypeManagement />}
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
-        {activePage === "LineChart" && <LineChartManagement />}
+        {activePage === "Appointments" && <AppointmentManagement />}
+        {activePage === "LineChart" && <LineChartManagementPage />}
       </div>
     </div>
   );

@@ -4,7 +4,7 @@
   margin-left: 100px;
   margin-right: 100px;
   margin-bottom: 20px;
-  background: #F8F6F7;
+  background: #f8f6f7;
   min-height: 100vh;
   min-width: 50vh;
   .doctor-profile {
@@ -13,22 +13,22 @@
     color: white;
     padding: 20px;
     height: auto;
-    .doctor-image{
-        width: 500px;
-        height: 350px;
+    .doctor-image {
+      width: 500px;
+      height: 350px;
 
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 8px;
-        }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
     }
     .doctor-name {
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 15px;
-      color: #7FBA00;
+      color: #7fba00;
     }
 
     .doctor-position {
@@ -43,7 +43,7 @@
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 15px;
-        color: #7FBA00;
+        color: #7fba00;
       }
 
       .info-item {
@@ -54,7 +54,7 @@
           margin-bottom: 5px;
           margin-right: 5px;
         }
-        
+
         .value {
           color: white;
         }
@@ -76,7 +76,7 @@
 
       .section-title {
         font-size: 24px;
-        color: #7FBA00;
+        color: #7fba00;
         font-weight: bold;
         margin-bottom: 20px;
       }
@@ -90,7 +90,6 @@
   }
 
   .book-button {
-    
     display: flex;
     margin: 0 auto;
     padding-bottom: 20px;
@@ -111,7 +110,6 @@
 
 // Add booking modal styles
 .booking-modal {
-
   .booking-form {
     padding: 20px;
     .doctor-info {
@@ -144,7 +142,73 @@
       }
     }
 
-    .booking-dates,
+    .booking-dates {
+      display: flex;
+      flex-direction: column;
+
+      gap: 10px;
+
+      .date-navigation {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        button {
+          background: #007bff;
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background 0.3s;
+
+          &:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+          }
+
+          &:hover:not(:disabled) {
+            background: #0056b3;
+          }
+        }
+      }
+
+      .date-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        overflow: hidden;
+        width: 100%;
+        white-space: nowrap;
+
+        .date-button {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 70px;
+          height: 70px;
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s;
+
+          &:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+          }
+
+          &.selected {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+          }
+        }
+      }
+    }
+
     .booking-times {
       margin-bottom: 25px;
 
@@ -211,7 +275,7 @@
       height: 40px;
       border-radius: 20px;
       font-size: 16px;
-      
+
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
