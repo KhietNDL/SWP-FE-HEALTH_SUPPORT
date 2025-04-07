@@ -1,0 +1,67 @@
+.services-card {
+    margin-top: 5%;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+
+    .services-card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .services-card-title {
+        font-size:1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .services-card-description {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .services-card-content {
+        padding: 1.5rem;
+    }
+
+    .services-card-chart {
+        height: 20rem;
+        width: 100%;
+    }
+
+    .services-card-loading,
+    .services-card-error {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20rem;
+        padding: 1.5rem;
+    }
+
+    .services-card-spinner {
+        height: 2rem;
+        width: 2rem;
+        animation: spin 1s linear infinite;
+        color: #9ca3af;
+    }
+
+    .services-card-error-message {
+        color: #ef4444;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+}

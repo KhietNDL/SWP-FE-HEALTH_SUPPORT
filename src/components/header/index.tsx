@@ -70,21 +70,21 @@ function Header() {
     setIsModalVisible(true);
   };
 
-  const notificationMenu = (
-    <Menu>
-      {notifications.length > 0 ? (
-        notifications.map((appointment, index) => (
-          <Menu.Item key={index} onClick={() => showAppointmentDetails(appointment)}>
-            <h3>Lịch khám</h3>
-            <strong>{appointment.psychologist.name}</strong> - {formatDate(appointment.appointmentDate)}
-            <p> ({appointment.status})</p>
-          </Menu.Item>
-        ))
-      ) : (
-        <Menu.Item>Không có thông báo</Menu.Item>
-      )}
-    </Menu>
-  );
+  const notificationMenu = {
+    items: notifications.length > 0 
+      ? notifications.map((appointment, index) => ({
+          key: index,
+          onClick: () => showAppointmentDetails(appointment),
+          label: (
+            <div>
+              <h3>Lịch khám</h3>
+              <strong>{appointment.psychologist.name}</strong> - {formatDate(appointment.appointmentDate)}
+              <p> ({appointment.status})</p>
+            </div>
+          )
+        }))
+      : [{ key: 'empty', label: 'Không có thông báo' }]
+  };
 
   return (
     <header className={`header ${isScrolled ? "fixed" : ""}`}>
@@ -111,7 +111,7 @@ function Header() {
       {user ? (
         <div className="header__right">
           <div className="notification-container">
-          <Dropdown overlay={notificationMenu} trigger={["click"]}>
+          <Dropdown menu={notificationMenu} trigger={["click"]}>
             <Badge count={notifications.length} offset={[8, 0]}>
               <BellOutlined className="notification-icon" />
             </Badge>
@@ -129,7 +129,7 @@ function Header() {
             <li><button onClick={handleLogout}><LogoutOutlined/> Đăng xuất</button></li>
           </ul>
           </div>
-          <Modal title="Chi tiết cuộc hẹn" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} className="appointment-modal">
+          <Modal title="Chi tiết cuộc hẹn" open={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} className="appointment-modal">
             {selectedAppointment && (
               <div>
                 <p><strong>Chuyên gia:</strong> {selectedAppointment.psychologist.name}</p>
