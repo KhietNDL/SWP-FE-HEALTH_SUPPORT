@@ -1,0 +1,44 @@
+.class-management {
+  padding: 24px;
+
+  .program-card {
+    height: 100%;
+    background: linear-gradient(145deg, #e6f7ff, #f6ffed);
+    border: 1px solid #91d5ff;
+    transition: all 0.3s ease;
+
+    .ant-card-head {
+      background: #1890ff;
+      color: white;
+      border-bottom: none;
+    }
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-color: #40a9ff;
+    }
+
+    .program-info {
+      margin-bottom: 8px;
+      padding: 8px;
+      border-radius: 4px;
+      background: rgba(24, 144, 255, 0.1);
+
+      strong {
+        color: #096dd9;
+      }
+    }
+
+    .program-description {
+      margin-top: 16px;
+    }
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+}

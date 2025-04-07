@@ -39,7 +39,7 @@ import PaymentMethodPage from "./pages/PaymentMethod";
 import PaymentDetailPage from "./pages/PaymentDetail";
 import OtpDetailPage from "./pages/otp/index";
 import OTP from "./components/OTP/otp";
-
+import ClassDetail from "./components/ClassDetail/ClassDetail";
 
 const router = createBrowserRouter([
   {
@@ -87,8 +87,8 @@ const router = createBrowserRouter([
       { path: "/api/Transaction/vnpay/callback", element: <PaymentCallback /> },
       { path: "payment-method", element: <PaymentMethodPage /> },
       { path: "payment-detail/:bankId", element: <PaymentDetailPage /> },
-      
       { path: "otp", element: <OTP /> },
+      { path: "class-detail/:programId", element: <ClassDetail /> },
     ],
   },
 ]);

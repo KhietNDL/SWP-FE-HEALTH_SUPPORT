@@ -81,6 +81,18 @@
             font-size: 12px;
             color: #666;
           }
+
+          .completed-label {
+            color: #52c41a;
+            font-weight: 500;
+            margin: 0;
+          }
+
+          .incomplete-label {
+            color: #faad14;
+            font-weight: 500;
+            margin: 0;
+          }
         }
       }
     }
