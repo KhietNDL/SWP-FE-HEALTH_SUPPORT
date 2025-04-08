@@ -49,7 +49,11 @@ const ClassDetail: React.FC = () => {
       try {
         setLoading(true);
         
-        // Fetch accounts first
+        // Get current subscription data first
+        const subscriptionResponse = await axios.get(`http://localhost:5199/Subscription/${programId}`);
+        const currentSubscription = subscriptionResponse.data;
+        
+        // Fetch accounts
         const accountsResponse = await axios.get('http://localhost:5199/Account');
         const accountsData = accountsResponse.data;
         setAccounts(accountsData);
@@ -59,17 +63,22 @@ const ClassDetail: React.FC = () => {
         const uniqueSections = [...new Set(progressResponse.data.map((p: any) => p.section))];
         setSections(uniqueSections.sort((a, b) => a - b));
 
-        // Fetch user progress before orders
+        // Fetch user progress
         const userProgressResponse = await axios.get(`http://localhost:5199/UserProgress?subscriptionId=${programId}`);
-        console.log('User Progress Data:', userProgressResponse.data);
         setUserProgress(userProgressResponse.data);
 
-        // Fetch orders with isJoined = true
+        // Fetch orders and filter by current subscription
         const ordersResponse = await axios.get(`http://localhost:5199/Order`);
         
         const joinedOrders = ordersResponse.data.filter((order: Order) => {
-          return order.isJoined === true && 
-                 order.subscriptionName === progressResponse.data[0].subscriptionName;
+          const isValidOrder = order.isJoined === true && 
+                             order.subscriptionName === currentSubscription.subscriptionName;
+          console.log('Checking order:', {
+            orderName: order.subscriptionName,
+            currentName: currentSubscription.subscriptionName,
+            isValid: isValidOrder
+          });
+          return isValidOrder;
         }).map((order: Order) => {
           const account = accountsData.find(acc => acc.fullname === order.accountName);
           return {
@@ -78,9 +87,7 @@ const ClassDetail: React.FC = () => {
           };
         });
 
-        console.log('Joined orders:', joinedOrders);
         setParticipants(joinedOrders);
-
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -89,7 +96,7 @@ const ClassDetail: React.FC = () => {
     };
 
     fetchData();
-  }, [programId, accounts.length]); // Add accounts.length to dependencies
+  }, [programId]); // Remove accounts.length dependency since we handle accounts inside
 
   const handleComplete = async (accountId: string, section: number) => {
     if (!accountId) {
