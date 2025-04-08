@@ -98,12 +98,12 @@ const ClassManagement: React.FC = () => {
                 onClick={() => handleProgramClick(program.id)}
               >
                 <div className="program-info">
-                  <Text strong>Category: </Text>
+                  <Text strong>Danh Mục: </Text>
                   <Text>{program.categoryName}</Text>
                 </div>
                 <div className="program-info">
-                  <Text strong>Duration: </Text>
-                  <Text>{program.duration} days</Text>
+                  <Text strong>Lộ Trình: </Text>
+                  <Text>{program.duration} tuần</Text>
                 </div>
               </Card>
             </Col>
