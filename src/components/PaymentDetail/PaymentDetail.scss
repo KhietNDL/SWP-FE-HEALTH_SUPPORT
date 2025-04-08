@@ -1,0 +1,366 @@
+.payment-detail-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    
+    .header {
+      display: flex;
+      justify-content: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      
+      img {
+        height: 40px;
+      }
+    }
+  
+    .title {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .bank-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      
+      img {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+      }
+      
+      .bank-name {
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+      }
+      
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        
+        &:focus {
+          outline: none;
+          border-color: #007bff;
+        }
+      }
+    }
+    
+    .submit-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    .cancel-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      
+      &:hover {
+        background-color: #cf1322;
+      }
+
+      &:disabled {
+        background-color: #ffa39e;
+        cursor: not-allowed;
+      }
+    }
+    
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      
+      .contact {
+        display: flex;
+        align-items: center;
+        
+        .phone, .email {
+          display: flex;
+          align-items: center;
+          margin-right: 15px;
+          font-size: 13px;
+          
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
+      
+      .security {
+        display: flex;
+        img {
+          height: 30px;
+        }
+      }
+    }
+  }
+
+  // Processing Modal Styles
+  .processing-modal {
+    &.ant-modal {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    
+      .ant-modal-content {
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    
+      .ant-modal-body {
+        padding: 30px;
+        text-align: center;
+      }
+    }
+
+    .processing-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .ant-spin {
+        font-size: 40px;
+      }
+
+      p {
+        margin: 0;
+        color: #1890ff;
+      }
+    }
+  }
+
+  // Success Modal Styles
+  .success-modal {
+    &.ant-modal {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    
+      .ant-modal-content {
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    
+      .ant-modal-body {
+        padding: 30px;
+        text-align: center;
+      }
+    }
+
+    .success-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .anticon {
+        font-size: 60px;
+        color: #52c41a;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #52c41a;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+        color: #8c8c8c;
+      }
+
+      .redirect-message {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #f6ffed;
+        border: 1px solid #b7eb8f;
+        border-radius: 4px;
+        color: #52c41a;
+      }
+    }
+  }
+
+  // Cancel Confirmation Modal Styles
+  .cancel-confirmation-modal {
+    &.ant-modal {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    
+      .ant-modal-content {
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    
+      .ant-modal-body {
+        padding: 30px;
+        text-align: center;
+      }
+    }
+
+    .cancel-confirmation-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .anticon {
+        font-size: 60px;
+        color: #ff4d4f;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #ff4d4f;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+        color: #8c8c8c;
+      }
+
+      .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+    }
+  }
+
+  // Cancel Success Modal Styles
+  .cancel-success-modal {
+    &.ant-modal {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    
+      .ant-modal-content {
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+    
+      .ant-modal-body {
+        padding: 30px;
+        text-align: center;
+      }
+    }
+
+    .cancel-success-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .anticon {
+        font-size: 60px;
+        color: #ff4d4f;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #ff4d4f;
+      }
+
+      p {
+        margin: 0;
+        font-size: 16px;
+        color: #8c8c8c;
+      }
+
+      .redirect-message {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #fff1f0;
+        border: 1px solid #ffa39e;
+        border-radius: 4px;
+        color: #ff4d4f;
+      }
+    }
+  }
+
+  // Custom button styles for cancel confirmation modal
+  .cancel-confirm-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ff4d4f, #cf1322);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #cf1322, #a8071a);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 77, 79, 0.3);
+    }
+  }
+
+  .cancel-cancel-button {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: transparent;
+    border: 2px solid #ff4d4f;
+    color: #ff4d4f;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #fff1f0;
+      border-color: #ff4d4f;
+      color: #ff4d4f;
+    }
+  }

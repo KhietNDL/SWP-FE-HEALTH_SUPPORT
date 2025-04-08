@@ -1,16 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { RootState } from "../../redux/Store";
 import { setOrder } from "../../redux/features/orderSlice";
 import "../../components/OrderDetail/OrderDetail.scss";
+import { OrderDetailProps } from '../../types/OrderDetail';
 
-const OrderDetail: React.FC = () => {
+const OrderDetail: React.FC<OrderDetailProps> = ({
+  id,
+  programId,
+  packageName,
+  fullname,
+  orderDate,
+  startDate,
+  endDate,
+  price,
+  duration,
+}) => {
   console.log("🔥 OrderDetail.tsx đã render");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-  const { id } = useParams(); // Lấy orderId từ URL
+  const [isLoading, setIsLoading] = useState(false);
 
   // Lấy subscriptionId từ state được truyền qua navigate
   const subscriptionId = location.state?.subscriptionId;
@@ -50,61 +61,14 @@ const OrderDetail: React.FC = () => {
   }
 
   // Xử lý điều hướng khi xác nhận đơn hàng
-  const handleConfirm = async () => {
-    try {
-        console.log("Preparing data to send to API...");
-
-        if (!order) {
-            console.error("Order data is missing!");
-            alert("Không tìm thấy thông tin đơn hàng. Vui lòng thử lại.");
-            return;
-        }
-
-        // Dữ liệu gửi đến API
-        const requestData = { 
-            orderId: order.id,
-           
-        };
-
-        console.log("Request Data:", requestData);
-
-        // Gửi request đến API
-        const response = await fetch("http://localhost:5199/api/Transaction/vnpay/url", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Origin": window.location.origin,
-                "Referer": window.location.href
-            },
-            body: JSON.stringify(requestData),
-        });
-
-        console.log("API Response Status:", response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("API Error Response:", errorText);
-            throw new Error(`Failed to create VNPAY: ${response.status}`);
-        }
-
-        // Lấy phản hồi từ API (dạng chuỗi)
-        const paymentUrl = await response.text();
-        console.log("Payment URL:", paymentUrl);
-
-        if (!paymentUrl.startsWith("http")) {
-            throw new Error("API did not return a valid payment URL");
-        }
-
-        // Lưu transactionId vào LocalStorage
-        localStorage.setItem("transactionId", order.id);
-
-        // Điều hướng đến sandbox VNPay
-        console.log("Redirecting to sandbox VNPay...");
-        window.location.href = paymentUrl;
-    } catch (error) {
-        console.error("Error creating VNPAY:", error);
-        alert("Không thể tạo thanh toán. Vui lòng thử lại sau.");
-    }
+  const handleConfirm = () => {
+    setIsLoading(true);
+    
+    // Add a 3-second delay before navigation
+    setTimeout(() => {
+      // Navigate to PaymentMethod with orderId and price from Redux store
+      navigate(`/payment-method?orderId=${order.id}&price=${order.price}`);
+    }, 3000);
   };
 
   // xử lí khi bấm nút hủy: 
@@ -128,6 +92,10 @@ const OrderDetail: React.FC = () => {
     }
   };
 
+  const handleRedirect = () => {
+    navigate("/payment-method");
+  };
+
   return (
     <div className="order-detail-container">
       <div className="order-bill">
@@ -144,9 +112,10 @@ const OrderDetail: React.FC = () => {
         </div>
 
         <div className="bill-footer">
-          <button className="confirm-button" onClick={handleConfirm}>✔ Đồng ý</button>
-          
-          <button className="cancel-button" onClick={handleCancel}>❌ Hủy</button>
+          <button className="confirm-button" onClick={handleConfirm} disabled={isLoading}>
+            {isLoading ? "⏳ Đang xử lý..." : "✔ Đồng ý"}
+          </button>
+          <button className="cancel-button" onClick={handleCancel} disabled={isLoading}>❌ Hủy</button>
         </div>
       </div>
     </div>

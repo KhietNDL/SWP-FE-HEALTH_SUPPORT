@@ -33,8 +33,12 @@ import TakeSurveyPage from "./pages/TakeSurvey";
 import ProgressManagePage from "./pages/ProgressManagement";
 import ProgressPage from "./pages/ProgramProgress";
 import OrderProgressPage from "./pages/OrderProgress";
-import OrderProgress from "./components/OrderProgress/OrderProgress";
+
 import PaymentCallback from "./components/PaymentCallback/PaymentCallback";
+import PaymentMethodPage from "./pages/PaymentMethod";
+import PaymentDetailPage from "./pages/PaymentDetail";
+
+import OTP from "./components/OTP/otp";
 
 
 const router = createBrowserRouter([
@@ -79,9 +83,12 @@ const router = createBrowserRouter([
       { path: "payment", element: <PaymentPage /> },
       { path: "progress-program", element: <ProgressPage /> },
       { path: "progress-information/:orderId", element: <Progress /> },
-      { path: "progress/:orderId", element: <OrderProgressPage /> }, // Route đúng
-     
-      { path: "/vnpay/callback", element: <PaymentCallback /> },
+      { path: "progress/:orderId", element: <OrderProgressPage /> },
+      { path: "/api/Transaction/vnpay/callback", element: <PaymentCallback /> },
+      { path: "payment-method", element: <PaymentMethodPage /> },
+      { path: "payment-detail/:bankId", element: <PaymentDetailPage /> },
+      
+      { path: "otp", element: <OTP /> },
     ],
   },
 ]);

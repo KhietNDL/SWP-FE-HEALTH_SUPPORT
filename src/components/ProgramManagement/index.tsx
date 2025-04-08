@@ -111,10 +111,35 @@ const SubscriptionManagement: React.FC = () => {
   };
 
   // Mở Modal để chỉnh sửa
-  const handleOpenEditModal = (sub: Subscription) => {
-    setEditingId(sub.id || null);
-    setCurrentSub(sub);
-    setShowModal(true);
+  const handleOpenEditModal = async (sub: Subscription) => {
+    try {
+      // Fetch all orders
+      const ordersResponse = await fetch(`http://localhost:5199/Order`);
+      if (!ordersResponse.ok) throw new Error("Failed to fetch orders");
+  
+      const orders = await ordersResponse.json();
+  
+      // Filter orders by subscriptionId
+      const relatedOrders = orders.filter((order: any) => order.subscriptionName === sub.subscriptionName);
+  
+      // Check if any order has isJoined = true
+      const hasJoinedOrders = relatedOrders.some((order: any) => order.isJoined === true);
+  
+      if (hasJoinedOrders) {
+        setErrorMessage("Không thể chỉnh sửa chương trình này vì đã có người tham gia.");
+        setShowErrorPopup(true);
+        return;
+      }
+  
+      // Proceed with editing if no joined orders exist
+      setEditingId(sub.id || null);
+      setCurrentSub(sub);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Lỗi kiểm tra trạng thái chương trình:", error);
+      setErrorMessage("Không thể kiểm tra trạng thái chương trình. Vui lòng thử lại.");
+      setShowErrorPopup(true);
+    }
   };
 
   // Đóng Modal
@@ -149,7 +174,7 @@ const SubscriptionManagement: React.FC = () => {
   
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Failed to save subscription: ${errorText}`);
+        throw new Error(`Không thể lưu chương trình: ${errorText}`);
       }
   
       await response.json();
@@ -159,13 +184,13 @@ const SubscriptionManagement: React.FC = () => {
       handleCloseModal();
     } catch (error) {
       console.error("🚨 Lỗi khi gửi API:", error);
-      alert("⚠ Failed to save subscription. Check console for details.");
+      alert("⚠ Không thể lưu chương trình. Kiểm tra console cho chi tiết.");
     }
   };
   
   // Xóa Subscription
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this subscription?")) return;
+    if (!window.confirm("Bạn có chắc chắn muốn xóa chương trình này không?")) return;
   
     try {
       // Fetch all orders
@@ -181,20 +206,20 @@ const SubscriptionManagement: React.FC = () => {
       const hasJoinedOrders = relatedOrders.some((order: any) => order.isJoined === true);
   
       if (hasJoinedOrders) {
-        setErrorMessage("Cannot delete this subscription because it has participants.");
+        setErrorMessage("Không thể xóa chương trình này vì đã có người tham gia.");
         setShowErrorPopup(true);
         return;
       }
   
       // Proceed with deletion if no joined orders exist
       const response = await fetch(`http://localhost:5199/Subscription/${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete subscription");
+      if (!response.ok) throw new Error("Không thể xóa chương trình này.");
   
       // Refresh the subscription list
       fetchSubscriptions();
     } catch (error) {
       console.error("Error deleting subscription:", error);
-      setErrorMessage("Failed to delete subscription. Please try again.");
+      setErrorMessage("Không thể xóa chương trình này. Vui lòng thử lại.");
       setShowErrorPopup(true);
     }
   };
@@ -261,9 +286,9 @@ const SubscriptionManagement: React.FC = () => {
               <td>VND{sub.price.toLocaleString()}</td>
               <td>{sub.duration} days</td>
               {/* Hiển thị tên Category dựa trên categoryId */}
-              <td>{categories.find((c) => c.id === sub.categoryId)?.categoryName || "Unknown"}</td>
+              <td>{sub.categoryName}</td>
               {/* Hiển thị tên Psychologist dựa trên psychologistId */}
-              <td>{psychologists.find((p) => p.id === sub.psychologistId)?.name || "Unknown"}</td>
+              <td>{sub.psychologistName}</td>
               <td>{sub.purpose}</td>
               <td>{sub.criteria}</td>
               <td>{sub.focusGroup}</td>
