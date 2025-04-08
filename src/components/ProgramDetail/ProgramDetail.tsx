@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { Modal } from "antd";
+import { Modal, notification } from "antd"; // Thêm notification vào import
 import Header from "../Header";
 import Footer from "../Footer";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
@@ -89,7 +89,53 @@ function ProgramDetail() {
     
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Lỗi API: ${response.status} - ${errorText}`);
+          if (errorText.includes("You have already created an order for this subscription")) {
+            Modal.error({
+              title: 'Thông báo',
+              content: (
+                <div className="error-modal-content">
+                  <h3 className="error-modal-title">
+                    Không thể đăng ký chương trình
+                  </h3>
+                  <p className="error-modal-message">
+                    Bạn đã đăng ký chương trình này trước đó
+                  </p>
+                  <p className="error-modal-submessage">
+                    Vui lòng kiểm tra lại trong danh sách chương trình của bạn
+                  </p>
+                </div>
+              ),
+              okText: 'Đã hiểu',
+              centered: true,
+              className: 'program-confirmation-modal custom-error-modal',
+              maskClosable: true,
+            });
+          } else if (errorText.includes("This subscription is full")) {
+            Modal.error({
+              title: 'Thông báo',
+              content: (
+                <div className="error-modal-content">
+                  <h3 className="error-modal-title">
+                    Chương trình đã đạt giới hạn
+                  </h3>
+                  <p className="error-modal-message">
+                    Chương trình này đã đạt đến số lượng đăng ký tối đa (35 người)
+                  </p>
+                  <p className="error-modal-submessage">
+                    Vui lòng thử lại sau hoặc chọn một chương trình khác
+                  </p>
+                </div>
+              ),
+              okText: 'Đã hiểu',
+              centered: true,
+              className: 'program-confirmation-modal custom-error-modal',
+              maskClosable: true,
+            });
+          } else {
+            throw new Error(`Lỗi API: ${response.status} - ${errorText}`);
+          }
+          setIsLoading(false);
+          return;
         }
     
         console.log("✅ Đơn hàng tạo thành công, đang lấy orderId...");
@@ -123,7 +169,6 @@ function ProgramDetail() {
       }
     }, 3000);
   };
-  
   
   
 
@@ -184,7 +229,8 @@ function ProgramDetail() {
           open={isModalOpen}
           onOk={handleModalOk}
           onCancel={handleModalCancel}
-          okText={isLoading ? "⏳ Đang khởi tạo đơn hàng..." : "Đồng ý"}
+          okText={isLoading ? "⏳ Đang khởi tạo đơn hàng..." : "Đồng ý"
+          }
           cancelText="Hủy"
           className="program-confirmation-modal"
           okButtonProps={{ disabled: isLoading }}

@@ -67,7 +67,7 @@ const SubscriptionManagement: React.FC = () => {
     try {
       const categoryResponse = await fetch("http://localhost:5199/api/Category");
       console.log("Category Response:", categoryResponse); // Log phản hồi từ API Category
-      const psychologistResponse = await fetch("http://localhost:5199/api/Psychologist");
+      const psychologistResponse = await fetch("http://localhost:5199/api/Psychologist/all");
       console.log("Psychologist Response:", psychologistResponse); // Log phản hồi từ API Psychologist
   
       if (!categoryResponse.ok || !psychologistResponse.ok) {

@@ -12,6 +12,7 @@ interface Progress {
   subscriptionName: string;
   isCompleted: boolean;
   createAt: string;
+  startDate : string;
   modifiedAt: string | null;
 }
 
@@ -343,7 +344,6 @@ const OrderProgress: React.FC = () => {
                     onClick={() => setActiveProgress(progress.id)}
                   >
                     <div className="session-number">Buổi {progress.section}</div>
-                    <div className="session-date">Ngày: {formatDate(progress.date.toString())}</div>
                     <p className={progress.isCompleted ? "completed-label" : "incomplete-label"}>
                       {progress.isCompleted ? "Đã hoàn thành" : "Chưa hoàn thành"}
                     </p>
@@ -362,7 +362,7 @@ const OrderProgress: React.FC = () => {
                 <div className="session-header">
                   <h2>Buổi {getCurrentProgress()?.section}</h2>
                   <div className="session-meta">
-                    Ngày tạo: {formatDate(getCurrentProgress()?.createAt || "")}
+                    Ngày tạo: {formatDate(getCurrentProgress()?.startDate || "")}
                   </div>
                 </div>
                 <div className="session-description">

@@ -371,3 +371,145 @@
     }
   }
 }
+
+// Custom Error Modal Styles
+.custom-error-modal {
+  &.program-confirmation-modal.ant-modal-confirm {
+    .ant-modal-content {
+      padding: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .ant-modal-close {
+      color: white;
+      top: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      
+      .ant-modal-close-x {
+        font-size: 1.2rem;
+        color: white;
+        line-height: 32px;
+        height: 32px;
+        width: 32px;
+      }
+    }
+
+    .ant-modal-body {
+      padding: 0;
+      
+      .ant-modal-confirm-body-wrapper {
+        padding: 0;
+      }
+
+      .ant-modal-confirm-title {
+        background: linear-gradient(135deg, #ff4d4f, #cf1322);
+        padding: 1.5rem 2rem;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+        margin: 0;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(207, 19, 34, 0.3);
+      }
+
+      .ant-modal-confirm-content {
+        margin: 0 !important;
+      }
+    }
+
+    .ant-modal-confirm-btns {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #f0f0f0;
+      margin-top: 0;
+      text-align: center;
+
+      .ant-btn {
+        padding: 0.8rem 2rem;
+        height: auto;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #ff4d4f, #cf1322);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &:hover {
+          background: linear-gradient(135deg, #ff7875, #ff4d4f);
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(255, 77, 79, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Error Modal Content Styles
+.error-modal-content {
+  text-align: center;
+  padding: 2rem;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  .error-modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+    color: #ff4d4f;
+    position: relative;
+    padding-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #ff4d4f, #ff7875);
+      border-radius: 3px;
+    }
+  }
+  
+  .error-modal-message {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .error-modal-submessage {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+    width: 100%;
+  }
+}

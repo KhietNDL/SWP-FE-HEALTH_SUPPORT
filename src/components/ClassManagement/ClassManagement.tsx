@@ -22,8 +22,8 @@ interface Subscription {
   assessmentTool: string;
 }
 
-const stripTitle = (name: string) => {
-  return name.replace(/^Dr\.\s+/, '');
+const normalizeString = (str: string) => {
+  return str.toLowerCase().trim();
 };
 
 const ClassManagement: React.FC = () => {
@@ -41,12 +41,10 @@ const ClassManagement: React.FC = () => {
         console.log('Current User fullname:', User?.fullname);
         
         const userPrograms = response.data.filter(
-          (program: Subscription) => {
-            const normalizedPsychologistName = stripTitle(program.psychologistName);
-            console.log('Comparing:', normalizedPsychologistName, 'with', User?.fullname);
-            return normalizedPsychologistName === User?.fullname;
-          }
+          (program: Subscription) => 
+            normalizeString(program.psychologistName) === normalizeString(User?.fullname || '')
         );
+        
         console.log('Filtered Programs:', userPrograms);
         setPrograms(userPrograms);
       } catch (error) {
