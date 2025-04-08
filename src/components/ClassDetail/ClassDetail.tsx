@@ -37,6 +37,18 @@ interface Account {
   // ...other fields
 }
 
+interface SubscriptionProgress {
+  id: string;
+  section: number;
+  description: string;
+  date: number;
+  startDate: string;
+  subscriptionName: string;
+  isCompleted: boolean;
+  createAt: string;
+  modifiedAt: string | null;
+}
+
 const ClassDetail: React.FC = () => {
   const { programId } = useParams<{ programId: string }>();
   const navigate = useNavigate();
@@ -46,6 +58,7 @@ const ClassDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState<UserProgress[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [sectionProgress, setSectionProgress] = useState<SubscriptionProgress[]>([]);
 
   // Fetch sections and participants
   useEffect(() => {
@@ -66,6 +79,7 @@ const ClassDetail: React.FC = () => {
         const progressResponse = await axios.get(`http://localhost:5199/SubscriptionProgress?subscriptionId=${programId}`);
         const uniqueSections = [...new Set(progressResponse.data.map((p: any) => p.section))];
         setSections(uniqueSections.sort((a, b) => a - b));
+        setSectionProgress(progressResponse.data); // Save the progress data
 
         // Get all user progress with exact matching conditions
         const userProgressResponse = await axios.get('http://localhost:5199/UserProgress');
@@ -207,14 +221,24 @@ const ClassDetail: React.FC = () => {
           <Card title="Danh sách tuần học">
             <List
               dataSource={sections}
-              renderItem={section => (
-                <List.Item
-                  className={`section-item ${activeSection === section ? 'active' : ''}`}
-                  onClick={() => setActiveSection(section)}
-                >
-                  <Text>Tuần {section}</Text>
-                </List.Item>
-              )}
+              renderItem={section => {
+                const progress = sectionProgress.find(p => p.section === section);
+                return (
+                  <List.Item
+                    className={`section-item ${activeSection === section ? 'active' : ''}`}
+                    onClick={() => setActiveSection(section)}
+                  >
+                    <div>
+                      <Text>Tuần {section}</Text>
+                      {progress && (
+                        <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                          {new Date(progress.startDate).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  </List.Item>
+                );
+              }}
             />
           </Card>
         </Col>
