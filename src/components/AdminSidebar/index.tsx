@@ -14,6 +14,7 @@ import { RootState } from "../../redux/Store";
 import AppointmentManagement from "../AppointmentManagement";
 import LineChartManagementPage from "../../pages/LineChartmanage";
 import ServicesBarChartPage from "../../pages/ServicesBarChart/ServicesBarChartPage";
+import DashboardOverallDataPage from "../../pages/DashboardOverrallData/DashboardOverrallData";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ const Sidebar = () => {
           <>
             <LineChartManagementPage />
             <ServicesBarChartPage />
+            <DashboardOverallDataPage />
           </>
         )}
       </div>

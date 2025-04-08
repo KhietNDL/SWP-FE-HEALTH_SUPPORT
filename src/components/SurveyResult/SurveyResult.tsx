@@ -26,7 +26,6 @@ const fetchAccountData = async () => {
     return null;
   }
 };
-fetchAccountData();
 
 // Fetch account survey data using the accountSurveyId
 const fetchAccountSurvey = async (accountSurveyId: string) => {
@@ -193,6 +192,20 @@ const SurveyResultsDashboard = () => {
   const [surveyName, setSurveyName] = useState<string>("");
   const [surveyAnswerRecords, setSurveyAnswerRecords] = useState<any[]>([]);
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const account = await fetchAccountData();
+      if (account) {
+        setAccountData({
+          fullname: account.fullname,
+          imgUrl: `http://localhost:5199${account.imgUrl}`,
+        });
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

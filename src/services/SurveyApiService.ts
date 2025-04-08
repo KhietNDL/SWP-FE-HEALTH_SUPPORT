@@ -1,25 +1,4 @@
-import axios, { AxiosInstance } from "axios";
-
-
-const API_BASE_URL = "http://localhost:5199";
-
-// Create an Axios instance with authentication
-export const getAuthAxios = (): AxiosInstance => {
-  const token = sessionStorage.getItem("token");
-  return axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-// Generic error handler
-const handleApiError = (error: any, errorMessage: string) => {
-  console.error(`${errorMessage}:`, error); // Ghi lỗi vào console
-  throw error; // Tiếp tục ném lỗi để xử lý ở nơi gọi hàm
-};
+import { getAuthAxios, handleApiError } from "./ApiConfig";
 
 // Account API calls
 export const accountApi = {
