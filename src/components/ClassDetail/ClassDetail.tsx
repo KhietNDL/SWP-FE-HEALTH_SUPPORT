@@ -16,6 +16,9 @@ interface UserProgress {
   description: string;
   date: number;
   subscriptionId: string;
+  subscriptionName: string;  // Add this field
+  createAt: string;         // Add this field
+  modifiedAt: string;       // Add this field
 }
 
 interface Order {
@@ -30,6 +33,7 @@ interface Account {
   id: string;
   fullname: string;
   email: string;
+  userName: string;
   // ...other fields
 }
 
@@ -48,45 +52,46 @@ const ClassDetail: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+       
         // Get current subscription data first
         const subscriptionResponse = await axios.get(`http://localhost:5199/Subscription/${programId}`);
         const currentSubscription = subscriptionResponse.data;
-        
-        // Fetch accounts
+       
+        // Fetch accounts first
         const accountsResponse = await axios.get('http://localhost:5199/Account');
         const accountsData = accountsResponse.data;
         setAccounts(accountsData);
 
-        // Fetch program progress sections
+        // Fetch progress sections
         const progressResponse = await axios.get(`http://localhost:5199/SubscriptionProgress?subscriptionId=${programId}`);
         const uniqueSections = [...new Set(progressResponse.data.map((p: any) => p.section))];
         setSections(uniqueSections.sort((a, b) => a - b));
 
-        // Fetch user progress
-        const userProgressResponse = await axios.get(`http://localhost:5199/UserProgress?subscriptionId=${programId}`);
-        setUserProgress(userProgressResponse.data);
-
-        // Fetch orders and filter by current subscription
-        const ordersResponse = await axios.get(`http://localhost:5199/Order`);
+        // Get all user progress with exact matching conditions
+        const userProgressResponse = await axios.get('http://localhost:5199/UserProgress');
         
-        const joinedOrders = ordersResponse.data.filter((order: Order) => {
-          const isValidOrder = order.isJoined === true && 
-                             order.subscriptionName === currentSubscription.subscriptionName;
-          console.log('Checking order:', {
-            orderName: order.subscriptionName,
-            currentName: currentSubscription.subscriptionName,
-            isValid: isValidOrder
-          });
-          return isValidOrder;
-        }).map((order: Order) => {
+        // First get orders to know which accounts are participating
+        const ordersResponse = await axios.get(`http://localhost:5199/Order`);
+        const joinedOrders = ordersResponse.data.filter((order: Order) => 
+          order.isJoined === true && 
+          order.subscriptionName === currentSubscription.subscriptionName
+        ).map((order: Order) => {
           const account = accountsData.find(acc => acc.fullname === order.accountName);
           return {
             ...order,
-            accountId: account?.id
+            accountId: account?.id,
+            userName: account?.userName
           };
         });
 
+        // Store all valid progress
+        const allProgress = userProgressResponse.data.filter((progress: any) => 
+          progress.subscriptionName === currentSubscription.subscriptionName &&
+          !progress.isDeleted
+        );
+
+        console.log('Initial Progress Data:', allProgress);
+        setUserProgress(allProgress);
         setParticipants(joinedOrders);
         setLoading(false);
       } catch (error) {
@@ -94,9 +99,8 @@ const ClassDetail: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [programId]); // Remove accounts.length dependency since we handle accounts inside
+  }, [programId]);
 
   const handleComplete = async (accountId: string, section: number) => {
     if (!accountId) {
@@ -106,10 +110,8 @@ const ClassDetail: React.FC = () => {
       });
       return;
     }
-
     try {
       const currentDate = Math.floor(Date.now() / 1000);
-
       // Create new progress
       const createPayload = {
         section,
@@ -119,27 +121,26 @@ const ClassDetail: React.FC = () => {
         accountId: accountId,
         isCompleted: false
       };
-
       console.log('Create payload:', createPayload);
-
       // Create UserProgress
       const createResponse = await axios.post(
         'http://localhost:5199/UserProgress/Create',
         createPayload
       );
-
       if (!createResponse.data) {
         throw new Error('Failed to create UserProgress');
       }
-
       // Fetch the newly created UserProgress to get its ID
       const userProgressList = await axios.get(
         `http://localhost:5199/UserProgress?accountId=${accountId}&subscriptionId=${programId}`
       );
 
-      const createdUserProgress = userProgressList.data.find(
-        (up: any) => up.section === section
-      );
+      // Tìm progress mới nhất theo createAt
+      const createdUserProgress = userProgressList.data
+        .filter((up: any) => up.section === section)
+        .sort((a: any, b: any) => 
+          new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+        )[0];
 
       if (!createdUserProgress) {
         throw new Error('Failed to find the newly created UserProgress');
@@ -152,8 +153,8 @@ const ClassDetail: React.FC = () => {
         isDeleted: false
       };
 
-      console.log('Update payload:', updatePayload);
-
+      console.log('Update payload for ID:', createdUserProgress.id);
+      
       const updateResponse = await axios.put(
         `http://localhost:5199/UserProgress/${createdUserProgress.id}`,
         updatePayload
@@ -163,23 +164,20 @@ const ClassDetail: React.FC = () => {
         throw new Error('Failed to update UserProgress');
       }
 
-      // Cập nhật state userProgress ngay lập tức
-      setUserProgress(prevProgress => [
-        ...prevProgress.filter(p => !(p.accountId === accountId && p.section === section)),
-        {
-          ...updatePayload,
-          id: createdUserProgress.id,
-          accountId: accountId,
-          section: section,
-          subscriptionId: programId
-        }
-      ]);
+      // Fetch lại progress sau khi update để đảm bảo dữ liệu mới nhất
+      const updatedProgressResponse = await axios.get(
+        `http://localhost:5199/UserProgress/${createdUserProgress.id}`
+      );
+      
+      const finalProgress = updatedProgressResponse.data;
+      console.log('Final progress after update:', finalProgress);
 
+      // Update state với dữ liệu mới nhất
+      setUserProgress(prev => [...prev, finalProgress]);
       notification.success({
         message: 'Cập nhật thành công',
         description: 'Đã cập nhật tiến độ cho học viên'
       });
-
     } catch (error: any) {
       console.error('Error in handleComplete:', error);
       notification.error({
@@ -225,25 +223,28 @@ const ClassDetail: React.FC = () => {
             <List
               dataSource={participants}
               renderItem={participant => {
-                // Kiểm tra chính xác progress cho từng học viên và section
+                // Find the account with matching fullname to get userName
+                const account = accounts.find(acc => acc.fullname === participant.accountName);
+                const userName = account?.userName;
                 const progress = userProgress.find(
                   p => 
-                    p.accountId === participant.accountId && 
-                    p.section === activeSection &&
-                    p.subscriptionId === programId && 
+                    p.accountName === userName && // Kiểm tra userName
+                    p.section === activeSection && // Kiểm tra section hiện tại
+                    p.subscriptionName === participant.subscriptionName && // Kiểm tra subscriptionName
                     p.isCompleted === true // Chỉ lấy những progress đã hoàn thành
                 );
-                
-                console.log('Checking progress for:', {
-                  participantId: participant.accountId,
-                  section: activeSection,
-                  progress: progress
-                });
 
+                console.log('Checking progress for:', {
+                  userName,
+                  section: activeSection,
+                  subscriptionName: participant.subscriptionName,
+                  foundProgress: progress,
+                  allProgressForUser: userProgress.filter(p => p.accountName === userName)
+                });
                 return (
                   <List.Item
                     actions={[
-                      progress ? (
+                      progress && progress.isCompleted ? (
                         <Text type="success">Đã tham gia</Text>
                       ) : (
                         <Button
@@ -256,7 +257,7 @@ const ClassDetail: React.FC = () => {
                     ]}
                   >
                     <List.Item.Meta
-                      title={participant.accountName}
+                      title={participant.accountName} // Keep displaying fullname
                     />
                   </List.Item>
                 );

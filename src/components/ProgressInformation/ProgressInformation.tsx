@@ -276,7 +276,7 @@ const ProgressInformation: React.FC = () => {
                       }
                     }}
                   >
-                    {order.isJoined ? "Xem Tiến Trình" : "Tham gia"}
+                    {order.isJoined ? "Xem Tiến Trình" : "Xem Tiến Trình"}
                   </button>
                 )}
               </div>

@@ -61,9 +61,23 @@ const ClassManagement: React.FC = () => {
     }
   }, [User?.fullname]);
 
-  const handleProgramClick = (programId: string) => {
-    console.log('Navigating to:', `/class-detail/${programId}`); // Debug log
-    navigate(`/class-detail/${programId}`);
+  const handleProgramClick = async (programId: string) => {
+    try {
+      // Pre-fetch UserProgress data before navigation
+      const userProgressResponse = await axios.get('http://localhost:5199/UserProgress');
+      console.log('Pre-fetched UserProgress:', {
+        programId: programId,
+        progress: userProgressResponse.data.filter((p: any) => p.subscriptionId === programId)
+      });
+      
+      // Navigate to class detail page
+      console.log('Navigating to:', `/class-detail/${programId}`);
+      navigate(`/class-detail/${programId}`);
+    } catch (error) {
+      console.error('Error pre-fetching UserProgress:', error);
+      // Still navigate even if pre-fetch fails
+      navigate(`/class-detail/${programId}`);
+    }
   };
 
   if (loading) {
