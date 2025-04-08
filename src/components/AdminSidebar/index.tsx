@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import AppointmentManagement from "../AppointmentManagement";
 import LineChartManagementPage from "../../pages/LineChartmanage";
+import RevenueDashboard from "../RevenueDashboard";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -61,6 +62,7 @@ const Sidebar = () => {
           >
             <LineChart /> <span>Line Chart</span>
           </li>
+          
         </ul>
         <div className="consultant-info">
           <div className="consultant-details">
@@ -79,7 +81,8 @@ const Sidebar = () => {
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
         {activePage === "Appointments" && <AppointmentManagement />}
-        {activePage === "LineChart" && <LineChartManagementPage />}
+        {activePage === "LineChart" && <><LineChartManagementPage /><RevenueDashboard /></>}
+        
       </div>
     </div>
   );

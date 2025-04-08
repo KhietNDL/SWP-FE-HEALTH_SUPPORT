@@ -27,8 +27,8 @@ function DoctorList() {
           </div>
           <div className="doctor-info">
             <h2>{doctor.name}</h2>
-            <p className="title">{doctor.specialization}</p>
-            
+            <p className="title-specialization">{doctor.specialization}</p>
+            <p className="title-expertise">chuyên môn: {doctor.expertise}</p>
             <Link to={`/booking-detail/${doctor.id}`}>
             <Button type="primary" className="doctor-button">
               Xem thêm

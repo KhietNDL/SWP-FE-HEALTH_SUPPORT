@@ -177,6 +177,7 @@ function ProgramDetail() {
           onCancel={handleModalCancel}
           okText="Đồng ý"
           cancelText="Hủy"
+          className="program-confirmation-modal"
         >
           <p>Bạn có chắc là sẽ mua gói này không?</p>
         </Modal>

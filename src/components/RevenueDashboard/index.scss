@@ -1,0 +1,178 @@
+// RevenueDashboard.scss
+// Assuming base variables ($border-color, $text-color-secondary, etc.) are defined elsewhere or here
+
+$border-color: #e8e8e8;
+$text-color-secondary: #666;
+$primary-chart-color: rgb(75, 192, 192); // Teal color used in chart
+
+.revenue-dashboard {
+  // Inherits or includes styles from .dashboard-container if defined globally
+  // Add specific styles for revenue dashboard if needed
+
+  // Reusing styles from previous example, adjust if necessary
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.7rem; // Slightly adjust size maybe
+  }
+
+  .year-selector-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-right: 10px;
+
+    label {
+      margin-right: 10px;
+      font-weight: 500;
+      color: $text-color-secondary;
+    }
+  }
+
+  // Style for the Antd Card containing the chart
+  .ant-card.chart-card { // Add class 'chart-card' in JSX
+    margin-bottom: 30px; // Space between chart card and detail card
+
+    .ant-card-head-title {
+       font-size: 1.1rem; // Adjust title size
+       font-weight: 600;
+    }
+
+    .ant-card-body {
+      padding: 0; // Remove default card padding if chart area handles it
+    }
+  }
+
+
+  .chart-area {
+    position: relative;
+    height: 420px; // Adjust height as needed
+    width: 100%;
+    padding: 20px; // Padding inside the chart area itself
+    border-radius: 0 0 8px 8px; // Match card bottom radius if padding removed from card body
+
+
+    // Placeholder styles remain similar, ensure they center within .chart-area
+    .placeholder-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: inherit; // Inherit border radius
+      text-align: center;
+      z-index: 10;
+
+      .ant-spin-spinning {
+        margin-bottom: 15px;
+      }
+      .ant-alert {
+         max-width: 85%;
+      }
+      p {
+        color: $text-color-secondary;
+        font-size: 1rem;
+        margin-top: 10px;
+      }
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  // Style for the Antd Card containing the details
+  .ant-card.detail-card { // Add class 'detail-card' in JSX
+
+     .ant-card-head {
+         background-color: #f0f8ff; // Light blue background for detail header
+         border-bottom: 1px solid darken($border-color, 5%);
+     }
+
+     .ant-card-head-title {
+         font-weight: 600;
+         font-size: 1.05rem;
+     }
+
+     .ant-card-extra {
+         // Style for the close button area
+         .ant-btn-link {
+             font-size: 0.9rem;
+         }
+     }
+
+
+    .ant-list {
+        padding: 0 10px; // Add some horizontal padding to the list
+
+        .ant-list-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 5px; // Adjust item padding
+          border-bottom: 1px solid $border-color;
+
+          &:last-child {
+            border-bottom: none; // Remove border for the last item
+          }
+
+          // Style for the program name (left side)
+          .ant-typography { // Targets the <Text> component
+             flex-grow: 1; // Allow name to take available space
+             margin-right: 15px; // Space before revenue
+             color: #444; // Slightly darker text
+          }
+
+          // Style for the revenue (right side)
+          .ant-typography-strong { // Targets the strong <Text> for revenue
+            color: $primary-chart-color; // Use chart color for revenue? Or a green color?
+            font-weight: 700;
+            white-space: nowrap; // Prevent revenue from wrapping
+          }
+        }
+     }
+      // Style for the 'no data' paragraph inside the detail card
+      > .ant-card-body > p {
+           text-align: center;
+           color: $text-color-secondary;
+           padding: 20px;
+       }
+  }
+
+  // Responsive adjustments
+   @media (max-width: 768px) {
+        .chart-area {
+            height: 380px;
+        }
+         .ant-card.chart-card .ant-card-head-title,
+         .ant-card.detail-card .ant-card-head-title {
+             font-size: 1rem;
+         }
+   }
+
+    @media (max-width: 480px) {
+         .chart-area {
+            height: 320px;
+            padding: 10px;
+        }
+         .ant-list-item {
+             padding: 8px 0px;
+         }
+         .ant-list-item .ant-typography {
+             font-size: 0.9rem; // Smaller text on small screens
+         }
+         .ant-list-item .ant-typography-strong {
+              font-size: 0.9rem;
+         }
+    }
+    
+}

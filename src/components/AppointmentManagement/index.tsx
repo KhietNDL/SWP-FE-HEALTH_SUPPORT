@@ -370,9 +370,7 @@ const AppointmentManagement: React.FC = () => {
       {/* HEADER */}
       <div className="appointment-header">
         <h2>Appointment Management</h2>
-        <button className="add-button" onClick={handleOpenCreateModal}>
-          <Plus size={16} /> Add New Appointment
-        </button>
+        
       </div>
       {/* CONTROLS: Search + Filter */}
       <div className="appointment-controls">
@@ -436,7 +434,7 @@ const AppointmentManagement: React.FC = () => {
               <th>Appointment Date</th>
               <th>Content Snippet</th>
               <th>Status</th>
-              <th>Actions</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -463,22 +461,7 @@ const AppointmentManagement: React.FC = () => {
                       {appointment.status}
                     </span>
                   </td>
-                  <td>
-                    <button
-                      className="edit-button"
-                      onClick={() => handleOpenEditModal(appointment)}
-                      title="Edit Appointment"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDeleteAppointment(appointment.id)}
-                      title="Delete Appointment"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
+                  
                 </tr>
               ))
             ) : (

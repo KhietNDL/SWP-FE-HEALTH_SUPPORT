@@ -289,81 +289,83 @@
 }
 
 // Custom Modal Styles
-.ant-modal {
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-
-  .ant-modal-content {
-    padding: 0;
+.program-confirmation-modal {
+  &.ant-modal {
     border-radius: 16px;
     overflow: hidden;
-  }
-
-  .ant-modal-header {
-    background: linear-gradient(135deg, #52c41a, #389e0d);
-    padding: 1.5rem 2rem;
-    border-bottom: none;
-    margin: 0;
-
-    .ant-modal-title {
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 600;
-      text-align: center;
-      font-family: 'Playfair Display', serif;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  
+    .ant-modal-content {
+      padding: 0;
+      border-radius: 16px;
+      overflow: hidden;
     }
-  }
-
-  .ant-modal-body {
-    padding: 2rem;
-    text-align: center;
-
-    p {
-      font-size: 1.2rem;
-      color: #333;
+  
+    .ant-modal-header {
+      background: linear-gradient(135deg, #52c41a, #389e0d);
+      padding: 1.5rem 2rem;
+      border-bottom: none;
       margin: 0;
-      line-height: 1.6;
-      font-weight: 500;
-    }
-  }
-
-  .ant-modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-
-    .ant-btn {
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      height: auto;
-      transition: all 0.3s ease;
-
-      &.ant-btn-default {
-        border: 2px solid #52c41a;
-        color: #52c41a;
-        background: transparent;
-
-        &:hover {
-          background: #f6ffed;
-          border-color: #52c41a;
-          color: #52c41a;
-        }
-      }
-
-      &.ant-btn-primary {
-        background: linear-gradient(135deg, #52c41a, #389e0d);
-        border: none;
+  
+      .ant-modal-title {
         color: white;
-
-        &:hover {
-          background: linear-gradient(135deg, #389e0d, #237804);
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(82, 196, 26, 0.3);
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+      }
+    }
+  
+    .ant-modal-body {
+      padding: 2rem;
+      text-align: center;
+  
+      p {
+        font-size: 1.2rem;
+        color: #333;
+        margin: 0;
+        line-height: 1.6;
+        font-weight: 500;
+      }
+    }
+  
+    .ant-modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+  
+      .ant-btn {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        height: auto;
+        transition: all 0.3s ease;
+  
+        &.ant-btn-default {
+          border: 2px solid #52c41a;
+          color: #52c41a;
+          background: transparent;
+  
+          &:hover {
+            background: #f6ffed;
+            border-color: #52c41a;
+            color: #52c41a;
+          }
+        }
+  
+        &.ant-btn-primary {
+          background: linear-gradient(135deg, #52c41a, #389e0d);
+          border: none;
+          color: white;
+  
+          &:hover {
+            background: linear-gradient(135deg, #389e0d, #237804);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(82, 196, 26, 0.3);
+          }
         }
       }
     }

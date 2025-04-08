@@ -6,5 +6,6 @@ export interface DoctorType {
   specialization: string;
   description: string;
   achievements: string;
+  expertise: string;
   imgUrl: string;
 } 
