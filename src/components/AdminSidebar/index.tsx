@@ -83,9 +83,10 @@ const Sidebar = () => {
         {activePage === "Appointments" && <AppointmentManagement />}
         {activePage === "Charts" && (
           <>
+            <DashboardOverallDataPage />
             <LineChartManagementPage />
             <ServicesBarChartPage />
-            <DashboardOverallDataPage />
+
           </>
         )}
       </div>
