@@ -7,5 +7,6 @@ export interface DoctorType {
   description: string;
   achievements: string;
   expertise: string;
+  urlMeet: string;
   imgUrl: string;
 } 

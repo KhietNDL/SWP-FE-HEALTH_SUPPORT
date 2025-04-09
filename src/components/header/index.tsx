@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/Store";
 import { Button, Badge, Dropdown, Menu, Modal } from "antd";
-import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined, FileTextOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, BellOutlined, StockOutlined, FileTextOutlined, VideoCameraOutlined } from "@ant-design/icons";
 // Giả sử bạn đã cài đặt date-fns: npm install date-fns
 // Hoặc bạn có thể dùng cách tính bằng mili giây như trong ví dụ trước
 import { differenceInHours, parseISO } from 'date-fns';
@@ -35,7 +35,6 @@ import logo from "../../images/Logo.png";
 import "./index.scss";
 import { Appointment } from "../../types/Appointment";
 
-// Định nghĩa kiểu dữ liệu Appointment (nên có từ file types)
 
 
 function Header() {
@@ -59,6 +58,7 @@ function Header() {
   useEffect(() => {
     if (user?.id) { // Kiểm tra user và id tồn tại
       fetch(`http://localhost:5199/Appointment/${user.id}/Account`)
+
         .then((res) => {
           if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
@@ -68,6 +68,7 @@ function Header() {
         .then((data: Appointment[]) => { // Thêm kiểu dữ liệu cho data
             // Lọc bỏ các lịch đã hủy hoặc trạng thái không muốn hiển thị ở đây nếu cần
             const activeAppointments = data.filter(app => app.status === 'pending' || app.status === 'approved');
+            console.log("Fetched appointments:", activeAppointments); // Debug log
             setNotifications(activeAppointments);
         })
         .catch((err) => console.error("Error fetching appointments:", err));
@@ -111,7 +112,7 @@ function Header() {
       // Tính số giờ chênh lệch
       const hoursDifference = differenceInHours(appointmentDateTime, now);
 
-      if (hoursDifference > 48) {
+      if (hoursDifference > 24) {
         return { canCancel: true, reason: "" };
       } else {
         return { canCancel: false, reason: "Chỉ được hủy lịch đã duyệt trước 48 giờ." };
@@ -201,6 +202,16 @@ function Header() {
             <div style={{ textTransform: 'capitalize', color: appointment.status === 'approved' ? 'green' : 'orange' }}>
                 ({appointment.status})
             </div>
+            <Button
+                                    type="primary"
+                                    href={appointment.psychologist.urlMeet} // Truy cập trực tiếp
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    icon={<VideoCameraOutlined />}
+                                    style={{  borderColor: '#000000' }}
+                                >
+                                    Join Meet
+                                </Button>
           </Menu.Item>
         ))
       ) : (
@@ -261,6 +272,7 @@ function Header() {
               <li><Link to="/info-user"><UserOutlined /> Thông tin</Link></li>
               <li><Link to="/progress"><StockOutlined /> Lộ Trình</Link></li>
               <li><Link to="/user-survey-result-list"><FileTextOutlined /> Lịch Sử Khảo Sát</Link></li>
+              <li><Link to="/user-survey-result-list"><FileTextOutlined /> Lịch Sử Khám bệnh</Link></li>
               {/* Nút Đăng xuất nên là button hoặc Menu.Item */}
               <li><button onClick={handleLogout} className="logout-button"><LogoutOutlined /> Đăng xuất</button></li>
             </ul>

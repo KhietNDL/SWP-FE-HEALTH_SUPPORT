@@ -9,7 +9,7 @@ function DoctorList() {
 
   const fetchDoctor = async () => {
     const response = await axios.get(
-      "https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/api/Psychologist/all"
+      "http://localhost:5199/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
@@ -23,16 +23,19 @@ function DoctorList() {
       {poster.map((doctor) => (
         <div className="doctor-card">
           <div className="doctor-image">
-            <img src={`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net${doctor.imgUrl}`} alt={doctor.name} />
+            <img
+              src={`http://localhost:5199${doctor.imgUrl}`}
+              alt={doctor.name}
+            />
           </div>
           <div className="doctor-info">
             <h2>{doctor.name}</h2>
             <p className="title-specialization">{doctor.specialization}</p>
             <p className="title-expertise">chuyên môn: {doctor.expertise}</p>
             <Link to={`/booking-detail/${doctor.id}`}>
-            <Button type="primary" className="doctor-button">
-              Xem thêm
-            </Button>
+              <Button type="primary" className="doctor-button">
+                Xem thêm
+              </Button>
             </Link>
           </div>
         </div>

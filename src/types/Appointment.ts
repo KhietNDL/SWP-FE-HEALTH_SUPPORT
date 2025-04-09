@@ -1,3 +1,4 @@
+import { DoctorType } from "./doctor";
 import { User } from "./user";
 export interface Appointment {
     id: string;
@@ -6,7 +7,7 @@ export interface Appointment {
     appointmentDate: string;
     accountId: string;
     account: User;
-    psychologistId: string;
+    psychologistId: DoctorType;
     psychologist: any | null;
     content: string;
     isDelete: boolean;
