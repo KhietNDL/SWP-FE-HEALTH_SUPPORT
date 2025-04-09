@@ -12,7 +12,7 @@ const Notification: React.FC = () => {
   useEffect(() => {
     if (user.id) {
       console.log(user.id);
-      axios.get(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment/by-name/${user?.fullname}/Psychologist`)
+      axios.get(`http://localhost:5199/Appointment/by-name/${user?.fullname}/Psychologist`)
         .then(response => {
           setAppointments(response.data.filter((appt: Appointment) => appt.status === "pending"));
         })
@@ -32,10 +32,10 @@ const Notification: React.FC = () => {
       status: "approved"
     };
   
-    axios.put(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment/${id}`, updatedAppointment)
+    axios.put(`http://localhost:5199/Appointment/${id}`, updatedAppointment)
       .then(() => {
         // Gọi lại API để lấy danh sách cuộc hẹn mới nhất
-        axios.get(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment/by-name/${user?.fullname}/Psychologist`)
+        axios.get(`http://localhost:5199/Appointment/by-name/${user?.fullname}/Psychologist`)
           .then(response => {
             setAppointments(response.data.filter((appt: Appointment) => appt.status === "pending"));
           })
@@ -46,7 +46,7 @@ const Notification: React.FC = () => {
   
 
   const rejectAppointment = (id: string) => {
-    axios.delete(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment/${id}`)
+    axios.delete(`http://localhost:5199/Appointment/${id}`)
       .then(() => {
         setAppointments(prev => prev.filter(appt => appt.id !== id));
       })

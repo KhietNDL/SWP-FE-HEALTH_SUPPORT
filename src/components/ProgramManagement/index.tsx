@@ -67,7 +67,7 @@ const SubscriptionManagement: React.FC = () => {
     try {
       const categoryResponse = await fetch("http://localhost:5199/api/Category");
       console.log("Category Response:", categoryResponse); // Log phản hồi từ API Category
-      const psychologistResponse = await fetch("http://localhost:5199/api/Psychologist");
+      const psychologistResponse = await fetch("http://localhost:5199/api/Psychologist/all");
       console.log("Psychologist Response:", psychologistResponse); // Log phản hồi từ API Psychologist
   
       if (!categoryResponse.ok || !psychologistResponse.ok) {
@@ -284,7 +284,7 @@ const SubscriptionManagement: React.FC = () => {
               <td>{sub.subscriptionName}</td>
               <td>{sub.description}</td>
               <td>VND{sub.price.toLocaleString()}</td>
-              <td>{sub.duration} days</td>
+              <td>{sub.duration} Buổi</td>
               {/* Hiển thị tên Category dựa trên categoryId */}
               <td>{sub.categoryName}</td>
               {/* Hiển thị tên Psychologist dựa trên psychologistId */}

@@ -61,11 +61,11 @@ function UserInformation() {
   
     try {
       // Gửi request cập nhật thông tin
-      await axios.put(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${reduxUser.id}`, updatedData);
+      await axios.put(`http://localhost:5199/Account/${reduxUser.id}`, updatedData);
       console.log("Cập nhật thông tin thành công!");
   
       // Gọi API GET để lấy thông tin mới nhất sau khi update thành công
-      const response = await axios.get(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${reduxUser.id}`);
+      const response = await axios.get(`http://localhost:5199/Account/${reduxUser.id}`);
       
       // Cập nhật Redux với dữ liệu mới nhất từ server
       dispatch(login(response.data));
@@ -93,7 +93,7 @@ function UserInformation() {
         newPassword,
       };
       const response = await axios.post(
-        "https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/UpdatePassword",
+        "http://localhost:5199/Account/UpdatePassword",
         payload
       );
       console.log("Password updated successfully:", response.data);
@@ -118,13 +118,13 @@ function UserInformation() {
   
     try {
       const avatar = await axios.put(
-        `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${reduxUser.id}/avatar`,
+        `http://localhost:5199/Account/${reduxUser.id}/avatar`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       setAvatarUrl(avatar.data.avatarUrl);
             // Gọi API GET để lấy thông tin mới nhất sau khi update thành công
-      const response = await axios.get(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${reduxUser.id}`);
+      const response = await axios.get(`http://localhost:5199/Account/${reduxUser.id}`);
       
       // Cập nhật Redux với dữ liệu mới nhất từ server
       dispatch(login(response.data));
@@ -178,7 +178,7 @@ function UserInformation() {
       <div className="avatar-section">
     <label>Hình đại diện</label>
     <div className="avatar-container" onClick={() => document.getElementById("avatarInput")?.click()}>
-      <img src={`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/${avatarUrl}`} alt="avatar" />
+      <img src={`http://localhost:5199/${avatarUrl}`} alt="avatar" />
       <div className="avatar-overlay">+</div>
     </div>
     <input

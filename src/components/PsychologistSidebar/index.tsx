@@ -1,4 +1,4 @@
-import { Calendar, Bell, LogOut } from "lucide-react";
+import { Calendar, Bell, LogOut, School } from "lucide-react";
 import "./index.scss";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import logo from "../../images/Logo.png";
 import WeeklySchedule from "../WeeklyCalendar";
 import { RootState } from "../../redux/Store";
 import Notification from "../AppointmentNoti";
+import ClassManagement from "../ClassManagement/ClassManagement";
 
 const ConsultantSidebar = () => {
   const [activePage, setActivePage] = useState("Schedule");
@@ -40,6 +41,11 @@ const ConsultantSidebar = () => {
           >
             <Bell /> <span>Notifications</span>
           </li>
+          <li
+            className={activePage === "ClassManagement" ? "active" : ""}
+            onClick={() => setActivePage("ClassManagement")}>
+            <School /> <span>Class Management</span>
+            </li>
         </ul>
 
         {/* Consultant Info */}
@@ -60,6 +66,7 @@ const ConsultantSidebar = () => {
       <div className="content">
         {activePage === "Schedule" && <WeeklySchedule />}
         {activePage === "Notifications" && <Notification />}
+        {activePage === "ClassManagement" && <ClassManagement />}
       </div>
     </div>
   );

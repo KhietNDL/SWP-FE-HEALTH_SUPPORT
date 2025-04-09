@@ -74,7 +74,7 @@ function Program() {
                       : program.description}
                   </p>
                   <p><strong>Giá:</strong> {program.price.toLocaleString()} VND</p>
-                  <p><strong>Thời gian:</strong> {program.duration} ngày</p>
+                  <p><strong>Thời gian:</strong> {program.duration} Buổi</p>
                   <button className="view-more" onClick={() => handleViewMore(program.id)}>
                     Xem chi tiết
                   </button>

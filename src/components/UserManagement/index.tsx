@@ -39,7 +39,7 @@ const UserManagement: React.FC = () => {
 
   // Lấy dữ liệu từ API khi component mount
   useEffect(() => {
-    fetch("https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account")
+    fetch("http://localhost:5199/Account")
       .then((response) => response.json())
       .then((data: User[]) => setUsers(data))
       .catch((error) => console.error("Error fetching users: ", error));
@@ -96,7 +96,7 @@ const UserManagement: React.FC = () => {
 
     if (editingUserId) {
       // Update user qua PUT
-      fetch(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${editingUserId}`, {
+      fetch(`http://localhost:5199/Account/${editingUserId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ const UserManagement: React.FC = () => {
         })
         .then(() => {
           // Sau PUT, gọi GET để lấy user mới nhất
-          return fetch(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${editingUserId}`);
+          return fetch(`http://localhost:5199/Account/${editingUserId}`);
         })
         .then((response) => {
           if (!response.ok) {
@@ -129,7 +129,7 @@ const UserManagement: React.FC = () => {
         .catch((error) => console.error("Error updating user:", error));
     } else {
       // Thêm mới user qua POST với API Register
-      fetch("https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/Register", {
+      fetch("http://localhost:5199/Account/Register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const UserManagement: React.FC = () => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa tài khoản này không?")) {
       return;
     }
-    fetch(`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${id}`, {
+    fetch(`http://localhost:5199/Account/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -175,7 +175,7 @@ const UserManagement: React.FC = () => {
       console.log("Uploading for user ID:", editingUserId);
       try {
         await axios.put(
-          `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Account/${editingUserId}/avatar`,
+          `http://localhost:5199/Account/${editingUserId}/avatar`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -262,7 +262,7 @@ const UserManagement: React.FC = () => {
               <td>
                 {user.imgUrl ? (
                   <img
-                    src={`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net${user.imgUrl}`}
+                    src={`http://localhost:5199${user.imgUrl}`}
                     alt="avatar"
                     style={{ width: 40, height: 40, borderRadius: "50%" }}
                   />

@@ -63,7 +63,7 @@ const RevenueDashboard: React.FC = () => {
       setIsDetailModalVisible(false); // Đóng modal nếu đang mở khi đổi năm
 
       try {
-        const apiUrl = `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/api/Dashboard/stats?year=${selectedYear}`;
+        const apiUrl = `http://localhost:5199/api/Dashboard/stats?year=${selectedYear}`;
         console.log(`Workspaceing revenue data from: ${apiUrl}`);
         const response = await axios.get<RevenueStatsResponse>(apiUrl);
         const statsData = response.data;

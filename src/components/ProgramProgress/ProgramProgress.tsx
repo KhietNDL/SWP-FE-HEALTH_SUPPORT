@@ -10,6 +10,7 @@ interface Progress {
   subscriptionName: string;
   isCompleted: boolean;
   createAt: string;
+  startDate : string;
   modifiedAt: string | null;
 }
 
@@ -101,10 +102,8 @@ const CourseProgress: React.FC = () => {
                     }`}
                     onClick={() => setActiveProgress(progress.id)}
                   >
-                    <div className="session-number">Tuần {progress.section}</div>
-                    <div className="session-date">
-                      Ngày: {progress.date}
-                    </div>
+                    <div className="session-number">Buổi {progress.section}</div>
+                    
                   </div>
                 ))}
               </div>
@@ -118,9 +117,9 @@ const CourseProgress: React.FC = () => {
             ) : activeProgress ? (
               <div className="session-details">
                 <div className="session-header">
-                  <h2>Tuần {getCurrentProgress()?.section}</h2>
+                  <h2>Buổi {getCurrentProgress()?.section}</h2>
                   <div className="session-meta">
-                    Ngày tạo: {formatDate(getCurrentProgress()?.createAt || "")}
+                    Ngày học: {formatDate(getCurrentProgress()?.startDate || "")}
                   </div>
                 </div>
                 <div className="session-description">

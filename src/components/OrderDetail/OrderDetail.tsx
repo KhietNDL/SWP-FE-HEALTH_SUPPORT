@@ -55,6 +55,16 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   console.log("Subscription ID from state:", subscriptionId);
   console.log("Order ID from URL:", id);
 
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "Đang cập nhật";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
   // Xử lý nếu không tìm thấy đơn hàng
   if (!order) {
     return <div className="order-detail-container">Đang tải thông tin đơn hàng...</div>;
@@ -107,7 +117,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         <div className="bill-content">
           <div className="info-row"><span>Tên Gói:</span> <span>{order?.subscriptionName || "Đang cập nhật"}</span></div>
           <div className="info-row"><span>Người Đặt:</span> <span>{order.accountName || "Đang cập nhật"}</span></div>
-          <div className="info-row"><span>Ngày Đặt:</span> <span>{order.createAt || "Đang cập nhật"}</span></div>
+          <div className="info-row"><span>Ngày Đặt:</span> <span>{formatDate(order.createAt)}</span></div>
           <div className="info-row"><span>Tổng Tiền:</span> <span>{order.price ? `${order.price.toLocaleString()} VNĐ` : "Đang cập nhật"}</span></div>
         </div>
 
