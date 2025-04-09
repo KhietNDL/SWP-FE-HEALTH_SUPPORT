@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { AccountSurveyApi, surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
+import { AccountSurveyApi, SurveyAnswerRecordApi, surveyApi, surveyTypeApi } from "../../services/SurveyApiService";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Link } from "react-router-dom";
 import "./UserSurveyResultList.scss";
-import Item from "antd/es/list/Item";
 
 interface SurveyResult {
   id: string;
   surveyName: string;
   date: string;
   rawDate: Date;
+  totalPoints: number;
+  maxScore: number;
 }
 
 // Get accountId from localStorage
@@ -29,11 +31,23 @@ const UserSurveyResultList: React.FC = () => {
       }
 
       try {
+        // Fetch account survey data by accountId
         const data = await AccountSurveyApi.getAccountSurveyByAccountId(accountId);
-        console.log("Account survey data:", data);
+
+        // Fetch all SurveyAnswerRecord by AccountSurveyId
+        const surveyAnswerPromises = data.map((item: any) =>
+          SurveyAnswerRecordApi.getSurveyAnswerRecordByAccountSurveyId(item.id)
+        );
+        const surveyAnswers = await Promise.all(surveyAnswerPromises);
 
         // Fetch all surveys and create a mapping of surveyId to surveyName
         const surveys = await surveyApi.getAll();
+        const surveysMaxScore = surveys.reduce((acc: any, survey: any) => {
+          acc[survey.id] = survey.maxScore;
+          return acc;
+        }
+        , {});
+
         const surveyTypeMap = new Map(
           surveys.map((survey: any) => [survey.id, survey.surveyTypeId])
         );
@@ -45,13 +59,23 @@ const UserSurveyResultList: React.FC = () => {
           surveyTypes.flat().map((type: any) => [type.id, type.surveyName])
         );
 
-        // Map surveyId to surveyName
+        // Map surveyId to surveyName and calculate points
         const mappedResults = data
-          .map((item: any) => {
+          .map((item: any, index: number) => {
             const surveyTypeId = surveyTypeMap.get(item.surveyId);
             const surveyName = surveyNameMap.get(surveyTypeId) || "Unknown Survey Name";
 
-            // Định dạng ngày
+            // Get maxScore for the surveyName
+            const maxScore = surveysMaxScore[item.surveyId] || 0;
+
+            // Calculate total points for the survey
+            const surveyAnswerRecords = surveyAnswers[index];
+            const totalPoints = surveyAnswerRecords.reduce(
+              (sum: number, record: any) => sum + (record.surveyAnswer?.point || 0),
+              0
+            );
+
+            // Format the date
             const date = new Date(item.createAt);
             const formattedDate = new Intl.DateTimeFormat("vi-VN", {
               day: "2-digit",
@@ -60,13 +84,15 @@ const UserSurveyResultList: React.FC = () => {
             }).format(date);
 
             return {
-              id: item.id, //id của AccountSurvey
-              surveyName, // Tên khảo sát
-              date: formattedDate, // Ngày khảo sát
-              rawDate: date, // Ngày khảo sát gốc để sắp xếp
+              id: item.id, // id of AccountSurvey
+              surveyName, // Survey name
+              date: formattedDate, // Formatted survey date
+              rawDate: date, // Original survey date for sorting
+              totalPoints, // Total points for the survey
+              maxScore, // Max score for the survey
             };
           })
-          .sort((a: { rawDate: Date; }, b: { rawDate: Date; }) => b.rawDate.getTime() - a.rawDate.getTime()); // Sắp xếp từ gần nhất đến cũ nhất
+          .sort((a: { rawDate: Date }, b: { rawDate: Date }) => b.rawDate.getTime() - a.rawDate.getTime()); // Sort from newest to oldest
 
         setSurveyResults(mappedResults);
       } catch (error) {
@@ -90,12 +116,56 @@ const UserSurveyResultList: React.FC = () => {
     setSurveyResults(sortedResults);
   };
 
+  // Group survey results by surveyName and sort by date (oldest to newest)
+  const groupedResults = surveyResults.reduce((acc: any, result) => {
+    if (!acc[result.surveyName]) {
+      acc[result.surveyName] = [];
+    }
+    acc[result.surveyName].push(result);
+    acc[result.surveyName].sort((a: SurveyResult, b: SurveyResult) => a.rawDate.getTime() - b.rawDate.getTime()); // Sort by rawDate (ascending)
+    return acc;
+  }, {});
+
   if (loading) {
     return <div className="loading">Đang tải dữ liệu...</div>;
   }
 
   return (
     <div className="user-survey-result-list">
+      <h1>Điểm số theo từng bài khảo sát</h1>
+      {Object.keys(groupedResults).map((surveyName) => {
+        const surveyData = groupedResults[surveyName]; // Dữ liệu của bài khảo sát
+        if (!surveyData || surveyData.length === 0) {
+          return null; // Không hiển thị nếu không có dữ liệu
+        }
+
+        const maxScore = Math.max(...surveyData.map((result: any) => result.maxScore)); // Lấy maxScore lớn nhất cho surveyName
+
+        return (
+          <div key={surveyName} className="chart-container">
+            <h2>{surveyName}</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={surveyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis
+                  label={{ value: "Tổng Điểm", angle: -90, position: "insideLeft" }}
+                  domain={[0, maxScore]} // Đặt domain từ 0 đến maxScore
+                />
+                <Tooltip />
+                <Legend formatter={() => "Tổng Điểm"} />
+                <Line
+                  type="monotone"
+                  dataKey="totalPoints"
+                  name="Tổng Điểm"
+                  stroke="#8884d8"
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        );
+      })}
       <h1>Danh sách kết quả khảo sát</h1>
       <table>
         <thead>
@@ -114,6 +184,7 @@ const UserSurveyResultList: React.FC = () => {
                 {sortOrder === "desc" ? "↓↑" : "↑↓"}
               </button>
             </th>
+            <th>Tổng Điểm</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -122,6 +193,7 @@ const UserSurveyResultList: React.FC = () => {
             <tr key={`${result.id}-${index}`}>
               <td>{result.surveyName}</td>
               <td>{result.date}</td>
+              <td>{result.totalPoints}</td>
               <td>
                 <Link to={`/survey-result/${result.id}`} className="view-details">
                   Xem chi tiết

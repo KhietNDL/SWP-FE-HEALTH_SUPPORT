@@ -43,7 +43,7 @@ function DoctorInfo() {
       if (!id) return; // Không fetch nếu không có id
       try {
         const response = await axios.get<DoctorType>( // Specify DoctorType for response data
-          `http://localhost:5199/api/Psychologist/${id}`
+          `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/api/Psychologist/${id}`
         );
         setDoctor(response.data);
         console.log("Doctor data:", response.data);
@@ -125,7 +125,7 @@ function DoctorInfo() {
     console.log(`Workspaceing appointments for psychologist: ${psychologistId}`);
     try {
       const response = await axios.get<Appointment[]>(
-        `http://localhost:5199/Appointment/${psychologistId}/Psychologist`
+        `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment/${psychologistId}/Psychologist`
       );
       // Lọc chỉ lấy lịch hẹn 'pending' hoặc 'approved' và chưa bị xóa (nếu có isDelete)
       const validAppointments = response.data.filter(
@@ -215,7 +215,7 @@ function DoctorInfo() {
     try {
         console.log("Đang đặt lịch (gửi đi UTC):", appointmentDateISO_UTC, appointmentObj);
         const response = await axios.post(
-            "http://localhost:5199/Appointment", // API endpoint để tạo appointment mới
+            "https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/Appointment", // API endpoint để tạo appointment mới
             appointmentObj
         );
         console.log("Đặt lịch thành công:", response.data);
@@ -238,7 +238,7 @@ function DoctorInfo() {
         <div className="doctor-profile">
           <div className="doctor-image">
             {/* Sửa lại src nếu cần, đảm bảo URL đúng */}
-            <img src={doctor?.imgUrl ? `http://localhost:5199${doctor.imgUrl}` : "/placeholder-avatar.png"} alt={doctor?.name || "Bác sĩ"} />
+            <img src={doctor?.imgUrl ? `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net${doctor.imgUrl}` : "/placeholder-avatar.png"} alt={doctor?.name || "Bác sĩ"} />
           </div>
           <h2 className="doctor-name">{doctor?.name || "Đang tải..."}</h2>
           <p className="doctor-position">{doctor?.specialization || "Chuyên khoa"}</p>
@@ -307,7 +307,7 @@ function DoctorInfo() {
         {!isLoadingAppointments && (
              <div className="booking-form">
                <div className="doctor-info"> {/* Đổi tên class để tránh trùng */}
-                  <img src={doctor?.imgUrl ? `http://localhost:5199${doctor.imgUrl}` : "/placeholder-avatar.png"} alt={doctor?.name || "Bác sĩ"} />
+                  <img src={doctor?.imgUrl ? `https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net${doctor.imgUrl}` : "/placeholder-avatar.png"} alt={doctor?.name || "Bác sĩ"} />
                   <div className="info">
                      <h2>{doctor?.name || "Bác sĩ"}</h2>
                      <p>{doctor?.specialization}</p>

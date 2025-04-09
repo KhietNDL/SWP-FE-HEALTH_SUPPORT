@@ -9,7 +9,7 @@ function DoctorList() {
 
   const fetchDoctor = async () => {
     const response = await axios.get(
-      "http://localhost:5199/api/Psychologist/all"
+      "https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net/api/Psychologist/all"
     );
     console.log();
     setPoster(response.data);
@@ -23,7 +23,7 @@ function DoctorList() {
       {poster.map((doctor) => (
         <div className="doctor-card">
           <div className="doctor-image">
-            <img src={`http://localhost:5199${doctor.imgUrl}`} alt={doctor.name} />
+            <img src={`https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net${doctor.imgUrl}`} alt={doctor.name} />
           </div>
           <div className="doctor-info">
             <h2>{doctor.name}</h2>

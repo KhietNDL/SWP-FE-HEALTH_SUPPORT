@@ -14,6 +14,8 @@ import { RootState } from "../../redux/Store";
 import AppointmentManagement from "../AppointmentManagement";
 import LineChartManagementPage from "../../pages/LineChartmanage";
 import RevenueDashboard from "../RevenueDashboard";
+import ServicesBarChartPage from "../../pages/ServicesBarChart/ServicesBarChartPage";
+import DashboardOverallDataPage from "../../pages/DashboardOverrallData/DashboardOverrallData";
 const Sidebar = () => {
   const [activePage, setActivePage] = useState<string | null>(null);
   const dispatch = useDispatch();
@@ -57,10 +59,10 @@ const Sidebar = () => {
             <Calendar /> <span>Appointments</span>
           </li>
           <li
-            className={activePage === "LineChart" ? "active" : ""}
-            onClick={() => setActivePage("LineChart")}
+            className={activePage === "Charts" ? "active" : ""}
+            onClick={() => setActivePage("Charts")}
           >
-            <LineChart /> <span>Line Chart</span>
+            <LineChart /> <span>Charts</span>
           </li>
           
         </ul>
@@ -81,8 +83,15 @@ const Sidebar = () => {
         {activePage === "Programs" && <SubscriptionManagement />}
         {activePage === "Users" && <UserManagement />}
         {activePage === "Appointments" && <AppointmentManagement />}
-        {activePage === "LineChart" && <><LineChartManagementPage /><RevenueDashboard /></>}
         
+        
+        {activePage === "Charts" && (
+          <>
+            <RevenueDashboard />
+            <ServicesBarChartPage />
+            <DashboardOverallDataPage />
+          </>
+        )}
       </div>
     </div>
   );

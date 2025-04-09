@@ -57,7 +57,7 @@ const AppointmentManagement: React.FC = () => {
   });
 
   // --- API Base URL ---
-  const API_URL = "http://localhost:5199"; // Centralize API base URL
+  const API_URL = "https://healthsupportwebapp-edf2hybhcah3e7hr.southeastasia-01.azurewebsites.net"; // Centralize API base URL
 
   // --- Fetch Initial Data ---
   useEffect(() => {

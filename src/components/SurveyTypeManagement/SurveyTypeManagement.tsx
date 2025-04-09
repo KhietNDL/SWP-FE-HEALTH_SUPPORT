@@ -245,7 +245,7 @@ const SurveyTypeManagement: React.FC = () => {
       <ToastContainer {...toastConfig} />
       <h1>Quản Lý Khảo Sát</h1>
 
-      <div className="search-box">
+      {/* <div className="search-box">
         <input
           type="text"
           placeholder="Tìm kiếm khảo sát..."
@@ -263,7 +263,7 @@ const SurveyTypeManagement: React.FC = () => {
         >
           <FiPlus /> Thêm Bài Khảo Sát
         </button>
-      </div>
+      </div> */}
 
       {isLoading && <div className="loading-indicator">Đang tải dữ liệu...</div>}
 

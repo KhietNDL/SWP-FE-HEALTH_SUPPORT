@@ -110,6 +110,7 @@
       cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s;
+      width: 220px;
     }
     .checkin-btn-absent {
       background-color: #ff0000; /* Màu xanh lá */
@@ -121,6 +122,7 @@
       cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s;
+      width: 220px;
     }
     .checkin-btn-present:hover {
       background-color: #388e3c; /* Màu xanh lá đậm hơn khi hover */

@@ -1,27 +1,4 @@
-import axios, { AxiosInstance } from "axios";
-import { toast } from "react-toastify";
-import { toastConfig } from "../types/toastConfig";
-import { de } from "date-fns/locale";
-
-const API_BASE_URL = "http://localhost:5199";
-
-// Create an Axios instance with authentication
-export const getAuthAxios = (): AxiosInstance => {
-  const token = sessionStorage.getItem("token");
-  return axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-// Generic error handler
-const handleApiError = (error: any, errorMessage: string) => {
-  console.error(`${errorMessage}:`, error); // Ghi lỗi vào console
-  throw error; // Tiếp tục ném lỗi để xử lý ở nơi gọi hàm
-};
+import { getAuthAxios, handleApiError } from "./ApiConfig";
 
 // Account API calls
 export const accountApi = {
@@ -316,7 +293,7 @@ export const SurveyAnswerRecordApi = {
 
 //SurveyResult API calls
 export const SurveyResultApi = {
-  getAll : async () => {
+  getAll: async () => {
     try {
       const authAxios = getAuthAxios();
       const response = await authAxios.get("/api/SurveyResults");
@@ -325,7 +302,7 @@ export const SurveyResultApi = {
       handleApiError(error, "Lỗi khi lấy danh sách kết quả khảo sát");
     }
   },
-  getBySurveyId : async (surveyId: string) => {
+  getBySurveyId: async (surveyId: string) => {
     try {
       const authAxios = getAuthAxios();
       const response = await authAxios.get(`/api/SurveyResults/${surveyId}/SurveyResults`);
@@ -334,7 +311,7 @@ export const SurveyResultApi = {
       handleApiError(error, "Lỗi khi lấy kết quả khảo sát");
     }
   },
-  delete : async (SurveyResultsId: string) => {
+  delete: async (SurveyResultsId: string) => {
     try {
       const authAxios = getAuthAxios();
       const response = await authAxios.delete(`/api/SurveyResults/${SurveyResultsId}`);
@@ -342,5 +319,40 @@ export const SurveyResultApi = {
     } catch (error) {
       handleApiError(error, "Lỗi khi xóa kết quả khảo sát");
     }
+  },
+  post: async (resultDescription: string, surveyId: string, maxScore: number, minScore: number) => {
+    try {
+      const authAxios = getAuthAxios();
+      const response = await authAxios.post("/api/SurveyResults", { resultDescription, surveyId, maxScore, minScore });
+      return response.data;
+    } catch (error) {
+      handleApiError(error, "Lỗi khi tạo kết quả khảo sát mới");
+    }
   }
 };
+
+//Order API calls
+export const OrderApi = {
+  getAll: async () => {
+    try {
+      const authAxios = getAuthAxios();
+      const response = await authAxios.get("/Order");
+      return response.data;
+    } catch (error) {
+      handleApiError(error, "Lỗi khi lấy danh sách đơn hàng");
+    }
+  }
+}
+
+//Appointment API calls
+export const AppointmentApi = {
+  getAll: async () => {
+    try {
+      const authAxios = getAuthAxios();
+      const response = await authAxios.get("/Appointment");
+      return response.data;
+    } catch (error) {
+      handleApiError(error, "Lỗi khi lấy danh sách cuộc hẹn");
+    }
+  }
+}

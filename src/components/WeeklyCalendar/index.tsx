@@ -185,13 +185,13 @@ const WeeklySchedule: React.FC = () => {
                   className="checkin-btn-present"
                   onClick={() => handleCheckIn("completed")}
                 >
-                  Check-in (Present)
+                  Điểm danh (Có mặt)
                 </button>
                 <button
                   className="checkin-btn-absent"
                   onClick={() => handleCheckIn("expired")}
                 >
-                  Check-in (Absent)
+                  Điểm danh (Vắng mặt)
                 </button>
               </>
             ) : (
