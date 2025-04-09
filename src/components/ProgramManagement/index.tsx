@@ -284,7 +284,7 @@ const SubscriptionManagement: React.FC = () => {
               <td>{sub.subscriptionName}</td>
               <td>{sub.description}</td>
               <td>VND{sub.price.toLocaleString()}</td>
-              <td>{sub.duration} days</td>
+              <td>{sub.duration} Buổi</td>
               {/* Hiển thị tên Category dựa trên categoryId */}
               <td>{sub.categoryName}</td>
               {/* Hiển thị tên Psychologist dựa trên psychologistId */}

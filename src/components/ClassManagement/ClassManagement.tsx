@@ -103,7 +103,7 @@ const ClassManagement: React.FC = () => {
                 </div>
                 <div className="program-info">
                   <Text strong>Lộ Trình: </Text>
-                  <Text>{program.duration} tuần</Text>
+                  <Text>{program.duration} buổi</Text>
                 </div>
               </Card>
             </Col>

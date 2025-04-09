@@ -59,6 +59,7 @@ const ClassDetail: React.FC = () => {
   const [userProgress, setUserProgress] = useState<UserProgress[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [sectionProgress, setSectionProgress] = useState<SubscriptionProgress[]>([]);
+  const [currentSubscription, setCurrentSubscription] = useState<any>(null);
 
   // Fetch sections and participants
   useEffect(() => {
@@ -116,6 +117,19 @@ const ClassDetail: React.FC = () => {
     fetchData();
   }, [programId]);
 
+  // Update the useEffect to set currentSubscription
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const subscriptionResponse = await axios.get(`http://localhost:5199/Subscription/${programId}`);
+        setCurrentSubscription(subscriptionResponse.data);
+      } catch (error) {
+        console.error('Error fetching subscription:', error);
+      }
+    };
+    fetchSubscription();
+  }, [programId]);
+
   const handleComplete = async (accountId: string, section: number) => {
     if (!accountId) {
       notification.error({
@@ -129,7 +143,7 @@ const ClassDetail: React.FC = () => {
       // Create new progress
       const createPayload = {
         section,
-        description: "Created by psychologist",
+        description: "Đã tham gia các hoạt động và bài tập tại lớp",
         date: currentDate,
         subscriptionId: programId,
         accountId: accountId,
@@ -218,18 +232,21 @@ const ClassDetail: React.FC = () => {
       </div>
       <Row gutter={24}>
         <Col span={6} className="sections-list">
-          <Card title="Danh sách tuần học">
+          <Card title="Danh sách buổi học">
             <List
               dataSource={sections}
               renderItem={section => {
-                const progress = sectionProgress.find(p => p.section === section);
+                const progress = sectionProgress.find(p => 
+                  p.section === section && 
+                  p.subscriptionName === currentSubscription.subscriptionName
+                );
                 return (
                   <List.Item
                     className={`section-item ${activeSection === section ? 'active' : ''}`}
                     onClick={() => setActiveSection(section)}
                   >
                     <div>
-                      <Text>Tuần {section}</Text>
+                      <Text>Buổi {section}</Text>
                       {progress && (
                         <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
                           {new Date(progress.startDate).toLocaleDateString()}
@@ -243,7 +260,7 @@ const ClassDetail: React.FC = () => {
           </Card>
         </Col>
         <Col span={18} className="participants-list">
-          <Card title={`Danh sách học viên - Tuần ${activeSection}`}>
+          <Card title={`Danh sách học viên - Buổi ${activeSection}`}>
             <List
               dataSource={participants}
               renderItem={participant => {
@@ -258,12 +275,25 @@ const ClassDetail: React.FC = () => {
                     p.isCompleted === true // Chỉ lấy những progress đã hoàn thành
                 );
 
+                // Find the section progress to check startDate
+                const sectionProgressData = sectionProgress.find(p => 
+                  p.section === activeSection && 
+                  p.subscriptionName === participant.subscriptionName
+                );
+                
+                // Check if current date is before startDate
+                const isBeforeStartDate = sectionProgressData && sectionProgressData.startDate
+                  ? new Date() < new Date(sectionProgressData.startDate)
+                  : false;
+
                 console.log('Checking progress for:', {
                   userName,
                   section: activeSection,
                   subscriptionName: participant.subscriptionName,
                   foundProgress: progress,
-                  allProgressForUser: userProgress.filter(p => p.accountName === userName)
+                  allProgressForUser: userProgress.filter(p => p.accountName === userName),
+                  isBeforeStartDate,
+                  startDate: sectionProgressData?.startDate
                 });
                 return (
                   <List.Item
@@ -274,8 +304,12 @@ const ClassDetail: React.FC = () => {
                         <Button
                           type="primary"
                           onClick={() => handleComplete(participant.accountId, activeSection)}
+                          disabled={isBeforeStartDate}
+                          title={isBeforeStartDate && sectionProgressData?.startDate 
+                            ? `Buổi học này bắt đầu từ ${new Date(sectionProgressData.startDate).toLocaleDateString()}` 
+                            : ""}
                         >
-                          Tham gia
+                          {isBeforeStartDate ? "Chưa đến thời gian" : "Tham gia"}
                         </Button>
                       )
                     ]}

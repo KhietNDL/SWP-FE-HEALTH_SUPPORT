@@ -202,7 +202,7 @@ function ProgramDetail() {
           <div className="program-stats">
             <div className="stat-item">
               <div className="label">Thời gian liệu trình</div>
-              <div className="value">{programData.duration} Tuần</div>
+              <div className="value">{programData.duration} Buổi</div>
             </div>
             <div className="stat-item price">
               <div className="label">Giá</div>
