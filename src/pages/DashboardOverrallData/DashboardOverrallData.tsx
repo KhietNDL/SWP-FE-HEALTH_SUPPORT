@@ -2,7 +2,7 @@ import DashboardOverallData from "../../components/DashboardOverallData/Dashboar
 
 function DashboardOverallDataPage() {
   return (
-    <div>
+    <div style={{alignItems: "center", display: "flex", flexDirection: "column", marginBottom: "20px"}}>
       <DashboardOverallData />
     </div>
   );

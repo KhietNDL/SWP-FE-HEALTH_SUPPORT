@@ -88,8 +88,10 @@ const Sidebar = () => {
         {activePage === "Charts" && (
           <>
             <RevenueDashboard />
-            <ServicesBarChartPage />
             <DashboardOverallDataPage />
+            <LineChartManagementPage />
+            <ServicesBarChartPage />
+
           </>
         )}
       </div>

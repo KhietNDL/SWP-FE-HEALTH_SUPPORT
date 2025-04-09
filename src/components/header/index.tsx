@@ -272,7 +272,7 @@ function Header() {
               <li><Link to="/info-user"><UserOutlined /> Thông tin</Link></li>
               <li><Link to="/progress"><StockOutlined /> Lộ Trình</Link></li>
               <li><Link to="/user-survey-result-list"><FileTextOutlined /> Lịch Sử Khảo Sát</Link></li>
-              <li><Link to="/user-survey-result-list"><FileTextOutlined /> Lịch Sử Khám bệnh</Link></li>
+              
               {/* Nút Đăng xuất nên là button hoặc Menu.Item */}
               <li><button onClick={handleLogout} className="logout-button"><LogoutOutlined /> Đăng xuất</button></li>
             </ul>
